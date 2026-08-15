@@ -1310,13 +1310,17 @@ document.getElementById("pw-go").addEventListener("click",submitGate);
   if(el) el.addEventListener("keydown",function(e){ if(e.key==="Enter") submitGate(); });
 });
 
+function greetPrefix(){
+  var hr=new Date().getHours();
+  return hr<12?"Good morning, ":hr<18?"Good afternoon, ":"Good evening, ";
+}
 async function enter(p){
   ME=p;
   document.getElementById("gate").classList.add("off");
   document.getElementById("av").textContent=p.initial;
   document.getElementById("whotxt").innerHTML=p.name+"<small>"+p.role_label+" · sign out</small>";
   var h=document.getElementById("hellotxt");
-  if(h) h.innerHTML=(p.is_admin?"Morning, ":"Hi ")+p.name+".<br>Here's where everything stands.";
+  if(h) h.innerHTML=greetPrefix()+p.name+".<br>Here's where everything stands.";
   document.getElementById("task-add").style.display=p.is_admin?"":"none";
   paintNav();
   // Show only the track that belongs to this person.
