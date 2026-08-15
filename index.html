@@ -150,6 +150,8 @@ main{flex:1;min-width:0;padding:30px 38px 80px;max-width:1180px}
 /* ═══ TASKS ═══ */
 .tasksec{margin-bottom:16px}
 .taskhead{display:flex;align-items:baseline;gap:11px;margin-bottom:11px;flex-wrap:wrap}
+.taskfilters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:11px}
+.taskfilters .seg{background:#fff}
 .taskhead h3{font-size:19px;font-weight:normal}
 .taskcount{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft)}
 .task{display:flex;gap:13px;align-items:flex-start;background:var(--card);border:1px solid var(--line);
@@ -438,6 +440,10 @@ textarea.tall{min-height:132px}
       <span style="flex:1"></span>
       <button class="mbtn" id="task-add" style="display:none">+ New task</button>
     </div>
+    <div class="taskfilters">
+      <div class="segs" id="task-filter-who" style="display:none"></div>
+      <div class="segs" id="task-filter-when"></div>
+    </div>
     <div class="addtask" id="addtask">
       <input class="t" type="text" id="nt-title" placeholder="What needs doing?">
       <select id="nt-who"></select>
@@ -479,7 +485,7 @@ textarea.tall{min-height:132px}
     <span class="arrow">→</span>
     <div class="link"><span class="lnum">02</span><h4>The baseline</h4><p>All three houses, by Aug 28</p></div>
     <span class="arrow">→</span>
-    <div class="link"><span class="lnum">03</span><h4>The annual plan</h4><p>Targets we set together, by Sep 11</p></div>
+    <div class="link"><span class="lnum">03</span><h4>The annual plan</h4><p>Targets we set together, by Aug 28</p></div>
     <span class="arrow">→</span>
     <div class="link"><span class="lnum">04</span><h4>Day 30 · 60 · 90</h4><p>Read against those targets</p></div>
   </div>
@@ -498,7 +504,7 @@ textarea.tall{min-height:132px}
     <span class="arrow">→</span>
     <div class="link"><span class="lnum">02</span><h4>The baseline</h4><p>All three houses, by Aug 28</p></div>
     <span class="arrow">→</span>
-    <div class="link"><span class="lnum">03</span><h4>The annual plan</h4><p>Targets we set together, by Sep 11</p></div>
+    <div class="link"><span class="lnum">03</span><h4>The annual plan</h4><p>Targets we set together, by Aug 28</p></div>
     <span class="arrow">→</span>
     <div class="link"><span class="lnum">04</span><h4>Day 30 · 60 · 90</h4><p>Read against those targets</p></div>
   </div>
@@ -677,21 +683,21 @@ textarea.tall{min-height:132px}
     <div class="tlrow"><div class="when">Now · weeks one and two</div>
       <h4>Onboarding and the first baseline</h4>
       <p>Both tracks answered. Access sorted. First measurement of all three houses — search, social, site, email, events. The first apples-to-apples numbers Democracy has had, and the foundation everything else is measured against.</p></div>
-    <div class="tlrow future"><div class="when">By September 11</div>
+    <div class="tlrow future"><div class="when">By August 28 · same week as the baseline</div>
       <h4>The annual plan</h4>
-      <p>Written on top of the baseline, with numeric targets for Day 30, Day 60 and Day 90. We agree those targets together in a weekly review before the plan is final — so they're realistic, they're shared, and neither of us is guessing.</p></div>
+      <p>Written straight off the baseline the same week it lands, with numeric targets for Day 30, Day 60 and Day 90. We agree those targets together in a weekly review before the plan is final — so they're realistic, they're shared, and neither of us is guessing.</p></div>
     <div class="tlrow future"><div class="when">Meanwhile · month one</div>
-      <h4>Building the list, and something to sell with</h4>
-      <p>Mapping the businesses around each house — offices, hotels, restaurants, institutions — and turning that into a working list. A simple kit that sells the private rooms at a glance. Google listings rebuilt across all three houses. Conversations start immediately; September is already late for some calendars.</p></div>
+      <h4>Building the list, and Oktoberfest prep</h4>
+      <p>Mapping the businesses around each house — offices, hotels, restaurants, institutions — and turning that into a working list. A simple kit that sells the private rooms at a glance. Google listings rebuilt across all three houses. Oktoberfest launches September 19 — the campaign gets planned and booked now, not once it's already running. Conversations start immediately; September is already late for some calendars.</p></div>
     <div class="tlrow future"><div class="when">Month two</div>
-      <h4>Working the neighbourhood</h4>
-      <p>The list gets worked, not just built — visits, drop-offs, follow-ups, tastings. Proposals start going out. Brand guidelines extended to cover every house.</p></div>
+      <h4>Oktoberfest, and working the neighbourhood</h4>
+      <p>Oktoberfest runs across the houses starting September 19 — the first campaign we have to execute, not just plan. In parallel, the prospecting list gets worked, not just built: visits, drop-offs, follow-ups, tastings. Proposals start going out. Brand guidelines extended to cover every house.</p></div>
     <div class="tlrow future"><div class="when">Month three</div>
-      <h4>Oktoberfest and the holiday close</h4>
-      <p>Seasonal push across the houses. The party calendar sold hard while companies are still deciding. First corporate events executed and invoiced.</p></div>
+      <h4>The holiday close</h4>
+      <p>The party calendar sold hard while companies are still deciding. First corporate events executed and invoiced.</p></div>
     <div class="tlrow future"><div class="when">Week of November 9</div>
       <h4>Day 90 — a reading, not an argument</h4>
-      <p>We sit down with the targets we agreed in September and the numbers this dashboard has been showing all along. Nothing in that meeting will be new information to anyone.</p></div>
+      <p>We sit down with the targets we agreed on August 28 and the numbers this dashboard has been showing all along. Nothing in that meeting will be new information to anyone.</p></div>
   </div>
   <div class="callout">
     <h4>One thing worth saying out loud</h4>
@@ -816,12 +822,16 @@ var nav=document.getElementById("nav");
 // The two answer tracks are working documents, not destinations.
 // Only the admin gets them in the sidebar; everyone else reaches
 // their own from Onboarding or straight from their task list.
+function scopeOk(){
+  return !!(ME && (ME.is_admin || ["miguel","james","laura"].indexOf(ME.slug)!==-1));
+}
 function paintNav(){
   var admin = ME && ME.is_admin;
   var cur = (document.querySelector(".page.on")||{}).id || "p-home";
   nav.innerHTML="";
   PAGES.forEach(function(p){
     if(!admin && (p.id==="p-miguel"||p.id==="p-karsen")) return;
+    if(p.id==="p-scope" && !scopeOk()) return;
     var b=document.createElement("button");
     b.className="navitem"; b.dataset.goto=p.id;
     b.setAttribute("aria-current", p.id===cur);
@@ -835,6 +845,7 @@ var taps=document.getElementById("taps");
 function paintTaps(){
   taps.innerHTML="";
   TAPS.forEach(function(t,i){
+    if(t.id==="p-scope" && !scopeOk()) return;
     var b=document.createElement("button");
     b.className="tap"; b.dataset.goto=t.id;
     b.innerHTML=pintSVG(t,i)+
@@ -1322,7 +1333,8 @@ async function enter(p){
   document.getElementById("task-title").textContent=p.is_admin?"All tasks":"Your tasks";
   await loadIds();
   await Promise.all([loadTasks(),loadViews(),loadResponses()]);
-  renderTasks(); renderSaved();
+  paintTaps();
+  paintTaskFilters(); renderTasks(); renderSaved();
   render("miguel"); render("karsen");
 }
 document.getElementById("whoami").addEventListener("click",async function(){
@@ -1354,15 +1366,53 @@ function nameOf(id){
   var m=IDS.filter(function(x){return x.id===id})[0];
   return m?m.name:"";
 }
+function today12(){ var n=new Date(); n.setHours(12,0,0,0); return n; }
+// Monday of the current week (offsetWeeks=0), or offsetWeeks weeks from it.
+function weekStart(offsetWeeks){
+  var n=today12(); var dow=(n.getDay()+6)%7; // 0=Mon..6=Sun
+  n.setDate(n.getDate()-dow+offsetWeeks*7);
+  return n;
+}
 function dueTxt(d){
   if(!d) return "";
-  var t=new Date(d+"T12:00:00"), now=new Date("2026-08-14T12:00:00");
+  var t=new Date(d+"T12:00:00"), now=today12();
   var days=Math.round((t-now)/86400000);
   if(days<0) return "Overdue";
   if(days===0) return "Due today";
   if(days===1) return "Due tomorrow";
   return "Due "+t.toLocaleDateString(undefined,{month:"short",day:"numeric"});
 }
+function dueBucket(d){
+  if(!d) return "none";
+  var t=new Date(d+"T12:00:00");
+  if(t<today12()) return "overdue";
+  if(t<weekStart(1)) return "this";
+  if(t<weekStart(2)) return "next";
+  return "later";
+}
+var TASK_WHO="all", TASK_WHEN="all";
+function paintTaskFilters(){
+  var whoBox=document.getElementById("task-filter-who");
+  var whenBox=document.getElementById("task-filter-when");
+  if(!whoBox||!whenBox) return;
+  if(ME&&ME.is_admin){
+    whoBox.style.display="";
+    var people=[{slug:"all",name:"All"}].concat(ROSTER.map(function(p){return {slug:p.slug,name:p.name};}));
+    whoBox.innerHTML=people.map(function(p){
+      return '<button class="seg" data-who="'+p.slug+'" aria-pressed="'+(TASK_WHO===p.slug)+'">'+esc(p.name)+'</button>';
+    }).join("");
+  } else { whoBox.style.display="none"; }
+  var whens=[["all","All"],["overdue","Overdue"],["this","This week"],["next","Next week"],["later","Later"]];
+  whenBox.innerHTML=whens.map(function(w){
+    return '<button class="seg" data-when="'+w[0]+'" aria-pressed="'+(TASK_WHEN===w[0])+'">'+w[1]+'</button>';
+  }).join("");
+}
+document.addEventListener("click",function(e){
+  var w=e.target.closest("[data-who]");
+  if(w){ TASK_WHO=w.dataset.who; paintTaskFilters(); renderTasks(); return; }
+  var wh=e.target.closest("[data-when]");
+  if(wh){ TASK_WHEN=wh.dataset.when; paintTaskFilters(); renderTasks(); return; }
+});
 function renderTasks(){
   var box=document.getElementById("tasklist");
   var cnt=document.getElementById("task-count");
@@ -1370,14 +1420,22 @@ function renderTasks(){
     box.innerHTML='<div class="taskempty">Tasks live in the database — connect to see them.</div>';
     cnt.textContent=""; return;
   }
-  var todo=TASKS.filter(function(t){return t.status!=="done"});
-  var done=TASKS.filter(function(t){return t.status==="done"});
+  var list=TASKS.filter(function(t){
+    if(TASK_WHO!=="all"&&t.assignee!==idOf(TASK_WHO)) return false;
+    if(TASK_WHEN!=="all"&&dueBucket(t.due_on)!==TASK_WHEN) return false;
+    return true;
+  });
+  var todo=list.filter(function(t){return t.status!=="done"});
+  var done=list.filter(function(t){return t.status==="done"});
   cnt.textContent=todo.length?(todo.length+" to do"):"all clear";
   if(!TASKS.length){
     box.innerHTML='<div class="taskempty">Nothing on your plate right now.</div>'; return;
   }
+  if(!list.length){
+    box.innerHTML='<div class="taskempty">Nothing matches this filter.</div>'; return;
+  }
   function row(t){
-    var late=t.due_on && new Date(t.due_on+"T12:00:00")<new Date("2026-08-14T12:00:00");
+    var late=t.due_on && new Date(t.due_on+"T12:00:00")<today12();
     var d=dueTxt(t.due_on);
     return '<div class="task'+(t.priority===1?" p1":"")+(t.status==="done"?" done":"")+'">'+
       '<button class="tick" data-tick="'+t.id+'" aria-label="Mark done">✓</button>'+
