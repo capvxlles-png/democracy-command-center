@@ -1,0 +1,21 @@
+# Democracy Brewing — Growth Command Center
+# Plain static site: no build step, no dependencies.
+
+[build]
+  publish = "."
+
+# Security headers. The dashboard talks to Supabase over HTTPS and
+# loads the client library from a CDN; nothing else is allowed out.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# Never serve a stale dashboard: the HTML is always revalidated.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

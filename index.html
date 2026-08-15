@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Democracy Brewing — Growth Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#4a6bb3; --blue-deep:#2e4478; --blue-ink:#1d2d52; --blue-wash:#e8eef8;
+  --gold:#b8912f; --amber:#d9a441; --amber-lt:#eec468; --foam:#f7f1e2;
+  --clay:#d19c85; --clay-deep:#b5705a; --olive:#8a825c; --brown:#452117; --brown-lt:#6b3524;
+  --paper:#f5f1e6; --card:#fffdf8; --ink:#1c2231; --ink-soft:#5a6172; --line:#dcd4c2;
+  --ok:#4f7a4a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{font-family:Georgia,'Times New Roman',serif;background:var(--paper);color:var(--ink);
+  line-height:1.55;font-size:15px}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.eyebrow{font-family:'Josefin Sans',sans-serif;font-weight:700;font-size:10px;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+select{font:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:3px}
+/* ═══ GATE ═══ */
+#gate{position:fixed;inset:0;z-index:200;background:var(--blue-ink);color:var(--foam);
+  display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto}
+#gate.off{display:none}
+#gate .dots{position:absolute;inset:0;opacity:.4;pointer-events:none;
+  background-image:radial-gradient(rgba(217,164,65,.3) 1.1px,transparent 1.2px);background-size:10px 10px}
+.gatebox{max-width:600px;width:100%;text-align:center;position:relative;z-index:2}
+.gatebox .seal{letter-spacing:.55em;color:var(--amber);font-size:14px;margin-bottom:16px}
+.gatebox h1{font-size:clamp(26px,5vw,40px);font-weight:normal;line-height:1.15;margin-bottom:10px}
+.gatebox .gsub{color:rgba(247,241,226,.62);max-width:46ch;margin:0 auto 28px;font-size:15px}
+.who{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.whobtn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:12px;
+  padding:18px 8px;transition:all .2s;color:var(--foam)}
+.whobtn:hover{background:rgba(217,164,65,.18);border-color:var(--amber);transform:translateY(-3px)}
+.whobtn .ini{font-family:'Josefin Sans',sans-serif;font-size:24px;font-weight:300;color:var(--amber);
+  display:block;margin-bottom:5px}
+.whobtn .nm{font-size:14.5px}
+.whobtn .rl{font-family:'Josefin Sans',sans-serif;font-size:8.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:rgba(247,241,226,.42);margin-top:3px;display:block}
+.whobtn .lock{display:block;margin-top:6px;font-size:9px;letter-spacing:.1em;
+  font-family:'JetBrains Mono',monospace;color:rgba(247,241,226,.3)}
+.gatefoot{margin-top:24px;font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:rgba(247,241,226,.35)}
+.pwbox{max-width:380px;margin:0 auto;text-align:left}
+.pwbox .back{font-family:'Josefin Sans',sans-serif;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(247,241,226,.5);margin-bottom:18px;display:inline-block}
+.pwbox .back:hover{color:var(--amber)}
+.pwbox label{font-family:'Josefin Sans',sans-serif;font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:rgba(247,241,226,.55);font-weight:700;display:block;margin-bottom:6px}
+.pwbox input{width:100%;padding:12px 14px;border-radius:9px;border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.07);color:var(--foam);font-family:Georgia,serif;font-size:15px;
+  margin-bottom:15px}
+.pwbox input:focus{border-color:var(--amber);outline:none;background:rgba(255,255,255,.11)}
+.pwbox input::placeholder{color:rgba(247,241,226,.3)}
+.pwbtn{width:100%;padding:13px;border-radius:9px;background:var(--amber);color:var(--brown);
+  font-family:'Josefin Sans',sans-serif;font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:700;transition:background .16s}
+.pwbtn:hover{background:var(--amber-lt)}
+.pwbtn[disabled]{opacity:.5;cursor:not-allowed}
+.pwmsg{margin-top:14px;font-size:13.5px;min-height:20px}
+.pwmsg.err{color:#f0a68e}
+.pwmsg.ok{color:#a8d0a0}
+.pwhint{font-size:13px;color:rgba(247,241,226,.45);margin-bottom:18px;line-height:1.5}
+
+/* ═══ SHELL ═══ */
+#app{display:flex;min-height:100vh}
+#rail{width:228px;flex-shrink:0;background:var(--blue-ink);color:#e9e3d4;
+  position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+.brand{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12);text-align:left;width:100%}
+.brand .seal{letter-spacing:.5em;color:var(--amber);font-size:10px;margin-bottom:7px}
+.brand h1{font-size:15.5px;font-weight:normal;line-height:1.25}
+.brand p{font-family:'Josefin Sans',sans-serif;font-size:9px;letter-spacing:.18em;
+  text-transform:uppercase;color:rgba(233,227,212,.5);margin-top:5px}
+nav{padding:11px 9px;flex:1;overflow-y:auto}
+.navitem{display:flex;align-items:center;gap:9px;width:100%;text-align:left;padding:8px 11px;
+  border-radius:7px;color:rgba(233,227,212,.7);font-size:13.5px;margin-bottom:2px;
+  transition:background .15s,color .15s}
+.navitem:hover{background:rgba(255,255,255,.07);color:#fff}
+.navitem[aria-current="true"]{background:rgba(255,255,255,.13);color:#fff}
+.navitem .dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.3;flex-shrink:0}
+.navitem[aria-current="true"] .dot{background:var(--amber);opacity:1}
+.navitem .tag{margin-left:auto;font-family:'Josefin Sans',sans-serif;font-size:8.5px;
+  letter-spacing:.14em;text-transform:uppercase;padding:3px 7px;border-radius:20px;font-weight:700;
+  background:var(--amber);color:var(--brown)}
+.navitem .tag.soon{background:rgba(255,255,255,.12);color:rgba(233,227,212,.6)}
+.whoami{padding:13px 18px;border-top:1px solid rgba(255,255,255,.12);display:flex;
+  align-items:center;gap:10px;width:100%;text-align:left;color:rgba(233,227,212,.75);
+  transition:background .15s}
+.whoami:hover{background:rgba(255,255,255,.06)}
+.whoami .av{width:30px;height:30px;border-radius:50%;background:var(--amber);color:var(--brown);
+  display:flex;align-items:center;justify-content:center;font-family:'Josefin Sans',sans-serif;
+  font-weight:700;font-size:13px;flex-shrink:0}
+.whoami .txt{font-size:13px;line-height:1.25}
+.whoami .txt small{display:block;font-family:'Josefin Sans',sans-serif;font-size:9px;
+  letter-spacing:.13em;text-transform:uppercase;color:rgba(233,227,212,.4)}
+
+main{flex:1;min-width:0;padding:30px 38px 80px;max-width:1180px}
+.page{display:none}
+.page.on{display:block;animation:rise .35s ease}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.page.on{animation:none}*{transition:none!important}
+  .bub,.steam{display:none!important}}
+.phead{margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.phead h2{font-size:29px;font-weight:normal;line-height:1.15;margin:7px 0}
+.phead .lede{color:var(--ink-soft);max-width:64ch}
+/* ═══ HERO / TAPS ═══ */
+.hero{position:relative;border-radius:14px;overflow:hidden;margin-bottom:26px;
+  background:linear-gradient(170deg,#20325c 0%,#2e4478 55%,#3a5490 100%);color:var(--foam)}
+.hero .dots{position:absolute;inset:0;opacity:.5;
+  background-image:radial-gradient(rgba(217,164,65,.32) 1.1px, transparent 1.2px);
+  background-size:9px 9px}
+.hero .glow{position:absolute;width:520px;height:520px;border-radius:50%;top:-260px;right:-140px;
+  background:radial-gradient(circle,rgba(217,164,65,.24),transparent 68%)}
+.heroin{position:relative;z-index:2;padding:30px 34px 22px}
+.heroin .eyebrow{color:var(--amber)}
+.heroin h2{font-size:clamp(24px,3.4vw,36px);font-weight:normal;line-height:1.12;margin:8px 0 8px}
+.heroin .sub{color:rgba(247,241,226,.68);max-width:56ch;font-size:15px}
+
+/* ═══ TAP LIST ═══ */
+.taps{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:end;
+  padding:24px 30px 0;position:relative;z-index:2}
+.tap{display:flex;flex-direction:column;align-items:center;
+  transition:transform .28s cubic-bezier(.2,.8,.3,1)}
+.tap:hover,.tap:focus-visible{transform:translateY(-9px)}
+.tap svg{width:100%;max-width:104px;height:auto;display:block;overflow:visible}
+.tap .tname{font-family:'Josefin Sans',sans-serif;font-size:10.5px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;margin-top:9px;color:var(--foam)}
+.tap .tstate{font-family:'JetBrains Mono',monospace;font-size:9px;margin-top:3px;color:var(--amber)}
+.tap .tstate.soon{color:rgba(247,241,226,.4)}
+.tap .beer{transition:transform .28s}
+.tap:hover .beer{transform:scale(1.04)}
+.tap .taphandle{transition:fill .22s}
+.tap:hover .taphandle{fill:var(--amber)}
+.bubble{animation:bfloat 3.6s ease-in infinite;transform-origin:center}
+@keyframes bfloat{0%{transform:translateY(0);opacity:0}
+  18%{opacity:.75}100%{transform:translateY(-46px);opacity:0}}
+.counter{height:14px;margin:0 22px;border-radius:3px 3px 0 0;position:relative;z-index:1;
+  background:linear-gradient(180deg,#7a4029,#4e2818 55%,#2e150d)}
+.barfoot{position:relative;z-index:2;text-align:center;padding:12px 0 18px;
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(247,241,226,.38)}
+
+/* ═══ TASKS ═══ */
+.tasksec{margin-bottom:16px}
+.taskhead{display:flex;align-items:baseline;gap:11px;margin-bottom:11px;flex-wrap:wrap}
+.taskhead h3{font-size:19px;font-weight:normal}
+.taskcount{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft)}
+.task{display:flex;gap:13px;align-items:flex-start;background:var(--card);border:1px solid var(--line);
+  border-radius:10px;padding:15px 17px;margin-bottom:9px;transition:all .18s}
+.task:hover{border-color:var(--blue)}
+.task.p1{border-left:3px solid var(--clay-deep)}
+.task.done{opacity:.5;background:#fbfcf8}
+.task.done .tk h4{text-decoration:line-through}
+.tick{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--line);background:#fff;
+  flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;
+  transition:all .16s;color:transparent;font-size:13px;font-weight:700}
+.tick:hover{border-color:var(--blue)}
+.task.done .tick{background:var(--ok);border-color:var(--ok);color:#fff}
+.tk{flex:1;min-width:0}
+.tk h4{font-size:15.5px;font-weight:normal;line-height:1.35;margin-bottom:4px}
+.tk p{font-size:13.5px;color:var(--ink-soft);line-height:1.5}
+.tkmeta{display:flex;gap:12px;align-items:center;margin-top:8px;flex-wrap:wrap;
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft)}
+.tkmeta .due.late{color:var(--clay-deep);font-weight:700}
+.tkgo{font-family:'Josefin Sans',sans-serif;font-size:10.5px;letter-spacing:.11em;
+  text-transform:uppercase;font-weight:700;color:var(--blue-deep);border-bottom:1px solid var(--blue-wash)}
+.tkgo:hover{border-color:var(--blue)}
+.tkwho{font-family:'Josefin Sans',sans-serif;font-size:9.5px;letter-spacing:.13em;
+  text-transform:uppercase;background:var(--blue-wash);color:var(--blue-deep);padding:3px 9px;
+  border-radius:20px;font-weight:700}
+.taskempty{background:var(--card);border:1px dashed var(--line);border-radius:10px;padding:24px;
+  text-align:center;color:var(--ink-soft);font-size:14.5px;font-style:italic}
+.addtask{display:none;gap:9px;flex-wrap:wrap;align-items:flex-end;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:11px}
+.addtask.on{display:flex}
+.addtask input,.addtask select{padding:9px 11px;border:1px solid var(--line);border-radius:7px;
+  background:#fff;font-family:Georgia,serif;font-size:14px;color:var(--ink)}
+.addtask input.t{flex:1;min-width:200px}
+
+/* ═══ CARDS ═══ */
+.card{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:19px 21px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.wlist{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:9px}
+.wlist li{font-size:14px;padding-left:21px;position:relative;line-height:1.5}
+.wlist li::before{content:"★";position:absolute;left:0;color:var(--amber);font-size:10px;top:3px}
+.wlist li.next::before{content:"○";color:var(--line)}
+.wlist li.next{color:var(--ink-soft)}
+.capbar{height:10px;background:var(--blue-wash);border-radius:6px;overflow:hidden;margin:9px 0 6px}
+.capbar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-deep));
+  width:0;transition:width .9s ease}
+.chain{display:flex;align-items:stretch;gap:9px;flex-wrap:wrap}
+.chain .link{flex:1;min-width:148px;background:var(--card);border:1px solid var(--line);
+  border-radius:10px;padding:14px 15px}
+.chain .link.on{background:#f2e8ce;border-color:#e0d0a8}
+.chain .lnum{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);
+  font-weight:700;display:block;margin-bottom:4px}
+.chain .link h4{font-size:15px;font-weight:normal;margin-bottom:3px}
+.chain .link p{font-size:12.5px;color:var(--ink-soft);line-height:1.4}
+.chain .arrow{align-self:center;color:var(--gold);font-size:16px}
+@media(max-width:700px){.chain .arrow{display:none}.chain .link{min-width:100%}}
+.callout{background:#f2e8ce;border:1px solid #e0d0a8;border-radius:11px;padding:18px 21px;margin-top:16px}
+.callout h4{font-size:16.5px;font-weight:normal;margin-bottom:6px}
+.callout p{font-size:14.5px;color:#5c4f2c;max-width:68ch}
+/* ═══ REPORT BUILDER ═══ */
+.samp{display:flex;gap:11px;align-items:flex-start;background:#f2e8ce;border:1px solid #e0d0a8;
+  border-radius:10px;padding:13px 17px;margin-bottom:17px;font-size:13.5px;color:#5c4f2c}
+.samp b{color:var(--brown)}
+.controls{background:var(--card);border:1px solid var(--line);border-radius:11px;
+  padding:15px 18px;margin-bottom:16px;display:flex;gap:22px;flex-wrap:wrap;align-items:flex-end}
+.ctl{display:flex;flex-direction:column;gap:6px}
+.ctl > label{font-family:'Josefin Sans',sans-serif;font-size:9.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-soft);font-weight:700}
+.ctl select{padding:8px 11px;border:1px solid var(--line);border-radius:7px;background:#fff;
+  font-family:Georgia,serif;font-size:14px;color:var(--ink);min-width:168px}
+.ctl select:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 3px var(--blue-wash)}
+.charttypes{display:flex;gap:6px}
+.ct{width:38px;height:34px;border:1px solid var(--line);border-radius:7px;background:#fff;
+  display:flex;align-items:center;justify-content:center;transition:all .16s}
+.ct:hover{border-color:var(--blue)}
+.ct[aria-pressed="true"]{border-color:var(--blue-deep);background:var(--blue-wash);border-width:2px}
+.ct svg{width:17px;height:17px}
+.segs{display:flex;gap:0;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:#fff}
+.seg{padding:8px 13px;font-family:'Josefin Sans',sans-serif;font-size:12px;letter-spacing:.05em;
+  color:var(--ink-soft);border-right:1px solid var(--line);transition:all .15s}
+.seg:last-child{border-right:none}
+.seg[aria-pressed="true"]{background:var(--blue-deep);color:#fff}
+.ctlspacer{flex:1}
+.miniact{display:flex;gap:8px}
+.mbtn{padding:9px 15px;border:1px solid var(--line);border-radius:7px;background:#fff;
+  font-family:'Josefin Sans',sans-serif;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
+  font-weight:700;color:var(--ink-soft);transition:all .16s}
+.mbtn:hover{border-color:var(--blue);color:var(--blue-deep)}
+.mbtn.solid{background:var(--blue-deep);border-color:var(--blue-deep);color:#fff}
+.mbtn.solid:hover{background:var(--blue);border-color:var(--blue)}
+
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:16px 18px;
+  transition:border-color .18s}
+.kpi.sel{border-color:var(--blue-deep);border-width:2px;padding:15px 17px}
+.kpi .klabel{font-family:'Josefin Sans',sans-serif;font-size:9.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;font-weight:700}
+.kpi .kval{font-family:'JetBrains Mono',monospace;font-size:27px;font-weight:700;line-height:1}
+.kpi .kval.na{color:var(--line)}
+.kpi .kdelta{font-family:'JetBrains Mono',monospace;font-size:11.5px;margin-top:7px}
+.kpi .kdelta.up{color:var(--ok)}
+.kpi .kdelta.dn{color:var(--clay-deep)}
+.kpi .ksrc{font-size:12px;color:var(--ink-soft);margin-top:7px;font-style:italic}
+
+.chartcard{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:19px 21px}
+.charthead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;
+  flex-wrap:wrap;gap:8px}
+.charthead h3{font-size:18px;font-weight:normal}
+.charthead .sub{font-size:13px;color:var(--ink-soft)}
+.legend{display:flex;gap:15px;flex-wrap:wrap;margin-top:13px;font-size:12.5px;color:var(--ink-soft)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:2px;display:block}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-family:'Josefin Sans',sans-serif;font-size:9.5px;letter-spacing:.16em;font-weight:700;
+  text-transform:uppercase;color:var(--ink-soft);text-align:left;padding:0 11px 9px}
+.tbl td{padding:10px 11px;border-top:1px solid var(--line)}
+.tbl td.n{font-family:'JetBrains Mono',monospace;text-align:right}
+.tbl .barcell{position:relative}
+.tbl .barcell i{display:block;height:7px;border-radius:3px;background:var(--blue);opacity:.65}
+.saved{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
+.svchip{padding:7px 13px;border:1px solid var(--line);border-radius:20px;background:#fff;
+  font-size:13px;color:var(--ink-soft);display:flex;align-items:center;gap:8px;transition:all .15s}
+.svchip:hover{border-color:var(--blue);color:var(--blue-deep)}
+.svchip .x{opacity:.4;font-size:15px}
+.svchip .x:hover{opacity:1;color:var(--clay-deep)}
+
+/* ═══ TIMELINE / LISTS ═══ */
+.tl{position:relative;padding-left:27px}
+.tl::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tlrow{position:relative;padding-bottom:21px}
+.tlrow::before{content:"★";position:absolute;left:-27px;top:-2px;color:var(--amber);font-size:12px;
+  background:var(--paper);line-height:1;padding:2px 0}
+.tlrow.future::before{color:var(--line)}
+.tlrow .when{font-family:'Josefin Sans',sans-serif;font-size:9.5px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--olive);margin-bottom:3px;font-weight:700}
+.tlrow h4{font-size:17px;font-weight:normal;margin-bottom:5px}
+.tlrow p{color:var(--ink-soft);font-size:14px;max-width:66ch}
+.slist{list-style:none;display:flex;flex-direction:column;gap:9px;margin-top:10px}
+.slist li{font-size:14.5px;padding-left:22px;position:relative;line-height:1.5}
+.slist li::before{position:absolute;left:0;top:0}
+.slist.yes li::before{content:"★";color:var(--amber);font-size:10px;top:4px}
+.slist.no li{color:var(--ink-soft)}
+.slist.no li::before{content:"—";color:var(--line)}
+.previewnote{background:var(--card);border:1px dashed var(--line);border-radius:11px;
+  padding:20px 22px;margin-top:16px;color:var(--ink-soft);font-size:14.5px;max-width:72ch}
+.soonbadge{display:inline-block;font-family:'Josefin Sans',sans-serif;font-size:9px;
+  letter-spacing:.18em;text-transform:uppercase;font-weight:700;padding:4px 10px;border-radius:20px;
+  background:#f2e8ce;color:var(--gold);border:1px solid #e2d4ae;vertical-align:middle}
+
+/* ═══ ONBOARDING ═══ */
+.tracks{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:22px}
+.track{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--blue);
+  border-radius:11px;padding:19px 21px;text-align:left;width:100%;transition:all .18s}
+.track:hover{border-color:var(--blue);box-shadow:0 3px 14px rgba(46,68,120,.1)}
+.track h3{font-size:20px;font-weight:normal;margin:5px 0 3px}
+.track .role{color:var(--ink-soft);font-size:14px;margin-bottom:13px}
+.track .bar{height:5px;background:var(--blue-wash);border-radius:3px;overflow:hidden;margin-bottom:8px}
+.track .bar i{display:block;height:100%;background:var(--amber);transition:width .4s}
+.track .meta{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:var(--ink-soft)}
+.qsec{margin-bottom:26px}
+.qsec h4{font-size:18px;font-weight:normal;margin-bottom:4px}
+.qsec .secnote{color:var(--ink-soft);font-size:14px;margin-bottom:13px;max-width:66ch}
+.q{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:16px 18px;
+  margin-bottom:10px;transition:border-color .18s}
+.q.done{border-color:#cfd9c9;background:#fbfcf8}
+.q.key{border-left:3px solid var(--amber)}
+.qtop{display:flex;gap:11px;align-items:flex-start}
+.qnum{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);padding-top:4px;
+  flex-shrink:0;font-weight:700}
+.qtext{font-size:15.5px;line-height:1.45}
+.qhelp{color:var(--ink-soft);font-size:13.5px;margin:6px 0 0 26px;font-style:italic;max-width:64ch}
+.qbody{margin:11px 0 0 26px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{display:flex;gap:9px;align-items:flex-start;cursor:pointer;font-size:14.5px;padding:5px 8px;
+  border-radius:6px;transition:background .12s}
+.opt:hover{background:var(--blue-wash)}
+.opt input{margin-top:5px;accent-color:var(--blue);flex-shrink:0}
+textarea,input[type=text]{width:100%;font-family:Georgia,serif;font-size:14.5px;color:var(--ink);
+  padding:10px 12px;border:1px solid var(--line);border-radius:7px;background:#fff;resize:vertical}
+textarea:focus,input[type=text]:focus{border-color:var(--blue);outline:none;
+  box-shadow:0 0 0 3px var(--blue-wash)}
+textarea{min-height:88px}
+textarea.tall{min-height:132px}
+.savebar{position:sticky;bottom:0;background:linear-gradient(to top,var(--paper) 62%,rgba(245,241,230,0));
+  padding:19px 0 6px;margin-top:6px;display:flex;gap:11px;align-items:center;flex-wrap:wrap}
+.btn{padding:11px 21px;border-radius:8px;font-family:'Josefin Sans',sans-serif;font-size:12.5px;
+  letter-spacing:.1em;text-transform:uppercase;font-weight:700;transition:all .16s}
+.btn.primary{background:var(--blue-deep);color:#fff}
+.btn.primary:hover{background:var(--blue)}
+.btn.ghost{border:1px solid var(--line);color:var(--ink-soft);background:#fff}
+.btn.ghost:hover{border-color:var(--blue);color:var(--blue-deep)}
+.savenote{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft)}
+
+@media print{
+  #rail,.controls,.savebar,.miniact,#gate{display:none!important}
+  main{padding:0;max-width:none}
+  .page{display:none!important}.page.on{display:block!important}
+  body{background:#fff}
+  .card,.chartcard,.kpi{break-inside:avoid}
+}
+@media(max-width:980px){
+  #app{flex-direction:column}
+  #rail{width:100%;height:auto;position:static}
+  nav{display:flex;overflow-x:auto;padding:9px;gap:6px}
+  .navitem{width:auto;white-space:nowrap;margin:0}
+  main{padding:20px 15px 60px}
+  .taps{grid-template-columns:repeat(3,1fr);padding:20px 16px 0}
+  .counter{margin:0 12px}
+  .heroin{padding:24px 20px 18px}
+  .tracks,.grid2,.grid3,.grid4{grid-template-columns:1fr}
+  .who{grid-template-columns:repeat(2,1fr)}
+  .phead h2{font-size:24px}
+  .glass{height:86px}
+  .controls{gap:15px}
+  .ctl select{min-width:100%}
+  .ctl{width:100%}
+}
+@media(max-width:520px){.taps{grid-template-columns:repeat(2,1fr)}.counter{display:none}}
+</style>
+</head>
+<body>
+<div id="gate">
+  <div class="dots"></div>
+  <div class="gatebox">
+    <div class="seal">★ ★ ★ ★ ★ ★</div>
+    <div id="gate-pick">
+      <h1>Who's opening this?</h1>
+      <p class="gsub">Pick your name, then set a password the first time. What you write stays yours — nobody else's view changes.</p>
+      <div class="who" id="who"></div>
+    </div>
+    <div id="gate-pw" style="display:none">
+      <h1 id="pw-title">Welcome back</h1>
+      <p class="gsub" id="pw-sub">Enter your password.</p>
+      <div class="pwbox">
+        <button class="back" id="pw-back">← Someone else</button>
+        <div id="pw-invitewrap" style="display:none">
+          <p class="pwhint">First time here. Nico sent you a short invite code — paste it below and pick a password you'll remember.</p>
+          <label for="pw-invite">Invite code</label>
+          <input type="text" id="pw-invite" placeholder="DEM-XXXX" autocomplete="off">
+        </div>
+        <label for="pw-pass">Password</label>
+        <input type="password" id="pw-pass" placeholder="At least 8 characters" autocomplete="current-password">
+        <button class="pwbtn" id="pw-go">Continue</button>
+        <div class="pwmsg" id="pw-msg"></div>
+      </div>
+    </div>
+    <div class="gatefoot">Democracy Brewing · Growth Command Center</div>
+  </div>
+</div>
+
+<div id="app">
+<aside id="rail">
+  <button class="brand" data-goto="p-home">
+    <div class="seal">★ ★ ★ ★ ★ ★</div>
+    <h1>Growth Command Center</h1>
+    <p>Democracy Brewing</p>
+  </button>
+  <nav id="nav"></nav>
+  <button class="whoami" id="whoami">
+    <span class="av" id="av">?</span>
+    <span class="txt" id="whotxt">Not signed in<small>Tap to choose</small></span>
+  </button>
+</aside>
+
+<main>
+
+<!-- ═════ HOME ═════ -->
+<section class="page on" id="p-home">
+  <div class="hero">
+    <div class="dots"></div><div class="glow"></div>
+    <div class="heroin">
+      <div class="eyebrow">Week of August 10 · 2026</div>
+      <h2 id="hellotxt">Everything I do for Democracy,<br>on one tap list.</h2>
+      <p class="sub">Six lines. Two are pouring already. The rest fill as the work lands — nothing is hidden, so you always know what's coming next.</p>
+    </div>
+    <div class="taps" id="taps"></div>
+    <div class="counter"></div>
+    <div class="barfoot">Pull any handle to open it</div>
+  </div>
+
+  <div class="tasksec" id="tasksec">
+    <div class="taskhead">
+      <h3 id="task-title">Your tasks</h3>
+      <span class="taskcount" id="task-count"></span>
+      <span style="flex:1"></span>
+      <button class="mbtn" id="task-add" style="display:none">+ New task</button>
+    </div>
+    <div class="addtask" id="addtask">
+      <input class="t" type="text" id="nt-title" placeholder="What needs doing?">
+      <select id="nt-who"></select>
+      <input type="date" id="nt-due">
+      <button class="mbtn solid" id="nt-save">Add</button>
+    </div>
+    <div id="tasklist"></div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="eyebrow">This week · what got poured</div>
+      <ul class="wlist">
+        <li>Read and cross-referenced every document shared — the 2024 strategy, the brand guidelines, the 2025 recommendations</li>
+        <li>Built this command center: one permanent link, no logins to remember</li>
+        <li>Wrote the onboarding so the annual plan starts from facts instead of guesses</li>
+        <li>Mapped what exists, what's missing, and what nobody's sure about</li>
+        <li class="next">Next: the baseline of all three houses, once both tracks come back</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="eyebrow">Capacity · 15 hours a week</div>
+        <div class="capbar"><i style="width:93%"></i></div>
+        <p class="mono" style="font-size:12.5px;color:var(--ink-soft)">14 of 15 committed · Aug 10–14</p>
+        <p style="margin-top:10px;font-size:13.5px;color:var(--ink-soft)">Task-based and flexible. Shown as capacity, not a timesheet — what matters is what got delivered and what's left to trade against.</p>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Waiting on</div>
+        <p style="font-size:14.5px;margin-top:7px">Two onboarding tracks — Miguel and Karsen. Everything downstream is built on those answers.</p>
+        <button class="btn primary" data-goto="p-onboard" style="margin-top:13px">Open the tracks</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="eyebrow" style="margin-bottom:10px">Where this is going</div>
+  <div class="chain">
+    <div class="link on"><span class="lnum">01</span><h4>Onboarding</h4><p>This week</p></div>
+    <span class="arrow">→</span>
+    <div class="link"><span class="lnum">02</span><h4>The baseline</h4><p>All three houses, by Aug 28</p></div>
+    <span class="arrow">→</span>
+    <div class="link"><span class="lnum">03</span><h4>The annual plan</h4><p>Targets we set together, by Sep 11</p></div>
+    <span class="arrow">→</span>
+    <div class="link"><span class="lnum">04</span><h4>Day 30 · 60 · 90</h4><p>Read against those targets</p></div>
+  </div>
+</section>
+
+<!-- ═════ ONBOARDING HUB ═════ -->
+<section class="page" id="p-onboard">
+  <div class="phead">
+    <div class="eyebrow">Tap 01 · Onboarding</div>
+    <h2>Before the plan, the picture.</h2>
+    <p class="lede">I've read and cross-referenced everything Miguel shared — the 2024 marketing strategy, the December 2024 brand guidelines, and the 2025 recommendations. There's a real foundation here. What's missing is a single place where it all lives, and a few answers only you two have.</p>
+  </div>
+  <div class="eyebrow" style="margin-bottom:10px">Where your answers end up</div>
+  <div class="chain" style="margin-bottom:22px">
+    <div class="link on"><span class="lnum">01</span><h4>These two tracks</h4><p>This week</p></div>
+    <span class="arrow">→</span>
+    <div class="link"><span class="lnum">02</span><h4>The baseline</h4><p>All three houses, by Aug 28</p></div>
+    <span class="arrow">→</span>
+    <div class="link"><span class="lnum">03</span><h4>The annual plan</h4><p>Targets we set together, by Sep 11</p></div>
+    <span class="arrow">→</span>
+    <div class="link"><span class="lnum">04</span><h4>Day 30 · 60 · 90</h4><p>Read against those targets</p></div>
+  </div>
+  <div class="card" style="margin-bottom:22px">
+    <div class="eyebrow" style="margin-bottom:8px">Why this comes first</div>
+    <p style="max-width:72ch;margin-bottom:10px">The annual plan gets built on what you tell me here — including the targets we'll read at Day 30, 60 and 90. Any goal set before this comes back would be a guess dressed up as a number.</p>
+    <p style="max-width:72ch;margin-bottom:10px">The specifics matter too. Without the real value of a private event, a revenue forecast is fiction. Without knowing what already exists, I'd rebuild things Democracy already owns. Without knowing who Karsen is already talking to, my first week of outreach could cost us a client.</p>
+    <p style="max-width:72ch;color:var(--ink-soft)"><strong style="color:var(--ink)">"I don't know" is a real answer.</strong> A lot of this is simply undocumented. Answer from memory, skip anything that stalls you, and I'll chase the rest myself.</p>
+  </div>
+  <div id="trackswrap"><div class="tracks">
+    <button class="track" data-goto="p-miguel">
+      <div class="eyebrow">Track 01</div><h3>Miguel</h3>
+      <div class="role">Eight years of context, the brand, and how the houses run</div>
+      <div class="bar"><i id="bar-miguel"></i></div>
+      <div class="meta"><span id="cnt-miguel">0 / 0</span><span>~15 min</span></div>
+    </button>
+    <button class="track" data-goto="p-karsen">
+      <div class="eyebrow">Track 02</div><h3>Karsen</h3>
+      <div class="role">Private events, how they really work, and the handoff</div>
+      <div class="bar"><i id="bar-karsen"></i></div>
+      <div class="meta"><span id="cnt-karsen">0 / 0</span><span>~15 min</span></div>
+    </button>
+  </div></div>
+  <div class="previewnote" id="notrack" style="display:none">There's no track for you to fill in — Miguel and Karsen are covering this round. Everything they answer shapes the plan that shows up on the rest of these pages.</div>
+</section>
+
+<!-- ═════ MIGUEL ═════ -->
+<section class="page" id="p-miguel">
+  <div class="phead">
+    <div class="eyebrow">Track 01 · Miguel</div>
+    <h2>Eight years I wasn't here for.</h2>
+    <p class="lede">Most of these aren't about tools — they're about what you know that isn't written down anywhere. You've watched this business from the beginning. That's the part no document can give me.</p>
+  </div>
+  <div id="form-miguel"></div>
+  <div class="savebar">
+    <button class="btn primary" data-save="miguel">Save my answers</button>
+    <button class="btn ghost" data-export="miguel">Download a copy</button>
+    <span class="savenote" id="note-miguel">Answers save as you type.</span>
+  </div>
+</section>
+
+<!-- ═════ KARSEN ═════ -->
+<section class="page" id="p-karsen">
+  <div class="phead">
+    <div class="eyebrow">Track 02 · Karsen</div>
+    <h2>You close them. I just open doors.</h2>
+    <p class="lede">Write as much or as little as you want — the long answers are where the useful stuff lives. Most of this is me making sure I never step on your toes, and that anything I hand you arrives in the shape you actually want it.</p>
+  </div>
+  <div id="form-karsen"></div>
+  <div class="savebar">
+    <button class="btn primary" data-save="karsen">Save my answers</button>
+    <button class="btn ghost" data-export="karsen">Download a copy</button>
+    <span class="savenote" id="note-karsen">Answers save as you type.</span>
+  </div>
+</section>
+<!-- ═════ THE NUMBERS ═════ -->
+<section class="page" id="p-numbers">
+  <div class="phead">
+    <div class="eyebrow">Tap 02 · The Numbers <span class="soonbadge">Soon</span></div>
+    <h2>Build the view you actually want.</h2>
+    <p class="lede">Pick a metric, pick how to see it, pick how to slice it. Save it with a name and it's waiting for you next time — yours only, nobody else's view changes.</p>
+  </div>
+
+  <div class="samp">
+    <span style="font-size:17px">⚠</span>
+    <div><b>Everything below is sample data</b>, here so you can see how it will work. Real numbers land with the baseline on August 28, and then this page never lies again.</div>
+  </div>
+
+  <div class="saved" id="savedviews"></div>
+
+  <div class="controls">
+    <div class="ctl">
+      <label for="m-metric">Metric</label>
+      <select id="m-metric">
+        <option value="maps">People finding us on Maps</option>
+        <option value="inquiries">Event inquiries</option>
+        <option value="revenue">Private event revenue</option>
+        <option value="reach">Social reach</option>
+        <option value="visits">Website visits</option>
+        <option value="list">Email list size</option>
+      </select>
+    </div>
+    <div class="ctl">
+      <label for="m-break">Break by</label>
+      <select id="m-break">
+        <option value="month">Month</option>
+        <option value="house">House</option>
+        <option value="channel">Channel</option>
+      </select>
+    </div>
+    <div class="ctl">
+      <label>Chart type</label>
+      <div class="charttypes" id="cts"></div>
+    </div>
+    <div class="ctl">
+      <label>Range</label>
+      <div class="segs" id="ranges">
+        <button class="seg" data-range="3" aria-pressed="false">3 mo</button>
+        <button class="seg" data-range="6" aria-pressed="true">6 mo</button>
+        <button class="seg" data-range="12" aria-pressed="false">12 mo</button>
+      </div>
+    </div>
+    <div class="ctlspacer"></div>
+    <div class="miniact">
+      <button class="mbtn" id="saveview">Save view</button>
+      <button class="mbtn solid" id="printview">Export PDF</button>
+    </div>
+  </div>
+
+  <div class="grid3" id="kpis" style="margin-bottom:16px"></div>
+
+  <div class="chartcard">
+    <div class="charthead">
+      <div>
+        <h3 id="chart-title">—</h3>
+        <p class="sub" id="chart-sub">—</p>
+      </div>
+      <div class="mono" style="font-size:12px;color:var(--ink-soft)" id="chart-range">—</div>
+    </div>
+    <div id="chart"></div>
+    <div class="legend" id="legend"></div>
+  </div>
+</section>
+
+<!-- ═════ PIPELINE ═════ -->
+<section class="page" id="p-pipeline">
+  <div class="phead">
+    <div class="eyebrow">Tap 03 · Pipeline <span class="soonbadge">Soon</span></div>
+    <h2>I open the doors. Karsen closes them.</h2>
+    <p class="lede">Every conversation logged from the first hello, visible to all of you. No lead lives in one person's inbox.</p>
+  </div>
+  <div class="card" style="margin-bottom:15px">
+    <div class="eyebrow" style="margin-bottom:11px">How a lead travels</div>
+    <div style="display:flex;flex-wrap:wrap;gap:9px;align-items:center;font-size:14px">
+      <span style="background:var(--blue-wash);padding:9px 14px;border-radius:8px">First hello — me</span>
+      <span style="color:var(--gold)">→</span>
+      <span style="background:var(--blue-wash);padding:9px 14px;border-radius:8px">Kept warm — me</span>
+      <span style="color:var(--gold)">→</span>
+      <span style="background:var(--blue-wash);padding:9px 14px;border-radius:8px">Booking-ready — handoff</span>
+      <span style="color:var(--gold)">→</span>
+      <span style="background:var(--amber);color:var(--brown);padding:9px 14px;border-radius:8px;font-weight:600">Booked — Karsen</span>
+    </div>
+  </div>
+  <div class="previewnote">This fills once Karsen's track comes back — one of her questions asks who's already in play, so nobody gets contacted twice. After that, every account, every stage and every estimated value shows here, live.</div>
+</section>
+
+<!-- ═════ BRAND ═════ -->
+<section class="page" id="p-brand">
+  <div class="phead">
+    <div class="eyebrow">Tap 04 · Brand &amp; Content <span class="soonbadge">Soon</span></div>
+    <h2>One voice, three houses.</h2>
+    <p class="lede">What's going out, where, and whether it's working. Plus the brand system itself, kept current instead of drifting.</p>
+  </div>
+  <div class="grid3">
+    <div class="card"><div class="eyebrow">Coming here</div>
+      <ul class="slist yes"><li>What's posted this week, across every house</li>
+      <li>Which posts actually moved something</li></ul></div>
+    <div class="card"><div class="eyebrow">Coming here</div>
+      <ul class="slist yes"><li>The brand guidelines, extended to cover every house</li>
+      <li>Logos, fonts and photos anyone can find</li></ul></div>
+    <div class="card"><div class="eyebrow">Coming here</div>
+      <ul class="slist yes"><li>How the three Google listings are performing</li>
+      <li>Reviews, and whether we answered them</li></ul></div>
+  </div>
+  <div class="previewnote">The December 2024 guidelines cover two houses. There are more than two now. Extending that document is one of the first things I'll do — and it lives here, so it stops being a PDF nobody can find.</div>
+</section>
+
+<!-- ═════ PLAN ═════ -->
+<section class="page" id="p-plan">
+  <div class="phead">
+    <div class="eyebrow">Tap 05 · The Plan</div>
+    <h2>How the plan gets built.</h2>
+    <p class="lede">Not written yet, and that's deliberate. Targets invented before a baseline exists are just decoration.</p>
+  </div>
+  <div class="tl">
+    <div class="tlrow"><div class="when">Now · weeks one and two</div>
+      <h4>Onboarding and the first baseline</h4>
+      <p>Both tracks answered. Access sorted. First measurement of all three houses — search, social, site, email, events. The first apples-to-apples numbers Democracy has had, and the foundation everything else is measured against.</p></div>
+    <div class="tlrow future"><div class="when">By September 11</div>
+      <h4>The annual plan</h4>
+      <p>Written on top of the baseline, with numeric targets for Day 30, Day 60 and Day 90. We agree those targets together in a weekly review before the plan is final — so they're realistic, they're shared, and neither of us is guessing.</p></div>
+    <div class="tlrow future"><div class="when">Meanwhile · month one</div>
+      <h4>Building the list, and something to sell with</h4>
+      <p>Mapping the businesses around each house — offices, hotels, restaurants, institutions — and turning that into a working list. A simple kit that sells the private rooms at a glance. Google listings rebuilt across all three houses. Conversations start immediately; September is already late for some calendars.</p></div>
+    <div class="tlrow future"><div class="when">Month two</div>
+      <h4>Working the neighbourhood</h4>
+      <p>The list gets worked, not just built — visits, drop-offs, follow-ups, tastings. Proposals start going out. Brand guidelines extended to cover every house.</p></div>
+    <div class="tlrow future"><div class="when">Month three</div>
+      <h4>Oktoberfest and the holiday close</h4>
+      <p>Seasonal push across the houses. The party calendar sold hard while companies are still deciding. First corporate events executed and invoiced.</p></div>
+    <div class="tlrow future"><div class="when">Week of November 9</div>
+      <h4>Day 90 — a reading, not an argument</h4>
+      <p>We sit down with the targets we agreed in September and the numbers this dashboard has been showing all along. Nothing in that meeting will be new information to anyone.</p></div>
+  </div>
+  <div class="callout">
+    <h4>One thing worth saying out loud</h4>
+    <p>A corporate event cycle runs sixty to ninety days from first hello to signed. Conversations starting in August become bookings in October and November. Month one looks quiet on purpose — that's the part that pays later, and it's why the Day-30 targets will measure conversations rather than contracts.</p>
+  </div>
+</section>
+
+<!-- ═════ SCOPE ═════ -->
+<section class="page" id="p-scope">
+  <div class="phead">
+    <div class="eyebrow">Tap 06 · Scope</div>
+    <h2>Fifteen hours, written down.</h2>
+    <p class="lede">Task-based and flexible across the week. Written here so month three is never a debate about what was bought.</p>
+  </div>
+  <div class="grid2">
+    <div class="card"><div class="eyebrow">In scope</div>
+      <ul class="slist yes">
+        <li>Building relationships around every house — offices, hotels, restaurants, institutions</li>
+        <li>Shared pipeline, visible from the first hello</li>
+        <li>Posts captured on site during shift hours</li>
+        <li>Short-form video editing, done in house</li>
+        <li>Google listings and local search, all three houses</li>
+        <li>Baseline dashboard and a one-page monthly report</li>
+        <li>Weekly 30-minute review with Miguel</li>
+      </ul></div>
+    <div class="card"><div class="eyebrow">Out of scope</div>
+      <ul class="slist no">
+        <li>Daily community management or same-day reactive posting</li>
+        <li>Heavy video production — long form, motion graphics</li>
+        <li>Paid ads management — unlocks after Day 90, inside a cap you approve</li>
+        <li>Evening and weekend coverage — swapped hour for hour, agreed ahead</li>
+        <li>Committee-routed approvals — one contact keeps us fast</li>
+      </ul>
+      <p style="margin-top:14px;font-size:14px;color:var(--ink-soft)">New requests are trades, not additions. Something comes in, something moves out that week.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+<script type="module">
+(function(){
+"use strict";
+
+/* ═════ TAP LIST — real pint glasses ═════ */
+function pintSVG(t,i){
+  var pct = t.live ? t.fill : 0;
+  var gid = "g"+i;
+  // Shaker pint: wide at the rim, tapering to the base.
+  var topW=44, botW=31, H=76, yTop=30, yBot=yTop+H;
+  var cx=50;
+  function edge(y){ var k=(y-yTop)/H; return (topW+(botW-topW)*k); }
+  var liqTop = yBot - (H-4)*(pct/100);
+  var wTop=edge(liqTop), wBot=edge(yBot);
+  var body='M'+(cx-topW)+','+yTop+' L'+(cx-botW)+','+yBot+
+           ' Q'+cx+','+(yBot+7)+' '+(cx+botW)+','+yBot+' L'+(cx+topW)+','+yTop+' Z';
+  var liquid = pct>0 ? ('M'+(cx-wTop)+','+liqTop+' L'+(cx-wBot)+','+yBot+
+           ' Q'+cx+','+(yBot+6)+' '+(cx+wBot)+','+yBot+' L'+(cx+wTop)+','+liqTop+' Z') : '';
+  var bubbles="";
+  if(t.live&&pct>18){
+    for(var b=0;b<4;b++){
+      var bx=cx-20+b*13, r=1.6+(b%2)*0.9;
+      bubbles+='<circle class="bubble" cx="'+bx+'" cy="'+(yBot-6)+'" r="'+r+
+        '" fill="rgba(255,255,255,.6)" style="animation-delay:'+(b*0.85)+'s"/>';
+    }
+  }
+  // Foam head sits on the liquid and spills a touch over the rim.
+  var foam="";
+  if(pct>8){
+    var fy=liqTop;
+    foam='<path d="M'+(cx-wTop-1)+','+fy+
+      ' q6,-9 13,-3 q5,-10 13,-3 q7,-9 14,-2 q7,-8 13,-1 q6,-7 12,1 L'+(cx+wTop+1)+','+(fy+7)+
+      ' L'+(cx-wTop-1)+','+(fy+7)+' Z" fill="#f9f3e4"/>'+
+      '<ellipse cx="'+(cx-9)+'" cy="'+(fy+1)+'" rx="3.4" ry="2.6" fill="#fffdf6"/>'+
+      '<ellipse cx="'+(cx+11)+'" cy="'+(fy+2)+'" rx="2.6" ry="2" fill="#fffdf6"/>';
+  }
+  return '<svg viewBox="0 0 100 118" role="img" aria-label="'+t.name+', '+t.state+'">'+
+    '<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="1" y2="0">'+
+      '<stop offset="0%" stop-color="#c98f24"/><stop offset="26%" stop-color="#eec468"/>'+
+      '<stop offset="62%" stop-color="#d9a441"/><stop offset="100%" stop-color="#b57f22"/>'+
+    '</linearGradient></defs>'+
+    // tap spout + handle
+    '<rect class="taphandle" x="46" y="2" width="8" height="13" rx="2" fill="#8a5a3c"/>'+
+    '<ellipse class="taphandle" cx="50" cy="3" rx="10" ry="4" fill="#6b3524"/>'+
+    '<rect x="47.5" y="14" width="5" height="9" rx="1.4" fill="#4e2818"/>'+
+    '<g class="beer">'+
+      '<path d="'+body+'" fill="rgba(255,255,255,.06)" stroke="rgba(247,241,226,.34)" stroke-width="2"/>'+
+      (pct>0?'<clipPath id="c'+gid+'"><path d="'+body+'"/></clipPath>'+
+        '<g clip-path="url(#c'+gid+')">'+
+          '<path d="'+liquid+'" fill="'+(t.live?'url(#'+gid+')':'rgba(247,241,226,.13)')+'"/>'+
+          bubbles+foam+
+        '</g>':'')+
+      // glass highlight + rim
+      '<path d="M'+(cx-topW+9)+','+(yTop+5)+' L'+(cx-botW+8)+','+(yBot-6)+
+        '" stroke="rgba(255,255,255,.3)" stroke-width="3" stroke-linecap="round" fill="none"/>'+
+      '<line x1="'+(cx-topW)+'" y1="'+yTop+'" x2="'+(cx+topW)+'" y2="'+yTop+
+        '" stroke="rgba(247,241,226,.5)" stroke-width="2.6" stroke-linecap="round"/>'+
+    '</g></svg>';
+}
+var TAPS_READY=false;
+/* ═════ NAV & TAPS ═════ */
+var TAPS=[
+ {id:"p-onboard", name:"Onboarding", state:"Pouring", live:true, fill:0},
+ {id:"p-numbers", name:"The Numbers",state:"Soon",    live:false},
+ {id:"p-pipeline",name:"Pipeline",   state:"Soon",    live:false},
+ {id:"p-brand",   name:"Brand",      state:"Soon",    live:false},
+ {id:"p-plan",    name:"The Plan",   state:"Building",live:true, fill:35},
+ {id:"p-scope",   name:"Scope",      state:"Ready",   live:true, fill:100}
+];
+var PAGES=[
+ {id:"p-home",label:"Home"},
+ {id:"p-onboard",label:"Onboarding",tag:"Start"},
+ {id:"p-miguel",label:"Track · Miguel"},
+ {id:"p-karsen",label:"Track · Karsen"},
+ {id:"p-numbers",label:"The Numbers",tag:"Soon",soon:true},
+ {id:"p-pipeline",label:"Pipeline",tag:"Soon",soon:true},
+ {id:"p-brand",label:"Brand & Content",tag:"Soon",soon:true},
+ {id:"p-plan",label:"The Plan"},
+ {id:"p-scope",label:"Scope"}
+];
+var nav=document.getElementById("nav");
+// The two answer tracks are working documents, not destinations.
+// Only the admin gets them in the sidebar; everyone else reaches
+// their own from Onboarding or straight from their task list.
+function paintNav(){
+  var admin = ME && ME.is_admin;
+  var cur = (document.querySelector(".page.on")||{}).id || "p-home";
+  nav.innerHTML="";
+  PAGES.forEach(function(p){
+    if(!admin && (p.id==="p-miguel"||p.id==="p-karsen")) return;
+    var b=document.createElement("button");
+    b.className="navitem"; b.dataset.goto=p.id;
+    b.setAttribute("aria-current", p.id===cur);
+    b.innerHTML='<span class="dot"></span><span>'+p.label+'</span>'+
+      (p.tag?'<span class="tag'+(p.soon?' soon':'')+'">'+p.tag+'</span>':'');
+    nav.appendChild(b);
+  });
+}
+paintNav();
+var taps=document.getElementById("taps");
+function paintTaps(){
+  taps.innerHTML="";
+  TAPS.forEach(function(t,i){
+    var b=document.createElement("button");
+    b.className="tap"; b.dataset.goto=t.id;
+    b.innerHTML=pintSVG(t,i)+
+      '<span class="tname">'+t.name+'</span>'+
+      '<span class="tstate'+(t.live?"":" soon")+'">'+t.state+'</span>';
+    taps.appendChild(b);
+  });
+}
+function go(id){
+  document.querySelectorAll(".page").forEach(function(s){s.classList.toggle("on",s.id===id)});
+  document.querySelectorAll(".navitem").forEach(function(n){
+    n.setAttribute("aria-current",n.dataset.goto===id)});
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.addEventListener("click",function(e){
+  var t=e.target.closest("[data-goto]"); if(t) go(t.dataset.goto);
+});
+var Q={
+miguel:[
+ {s:"What already exists",note:"I've read the 2024 marketing strategy, the December 2024 brand guidelines and the 2025 recommendations. I have no way of knowing what else is out there — or what was built and quietly stopped."},
+ {id:"m1",key:true,t:"Rather than me asking about tool after tool: could you send me a list of the accounts we have and how to get into them?",
+  h:"A document, a shared note, a link to a folder — whatever already exists. If nothing does, just paste below what you can remember. Anything missing, I'll track down myself.",
+  type:"text"},
+ {id:"m2",t:"Are there other documents, plans or strategies I haven't seen?",
+  h:"Old agency work, a business plan, an investor deck, notes from a consultant. Even outdated ones tell me what's been tried.",type:"text"},
+ {id:"m3",t:"Of everything that's ever been recommended to Democracy, what actually got done?",
+  h:"Plans have a way of becoming PDFs. I want to know what's real so I don't rebuild something that already exists — or promise something that already failed.",type:"text"},
+ {id:"m4",t:"What customer or contact lists exist, and how do they get added to?",
+  h:"Email subscribers, guest emails from receipts, old event inquiries, press contacts. The second half matters most: does it grow by itself, or has nobody touched it since 2024?",type:"text"},
+ {id:"m5",key:true,t:"Can I get a Democracy email address?",
+  h:"Outreach from a personal Gmail lands in spam. It's the cheapest thing on this whole list and it roughly doubles the chance of a reply — I'd like it before the first round of introductions goes out.",
+  type:"radio",o:["Yes — I'll set it up","Yes — tell me what you need","Let's talk about it"]},
+
+ {s:"Eight years you were here for",note:"This section is the reason your track is longer than Karsen's. None of it is written down anywhere, and all of it changes what I do first."},
+ {id:"m6",key:true,t:"In eight years, what has actually filled the houses?",
+  h:"An event, a partnership, a press story, a person, a season, a rumour. The things that visibly worked — even if nobody planned them.",type:"long"},
+ {id:"m7",t:"And what's been tried that didn't work?",
+  h:"Just as useful. It stops me proposing something that already failed and saves us both the conversation.",type:"long"},
+ {id:"m8",t:"Who keeps coming back?",
+  h:"The regulars, the groups, the companies that book twice. Describe them however you'd describe them to a friend.",type:"long"},
+ {id:"m9",t:"What do people ask for that we can't give them yet?",
+  h:"A question you hear at the bar over and over, a request that always gets turned down. That's usually where the money is hiding.",type:"long"},
+ {id:"m10",t:"What's the moment in the year that matters most?",
+  h:"The week or month where getting it right changes the whole quarter.",type:"long"},
+ {id:"m11",t:"What does Boston get wrong about Democracy?",
+  h:"The thing people assume, or don't realise, that you'd correct if you could correct one thing.",type:"long"},
+
+ {s:"The brand",note:"The December 2024 guidelines are good — better than most places this size have. But they only cover two houses, and the city has changed since."},
+ {id:"m12",key:true,t:"What brands — any industry, not beer — feel like they share something with Democracy?",
+  h:"Not competitors. Companies whose spirit, look or way of talking feels related to what Democracy is. It tells me more about the identity than any adjective would.",
+  type:"long"},
+ {id:"m13",t:"What's untouchable?",
+  h:"The seal, the blue, \u201cFermenting rebellion since 2018\u201d — tell me what I shouldn't move, and I won't.",type:"long"},
+ {id:"m14",t:"And is there anything about how Democracy looks today that you'd change tomorrow?",
+  h:"Blunt is better here. It saves me weeks of guessing.",type:"long"},
+ {id:"m15",t:"What's the current, correct list of houses — written the way you'd want them written?",
+  h:"The guidelines only name Downtown and Eastie.",type:"text"},
+ {id:"m16",key:true,t:"City Hall closes at the end of summer — what's the exact last day?",
+  h:"It changes everything about timing. Anything I want to sell or capture there has a hard deadline, and I'd rather plan around the real date.",
+  type:"short"},
+ {id:"m17",t:"And Lewiston — where does that stand?",type:"text"},
+
+ {s:"Materials",note:"Anything visual you can point me to saves me rebuilding something Democracy already owns."},
+ {id:"m18",key:true,t:"Where can I find the graphic materials?",
+  h:"Logos, fonts, photo libraries, old decks, menus, event flyers, signage files. A Drive link, a Dropbox, a Canva account, or just \u201cask so-and-so.\u201d Messy and incomplete is fine — I'll sort it.",
+  type:"long"},
+
+ {s:"How the houses run"},
+ {id:"m19",t:"Which days and hours are slowest, house by house?",type:"text"},
+ {id:"m20",t:"In your own words: what's the biggest revenue lever right now?",type:"long"},
+ {id:"m21",t:"An earlier strategy said not to oversell the event space. My job leans the other way. Is there a reason behind that I should know?",
+  h:"Capacity, staffing, a bad experience, something about keeping the space public — I'd rather hear it now than find out in month three.",type:"long"},
+ {id:"m22",t:"What should a prospect never be promised?",
+  h:"Days we can't host, lead times, kitchen limits. The things that turn a win into a problem.",type:"long"},
+ {id:"m23",t:"Which neighbours, businesses or institutions would you most like us close to?",
+  h:"You said priority one is the neighbourhood knowing we're here. Name names.",type:"long"},
+
+ {s:"What we'll measure",note:"Your answers here become the targets in the annual plan — the ones we read together at Day 30, 60 and 90. I'd rather build them in your language than hand you mine."},
+ {id:"m24",key:true,t:"What do you look at today to know whether a month was good?",
+  h:"Sales, covers, a feeling on a Friday night, a number in Toast. Whatever it actually is. Targets that don't connect to how you already think about the business get ignored by month two.",
+  type:"long"},
+ {id:"m25",key:true,t:"Come November, what would make you say this clearly worked?",
+  h:"Be concrete if you can. If there's a number in your head, I'd rather know it now than guess at it in the plan.",type:"long"},
+ {id:"m26",t:"And what would make you say it clearly didn't?",
+  h:"The failure condition is as useful as the success one, and much less often said out loud.",type:"long"},
+
+ {s:"How we work"},
+ {id:"m27",t:"Best day and time for the weekly 30 minutes?",type:"short"}
+],
+karsen:[
+ {s:"Start here",note:"This first one matters more than anything else in this form."},
+ {id:"k1",key:true,t:"Do you already have a strategy or a plan for private events that I should know about?",
+  h:"If you've been building something, thinking about a direction, or have a way you want this to go — tell me now and I'll build around it. I'd much rather support your plan than accidentally compete with it.",
+  type:"long"},
+ {id:"k2",key:true,t:"Tell me how private events actually work today.",
+  h:"Not the ideal version — the real one. How people find us, who they talk to, what happens between the first email and the night itself, and where it usually gets stuck.",
+  type:"long"},
+
+ {s:"What you see from where you sit"},
+ {id:"k3",t:"Describe a private event that went perfectly.",
+  h:"Who they were, what they booked, why it worked. This is how I learn what to go looking for.",type:"long"},
+ {id:"k4",t:"And one that didn't.",
+  h:"What went wrong, and whether it was avoidable.",type:"long"},
+ {id:"k5",t:"When an inquiry doesn't turn into a booking, what usually happened?",
+  h:"Price, dates, capacity, they went quiet, they picked somewhere else. This tells me what to fix before the lead ever reaches you.",type:"long"},
+ {id:"k6",t:"Who books us more than once, and why do you think they come back?",type:"long"},
+ {id:"k7",t:"What kind of client is a great fit — and which ones aren't worth the trouble?",
+  h:"I'd rather bring you five right ones than fifty of anything.",type:"long"},
+
+ {s:"The shape of it",note:"Ballparks are fine. Your rough number beats my precise guess every time."},
+ {id:"k8",t:"Roughly how many inquiries come in a month, and how many become events?",type:"short"},
+ {id:"k9",t:"What does a typical private event bill in food and drink?",
+  h:"A range is fine. This single number calibrates everything I promise anyone.",type:"short"},
+ {id:"k10",t:"Biggest event we've ever done, and roughly what it billed?",type:"short"},
+ {id:"k11",t:"Busiest months for events? Deadest?",type:"short"},
+ {id:"k12",t:"Is there a record of past events anywhere — a list, a folder, a spreadsheet?",
+  h:"If anything like this exists, it's the most valuable thing in this whole onboarding. Even fifteen messy rows.",type:"text"},
+ {id:"k13",t:"How do we price and bill an event today?",
+  h:"Packages, case by case, minimum spend, deposits, whether it all runs through Toast.",type:"long"},
+
+ {s:"How we hand things off",note:"Tell me how you work and I'll build around it. Where my way and your way differ, yours wins."},
+ {id:"k14",key:true,t:"At what point do you want a lead handed to you, and how?",
+  h:"The moment someone shows interest, or only when they're ready to book? By email, text, or somewhere shared? And what do you need to know about them to pick it up cleanly?",
+  type:"long"},
+ {id:"k15",t:"What can I say to someone without checking with you first?",
+  h:"Capacity, rough prices, open dates, offering a visit or a tasting, comping a round. Tell me the line and I won't cross it.",type:"long"},
+ {id:"k16",t:"Once you take a lead over, do you want me in the loop or out of the way?",type:"long"},
+
+ {s:"The list",note:"Double-touching a prospect is the fastest way for me to make your job harder. I'd rather over-ask than guess."},
+ {id:"k17",key:true,t:"Who should I not contact?",
+  h:"Existing relationships, anything mid-negotiation, anyone who had a bad experience. Names, or just \u201canything to do with X.\u201d",type:"long"},
+ {id:"k18",t:"And who have you been meaning to chase but haven't had time for?",
+  h:"These go to the top of my list this week.",type:"long"},
+ {id:"k19",t:"Do companies order catering or office food from us?",
+  h:"Anyone already paying to feed their staff is the warmest lead that exists — and they'd already be in our own system.",type:"long"},
+ {id:"k20",t:"Who else here talks to potential event clients?",
+  h:"So I know how many doors this can come through.",type:"short"},
+
+ {s:"What we'll measure",note:"What you say here goes straight into the annual plan — the targets we read together at Day 30, 60 and 90."},
+ {id:"k21",key:true,t:"If I'm doing this job well, what should you be seeing by November?",
+  h:"More inquiries, better ones, bigger bookings, fewer dead ends, less chasing. Say it however you'd say it — I'll turn it into something we can measure.",
+  type:"long"},
+ {id:"k22",t:"And what would tell you early that it isn't working?",
+  h:"I'd rather know the warning sign now than discover it at Day 60.",type:"long"},
+
+ {s:"Last one"},
+ {id:"k23",key:true,t:"What's the one thing that would make your job easier this quarter?",
+  h:"Whatever it is, if it's within reach I'll try to make it the first thing I fix.",type:"long"}
+]};
+/* ═════ SAMPLE DATA & REPORT BUILDER ═════ */
+var MONTHS=["Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb"];
+var HOUSES=["Downtown","Eastie","City Hall"];
+var CHANNELS=["Google Maps","Instagram","Website","Referral","Walk-in"];
+var PAL=["#4a6bb3","#d9a441","#8a825c","#d19c85","#2e4478"];
+
+var METRICS={
+ maps:{label:"People finding us on Maps",unit:"",base:[2100,2450,2890,3320,3610,3480,0,0,0,0,0,0],
+   houses:[1680,890,910],channels:[3480,0,0,0,0],src:"Google profiles, three houses"},
+ inquiries:{label:"Event inquiries",unit:"",base:[6,4,9,7,11,8,0,0,0,0,0,0],
+   houses:[6,1,1],channels:[3,2,2,1,0],src:"Karsen's track"},
+ revenue:{label:"Private event revenue",unit:"$",base:[14200,9800,21400,16900,26800,19200,0,0,0,0,0,0],
+   houses:[15100,2600,1500],channels:[7200,3100,4900,3200,800],src:"Toast + Karsen's track"},
+ reach:{label:"Social reach",unit:"",base:[8400,9100,11200,10400,12900,14100,0,0,0,0,0,0],
+   houses:[7900,3800,2400],channels:[0,14100,0,0,0],src:"Instagram, once connected"},
+ visits:{label:"Website visits",unit:"",base:[3200,3450,4100,3980,4620,4380,0,0,0,0,0,0],
+   houses:[2400,1100,880],channels:[1900,1100,980,290,110],src:"Site analytics"},
+ list:{label:"Email list size",unit:"",base:[1840,1910,1980,2040,2120,2210,0,0,0,0,0,0],
+   houses:[1420,510,280],channels:[420,690,880,180,40],src:"Squarespace + Toast"}
+};
+
+var VIEW={metric:"maps",brk:"month",chart:"bar",range:6};
+
+var CT_ICONS={
+ bar:'<rect x="2" y="8" width="3" height="8"/><rect x="7" y="4" width="3" height="12"/><rect x="12" y="10" width="3" height="6"/>',
+ line:'<polyline points="2,13 6,8 10,10 15,3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+ donut:'<path d="M9 2a7 7 0 1 1-7 7h4a3 3 0 1 0 3-3z"/>',
+ table:'<rect x="2" y="3" width="14" height="2.6"/><rect x="2" y="7.6" width="14" height="2"/><rect x="2" y="11.6" width="14" height="2"/>'
+};
+var cts=document.getElementById("cts");
+["bar","line","donut","table"].forEach(function(k){
+  var b=document.createElement("button");
+  b.className="ct"; b.dataset.ct=k; b.setAttribute("aria-pressed",k===VIEW.chart);
+  b.setAttribute("aria-label",k+" chart");
+  b.innerHTML='<svg viewBox="0 0 18 18" fill="currentColor">'+CT_ICONS[k]+'</svg>';
+  cts.appendChild(b);
+});
+
+function fmt(n,unit){
+  if(unit==="$") return "$"+(n>=1000?(n/1000).toFixed(1)+"K":n);
+  return n>=1000?(n/1000).toFixed(1)+"K":String(n);
+}
+function series(){
+  var m=METRICS[VIEW.metric];
+  if(VIEW.brk==="house") return {labels:HOUSES.slice(),values:m.houses.slice()};
+  if(VIEW.brk==="channel"){
+    var l=[],v=[];
+    CHANNELS.forEach(function(c,i){ if(m.channels[i]>0){l.push(c);v.push(m.channels[i]);} });
+    return {labels:l,values:v};
+  }
+  var n=Math.min(VIEW.range,6);
+  return {labels:MONTHS.slice(6-n,6),values:m.base.slice(6-n,6)};
+}
+
+function renderKpis(){
+  var m=METRICS[VIEW.metric], box=document.getElementById("kpis"), html="";
+  var live=m.base.filter(function(x){return x>0});
+  var last=live[live.length-1]||0, prev=live[live.length-2]||0;
+  var d=prev?Math.round((last-prev)/prev*100):0;
+  var total=live.reduce(function(a,b){return a+b},0);
+  var avg=live.length?Math.round(total/live.length):0;
+  var cards=[
+   {l:"Latest month",v:fmt(last,m.unit),d:d,src:m.src},
+   {l:"Six-month total",v:fmt(total,m.unit),d:null,src:"Sum of the period shown"},
+   {l:"Monthly average",v:fmt(avg,m.unit),d:null,src:"The line to beat"}
+  ];
+  cards.forEach(function(c,i){
+    html+='<div class="kpi'+(i===0?" sel":"")+'"><div class="klabel">'+c.l+'</div>'+
+      '<div class="kval">'+c.v+'</div>'+
+      (c.d!==null?'<div class="kdelta '+(c.d>=0?"up":"dn")+'">'+(c.d>=0?"↗ +":"↘ ")+c.d+
+        '% vs previous month</div>':'')+
+      '<div class="ksrc">'+c.src+'</div></div>';
+  });
+  box.innerHTML=html;
+}
+
+function renderChart(){
+  var m=METRICS[VIEW.metric], s=series();
+  var W=760,H=280,P={t:14,r:14,b:34,l:52};
+  document.getElementById("chart-title").textContent=m.label;
+  document.getElementById("chart-sub").textContent="Broken down by "+
+    (VIEW.brk==="month"?"month":VIEW.brk==="house"?"house":"channel");
+  document.getElementById("chart-range").textContent=
+    VIEW.brk==="month"?("Last "+Math.min(VIEW.range,6)+" months"):"Current period";
+  var box=document.getElementById("chart"), leg=document.getElementById("legend");
+  leg.innerHTML="";
+
+  if(VIEW.chart==="table"){
+    var mx=Math.max.apply(null,s.values)||1, html='<table class="tbl"><thead><tr><th>'+
+      (VIEW.brk==="month"?"Month":VIEW.brk==="house"?"House":"Channel")+
+      '</th><th>Share</th><th style="text-align:right">Value</th></tr></thead><tbody>';
+    s.labels.forEach(function(l,i){
+      html+='<tr><td>'+l+'</td><td class="barcell"><i style="width:'+
+        Math.round(s.values[i]/mx*100)+'%"></i></td><td class="n">'+
+        fmt(s.values[i],m.unit)+'</td></tr>';
+    });
+    box.innerHTML=html+'</tbody></table>';
+    return;
+  }
+
+  if(VIEW.chart==="donut"){
+    var tot=s.values.reduce(function(a,b){return a+b},0)||1, a0=-Math.PI/2, sv="";
+    var cx=150,cy=140,R=104,r=62;
+    s.values.forEach(function(v,i){
+      var a1=a0+(v/tot)*Math.PI*2, big=(a1-a0)>Math.PI?1:0;
+      var x0=cx+R*Math.cos(a0),y0=cy+R*Math.sin(a0),x1=cx+R*Math.cos(a1),y1=cy+R*Math.sin(a1);
+      var xi=cx+r*Math.cos(a1),yi=cy+r*Math.sin(a1),xj=cx+r*Math.cos(a0),yj=cy+r*Math.sin(a0);
+      sv+='<path d="M'+x0+','+y0+' A'+R+','+R+' 0 '+big+',1 '+x1+','+y1+' L'+xi+','+yi+
+        ' A'+r+','+r+' 0 '+big+',0 '+xj+','+yj+' Z" fill="'+PAL[i%PAL.length]+'"/>';
+      a0=a1;
+    });
+    sv+='<text x="'+cx+'" y="'+(cy-4)+'" text-anchor="middle" font-family="JetBrains Mono,monospace"'+
+      ' font-size="24" font-weight="700" fill="#1c2231">'+fmt(tot,m.unit)+'</text>'+
+      '<text x="'+cx+'" y="'+(cy+16)+'" text-anchor="middle" font-family="Josefin Sans,sans-serif"'+
+      ' font-size="10" letter-spacing="2" fill="#5a6172">TOTAL</text>';
+    box.innerHTML='<svg viewBox="0 0 300 280" style="width:100%;max-width:340px;height:auto"'+
+      ' role="img" aria-label="'+m.label+'">'+sv+'</svg>';
+    s.labels.forEach(function(l,i){
+      leg.innerHTML+='<span><i style="background:'+PAL[i%PAL.length]+'"></i>'+l+' — '+
+        fmt(s.values[i],m.unit)+'</span>';
+    });
+    return;
+  }
+
+  var mx=Math.max.apply(null,s.values)*1.15||1;
+  var iw=W-P.l-P.r, ih=H-P.t-P.b, sv="";
+  for(var g=0;g<=4;g++){
+    var y=P.t+ih-(ih/4)*g;
+    sv+='<line x1="'+P.l+'" y1="'+y+'" x2="'+(W-P.r)+'" y2="'+y+
+      '" stroke="#dcd4c2" stroke-width="1"'+(g?'':' stroke-width="1.5"')+'/>'+
+      '<text x="'+(P.l-9)+'" y="'+(y+4)+'" text-anchor="end" font-family="JetBrains Mono,monospace"'+
+      ' font-size="10" fill="#5a6172">'+fmt(Math.round(mx/4*g),m.unit)+'</text>';
+  }
+  var step=iw/s.values.length;
+  if(VIEW.chart==="bar"){
+    s.values.forEach(function(v,i){
+      var bh=(v/mx)*ih, bw=Math.min(step*0.56,64);
+      var x=P.l+step*i+(step-bw)/2, y=P.t+ih-bh;
+      sv+='<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+bh+'" rx="3" fill="'+
+        PAL[VIEW.brk==="month"?0:i%PAL.length]+'"/>'+
+        '<text x="'+(x+bw/2)+'" y="'+(y-7)+'" text-anchor="middle"'+
+        ' font-family="JetBrains Mono,monospace" font-size="11" font-weight="700" fill="#1c2231">'+
+        fmt(v,m.unit)+'</text>';
+    });
+  } else {
+    var pts=s.values.map(function(v,i){
+      return [P.l+step*i+step/2, P.t+ih-(v/mx)*ih]; });
+    var d=pts.map(function(p,i){return (i?"L":"M")+p[0]+","+p[1]}).join(" ");
+    sv+='<path d="'+d+' L'+pts[pts.length-1][0]+','+(P.t+ih)+' L'+pts[0][0]+','+(P.t+ih)+
+      ' Z" fill="#4a6bb3" opacity="0.11"/>';
+    sv+='<path d="'+d+'" fill="none" stroke="#4a6bb3" stroke-width="2.5"'+
+      ' stroke-linecap="round" stroke-linejoin="round"/>';
+    pts.forEach(function(p,i){
+      sv+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4.5" fill="#fffdf8" stroke="#4a6bb3" stroke-width="2.5"/>'+
+        '<text x="'+p[0]+'" y="'+(p[1]-13)+'" text-anchor="middle"'+
+        ' font-family="JetBrains Mono,monospace" font-size="11" font-weight="700" fill="#1c2231">'+
+        fmt(s.values[i],m.unit)+'</text>';
+    });
+  }
+  s.labels.forEach(function(l,i){
+    sv+='<text x="'+(P.l+step*i+step/2)+'" y="'+(H-11)+'" text-anchor="middle"'+
+      ' font-family="Josefin Sans,sans-serif" font-size="11" fill="#5a6172">'+l+'</text>';
+  });
+  box.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto" role="img"'+
+    ' aria-label="'+m.label+'">'+sv+'</svg>';
+}
+
+function draw(){ renderKpis(); renderChart(); }
+
+document.getElementById("m-metric").addEventListener("change",function(e){
+  VIEW.metric=e.target.value; draw(); });
+document.getElementById("m-break").addEventListener("change",function(e){
+  VIEW.brk=e.target.value; draw(); });
+cts.addEventListener("click",function(e){
+  var b=e.target.closest("[data-ct]"); if(!b) return;
+  VIEW.chart=b.dataset.ct;
+  cts.querySelectorAll(".ct").forEach(function(x){
+    x.setAttribute("aria-pressed",x.dataset.ct===VIEW.chart)});
+  draw();
+});
+document.getElementById("ranges").addEventListener("click",function(e){
+  var b=e.target.closest("[data-range]"); if(!b) return;
+  VIEW.range=+b.dataset.range;
+  this.querySelectorAll(".seg").forEach(function(x){
+    x.setAttribute("aria-pressed",+x.dataset.range===VIEW.range)});
+  draw();
+});
+document.getElementById("printview").addEventListener("click",function(){ window.print(); });
+
+/* ═════ SUPABASE ═════ */
+var SB_URL="https://obshcqdksrxbfaujbyso.supabase.co";
+var SB_KEY="sb_publishable_Zsw3JcTj0HXgfpUTHqtWLA_R2c9G1o4";
+var sb=null, ROSTER=[], ME=null, PICKED=null, TASKS=[], SAVED=[];
+var ONLINE=false;
+
+function mail(slug){ return slug+"@dbcommand.co"; }
+
+async function boot(){
+  try{
+    var mod=await import("https://esm.sh/@supabase/supabase-js@2");
+    sb=mod.createClient(SB_URL,SB_KEY);
+    var r=await sb.from("roster").select("*");
+    if(r.error) throw r.error;
+    ROSTER=r.data||[];
+    ONLINE=true;
+  }catch(e){
+    ONLINE=false;
+    ROSTER=[{slug:"nico",name:"Nico",role_label:"Growth & Partnerships",initial:"N",is_admin:true,claimed:false},
+            {slug:"miguel",name:"Miguel",role_label:"Operations",initial:"M",is_admin:false,claimed:false},
+            {slug:"karsen",name:"Karsen",role_label:"Private Events",initial:"K",is_admin:false,claimed:false},
+            {slug:"james",name:"James",role_label:"Co-op",initial:"J",is_admin:false,claimed:false},
+            {slug:"laura",name:"Laura",role_label:"Restaurant Manager",initial:"L",is_admin:false,claimed:false}];
+  }
+  paintRoster();
+  if(sb){
+    var s=await sb.auth.getSession();
+    if(s.data&&s.data.session){
+      var em=s.data.session.user.email||"";
+      var slug=em.split("@")[0];
+      var found=ROSTER.filter(function(p){return p.slug===slug})[0];
+      if(found){ await enter(found); return; }
+    }
+  }
+}
+
+function paintRoster(){
+  var box=document.getElementById("who");
+  box.innerHTML=ROSTER.map(function(p){
+    return '<button class="whobtn" data-pick="'+p.slug+'">'+
+      '<span class="ini">'+p.initial+'</span><span class="nm">'+p.name+'</span>'+
+      '<span class="rl">'+p.role_label+'</span>'+
+      '<span class="lock">'+(p.claimed?"● set":"○ new")+'</span></button>';
+  }).join("");
+}
+
+/* ── gate flow ── */
+function showPick(){
+  document.getElementById("gate-pick").style.display="";
+  document.getElementById("gate-pw").style.display="none";
+  document.getElementById("pw-msg").textContent="";
+  document.getElementById("pw-pass").value="";
+  var iv=document.getElementById("pw-invite"); if(iv) iv.value="";
+}
+function showPw(p){
+  PICKED=p;
+  document.getElementById("gate-pick").style.display="none";
+  document.getElementById("gate-pw").style.display="";
+  document.getElementById("pw-title").textContent=p.claimed?("Welcome back, "+p.name):("Hi "+p.name);
+  document.getElementById("pw-sub").textContent=p.claimed?
+    "Enter your password.":"Let's set you up — it takes a moment.";
+  document.getElementById("pw-invitewrap").style.display=p.claimed?"none":"";
+  document.getElementById("pw-pass").setAttribute("autocomplete",p.claimed?"current-password":"new-password");
+  document.getElementById("pw-pass").placeholder=p.claimed?"Your password":"At least 8 characters";
+  setTimeout(function(){
+    document.getElementById(p.claimed?"pw-pass":"pw-invite").focus(); },60);
+}
+document.addEventListener("click",function(e){
+  var b=e.target.closest("[data-pick]");
+  if(b){ showPw(ROSTER.filter(function(p){return p.slug===b.dataset.pick})[0]); }
+});
+document.getElementById("pw-back").addEventListener("click",showPick);
+
+function msg(t,cls){
+  var m=document.getElementById("pw-msg");
+  m.textContent=t; m.className="pwmsg "+(cls||"");
+}
+
+async function submitGate(){
+  if(!PICKED) return;
+  var pass=document.getElementById("pw-pass").value;
+  var btn=document.getElementById("pw-go");
+  if(pass.length<8){ msg("Passwords need at least 8 characters.","err"); return; }
+  if(!ONLINE){ msg("Can't reach the database — check the connection.","err"); return; }
+  btn.disabled=true; msg("Working…");
+  try{
+    if(PICKED.claimed){
+      var si=await sb.auth.signInWithPassword({email:mail(PICKED.slug),password:pass});
+      if(si.error){ msg("That password doesn't match. Try again.","err"); btn.disabled=false; return; }
+    } else {
+      var code=document.getElementById("pw-invite").value.trim();
+      if(!code){ msg("The invite code is missing.","err"); btn.disabled=false; return; }
+      var su=await sb.auth.signUp({email:mail(PICKED.slug),password:pass});
+      if(su.error && !/already/i.test(su.error.message)){
+        msg(su.error.message,"err"); btn.disabled=false; return;
+      }
+      if(!su.data||!su.data.session){
+        var si2=await sb.auth.signInWithPassword({email:mail(PICKED.slug),password:pass});
+        if(si2.error){
+          msg("This name is already set up. Use the existing password, or ask Nico to reset it.","err");
+          btn.disabled=false; return;
+        }
+      }
+      var cl=await sb.rpc("claim_member",{p_slug:PICKED.slug,p_code:code});
+      if(cl.error||!cl.data||!cl.data.ok){
+        var why=(cl.data&&cl.data.error)||"";
+        msg(why==="bad_code"?"That invite code isn't right.":
+            why==="already_claimed"?"Someone already set this name up.":
+            "Couldn't finish setting you up.","err");
+        await sb.auth.signOut(); btn.disabled=false; return;
+      }
+    }
+    var rr=await sb.from("roster").select("*");
+    if(!rr.error) ROSTER=rr.data||ROSTER;
+    var mine=ROSTER.filter(function(p){return p.slug===PICKED.slug})[0]||PICKED;
+    await enter(mine);
+  }catch(err){ msg("Something went wrong. Try again.","err"); }
+  btn.disabled=false;
+}
+document.getElementById("pw-go").addEventListener("click",submitGate);
+["pw-pass","pw-invite"].forEach(function(id){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener("keydown",function(e){ if(e.key==="Enter") submitGate(); });
+});
+
+async function enter(p){
+  ME=p;
+  document.getElementById("gate").classList.add("off");
+  document.getElementById("av").textContent=p.initial;
+  document.getElementById("whotxt").innerHTML=p.name+"<small>"+p.role_label+" · sign out</small>";
+  var h=document.getElementById("hellotxt");
+  if(h) h.innerHTML=(p.is_admin?"Morning, ":"Hi ")+p.name+".<br>Here's where everything stands.";
+  document.getElementById("task-add").style.display=p.is_admin?"":"none";
+  paintNav();
+  // Show only the track that belongs to this person.
+  ["miguel","karsen"].forEach(function(t){
+    var card=document.querySelector('.track[data-goto="p-'+t+'"]');
+    if(card) card.style.display=(p.is_admin||p.slug===t)?"":"none";
+  });
+  var tw=document.getElementById("trackswrap");
+  if(tw){
+    var mine=(p.slug==="miguel"||p.slug==="karsen");
+    tw.style.display=(p.is_admin||mine)?"":"none";
+    var no=document.getElementById("notrack");
+    if(no) no.style.display=(p.is_admin||mine)?"none":"";
+  }
+  document.getElementById("task-title").textContent=p.is_admin?"All tasks":"Your tasks";
+  await loadIds();
+  await Promise.all([loadTasks(),loadViews(),loadResponses()]);
+  renderTasks(); renderSaved();
+  render("miguel"); render("karsen");
+}
+document.getElementById("whoami").addEventListener("click",async function(){
+  if(sb) await sb.auth.signOut();
+  ME=null; PICKED=null;
+  document.getElementById("gate").classList.remove("off");
+  showPick();
+});
+
+/* ═════ TASKS ═════ */
+async function loadTasks(){
+  TASKS=[];
+  if(!ONLINE||!ME) return;
+  var q=await sb.from("tasks").select("*").order("status").order("priority").order("due_on",{nullsFirst:false});
+  if(!q.error) TASKS=q.data||[];
+}
+var IDS=[];
+async function loadIds(){
+  IDS=[];
+  if(!ONLINE) return;
+  var q=await sb.from("members_ids").select("*");
+  if(!q.error) IDS=q.data||[];
+}
+function idOf(slug){
+  var m=IDS.filter(function(x){return x.slug===slug})[0];
+  return m?m.id:null;
+}
+function nameOf(id){
+  var m=IDS.filter(function(x){return x.id===id})[0];
+  return m?m.name:"";
+}
+function dueTxt(d){
+  if(!d) return "";
+  var t=new Date(d+"T12:00:00"), now=new Date("2026-08-14T12:00:00");
+  var days=Math.round((t-now)/86400000);
+  if(days<0) return "Overdue";
+  if(days===0) return "Due today";
+  if(days===1) return "Due tomorrow";
+  return "Due "+t.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+}
+function renderTasks(){
+  var box=document.getElementById("tasklist");
+  var cnt=document.getElementById("task-count");
+  if(!ONLINE){
+    box.innerHTML='<div class="taskempty">Tasks live in the database — connect to see them.</div>';
+    cnt.textContent=""; return;
+  }
+  var todo=TASKS.filter(function(t){return t.status!=="done"});
+  var done=TASKS.filter(function(t){return t.status==="done"});
+  cnt.textContent=todo.length?(todo.length+" to do"):"all clear";
+  if(!TASKS.length){
+    box.innerHTML='<div class="taskempty">Nothing on your plate right now.</div>'; return;
+  }
+  function row(t){
+    var late=t.due_on && new Date(t.due_on+"T12:00:00")<new Date("2026-08-14T12:00:00");
+    var d=dueTxt(t.due_on);
+    return '<div class="task'+(t.priority===1?" p1":"")+(t.status==="done"?" done":"")+'">'+
+      '<button class="tick" data-tick="'+t.id+'" aria-label="Mark done">✓</button>'+
+      '<div class="tk"><h4>'+esc(t.title)+'</h4>'+
+      (t.detail?'<p>'+esc(t.detail)+'</p>':'')+
+      '<div class="tkmeta">'+
+        (ME.is_admin?'<span class="tkwho">'+esc(nameOf(t.assignee))+'</span>':'')+
+        (d?'<span class="due'+(late&&t.status!=="done"?" late":"")+'">'+d+'</span>':'')+
+        (t.link_page?'<button class="tkgo" data-goto="'+t.link_page+'">Open →</button>':'')+
+      '</div></div></div>';
+  }
+  box.innerHTML=todo.map(row).join("")+
+    (done.length?'<div style="margin-top:14px" class="eyebrow">Done</div>'+done.map(row).join(""):"");
+}
+document.addEventListener("click",async function(e){
+  var b=e.target.closest("[data-tick]"); if(!b||!ONLINE) return;
+  var t=TASKS.filter(function(x){return x.id===b.dataset.tick})[0]; if(!t) return;
+  var next=t.status==="done"?"todo":"done";
+  t.status=next; renderTasks();
+  await sb.from("tasks").update({status:next,done_at:next==="done"?new Date().toISOString():null})
+    .eq("id",t.id);
+});
+document.getElementById("task-add").addEventListener("click",function(){
+  var box=document.getElementById("addtask");
+  box.classList.toggle("on");
+  if(box.classList.contains("on")){
+    var sel=document.getElementById("nt-who");
+    sel.innerHTML=ROSTER.map(function(p){
+      return '<option value="'+p.slug+'">'+p.name+'</option>'}).join("");
+    document.getElementById("nt-title").focus();
+  }
+});
+document.getElementById("nt-save").addEventListener("click",async function(){
+  if(!ONLINE||!ME||!ME.is_admin) return;
+  var title=document.getElementById("nt-title").value.trim();
+  if(!title) return;
+  var slug=document.getElementById("nt-who").value;
+  var due=document.getElementById("nt-due").value||null;
+  var target=idOf(slug), mine=idOf(ME.slug);
+  if(!target) return;
+  var ins=await sb.from("tasks").insert({assignee:target,title:title,due_on:due,
+    created_by:mine,priority:2});
+  if(!ins.error){
+    document.getElementById("nt-title").value="";
+    document.getElementById("nt-due").value="";
+    document.getElementById("addtask").classList.remove("on");
+    await loadTasks(); renderTasks();
+  }
+});
+
+/* ═════ SAVED VIEWS — private per person ═════ */
+async function loadViews(){
+  SAVED=[];
+  if(!ONLINE||!ME) return;
+  var q=await sb.from("saved_views").select("*").order("created_at");
+  if(!q.error) SAVED=(q.data||[]).map(function(r){
+    return {id:r.id,name:r.name,v:r.config}; });
+}
+function renderSaved(){
+  var box=document.getElementById("savedviews");
+  if(!box) return;
+  if(!SAVED.length){
+    box.innerHTML='<span style="font-size:13px;color:var(--ink-soft);font-style:italic">'+
+      'No saved views yet — set the controls how you like them and press Save view.</span>';
+    return;
+  }
+  box.innerHTML=SAVED.map(function(v,i){
+    return '<span class="svchip"><button data-load="'+i+'">'+esc(v.name)+
+      '</button><button class="x" data-del="'+i+'" aria-label="Delete view">×</button></span>';
+  }).join("");
+}
+document.getElementById("saveview").addEventListener("click",async function(){
+  if(!ONLINE||!ME){ return; }
+  var name=window.prompt("Name this view", METRICS[VIEW.metric].label+" by "+VIEW.brk);
+  if(!name) return;
+  var mine=idOf(ME.slug);
+  var ins=await sb.from("saved_views").insert({owner:mine,name:name,config:VIEW}).select();
+  if(!ins.error){ await loadViews(); renderSaved(); }
+});
+document.addEventListener("click",async function(e){
+  var l=e.target.closest("[data-load]");
+  if(l){
+    var s=SAVED[+l.dataset.load]; if(!s) return;
+    VIEW=JSON.parse(JSON.stringify(s.v));
+    document.getElementById("m-metric").value=VIEW.metric;
+    document.getElementById("m-break").value=VIEW.brk;
+    cts.querySelectorAll(".ct").forEach(function(x){
+      x.setAttribute("aria-pressed",x.dataset.ct===VIEW.chart)});
+    document.querySelectorAll("#ranges .seg").forEach(function(x){
+      x.setAttribute("aria-pressed",+x.dataset.range===VIEW.range)});
+    draw(); return;
+  }
+  var d=e.target.closest("[data-del]");
+  if(d&&ONLINE){
+    var s2=SAVED[+d.dataset.del]; if(!s2) return;
+    await sb.from("saved_views").delete().eq("id",s2.id);
+    await loadViews(); renderSaved();
+  }
+});
+
+/* ═════ ONBOARDING FORMS ═════ */
+var STATE={miguel:{},karsen:{}};
+async function loadResponses(){
+  STATE={miguel:{},karsen:{}};
+  if(!ONLINE||!ME) return;
+  var q=await sb.from("responses_current").select("*");
+  if(q.error) return;
+  (q.data||[]).forEach(function(r){
+    if(STATE[r.track]) STATE[r.track][r.question_id]=r.value;
+  });
+}
+// Append-only: every save inserts a new row. Nothing is ever overwritten,
+// so any earlier answer stays readable in the history.
+async function saveAnswer(track,qid,value,quiet){
+  var note=document.getElementById("note-"+track);
+  if(!ONLINE||!ME){
+    if(note&&!quiet) note.textContent="Not connected — use Download a copy.";
+    return;
+  }
+  var mine=idOf(ME.slug);
+  var r=await sb.from("responses").insert({track:track,question_id:qid,value:value,saved_by:mine});
+  if(note) note.textContent=r.error?"Couldn't save — use Download a copy instead."
+    :("Saved "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}));
+}
+function canEdit(track){ return ME && (ME.is_admin || ME.slug===track); }
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function render(w){
+  var wrap=document.getElementById("form-"+w);
+  if(!wrap) return;
+  var ro=!canEdit(w), html="", n=0, open=false;
+  if(ro&&ME) html+='<div class="samp"><span style="font-size:17px">🔒</span><div>This track belongs to <b>'+w.charAt(0).toUpperCase()+w.slice(1)+'</b>. You can read it, but only they can answer.</div></div>';
+  Q[w].forEach(function(item){
+    if(item.s){
+      if(open) html+="</div>";
+      open=true;
+      html+='<div class="qsec"><h4>'+esc(item.s)+'</h4>'+
+        (item.note?'<p class="secnote">'+esc(item.note)+'</p>':'');
+      return;
+    }
+    n++;
+    var v=STATE[w][item.id], done=v!==undefined&&v!=="";
+    html+='<div class="q'+(done?" done":"")+(item.key?" key":"")+'" id="q-'+item.id+'">'+
+      '<div class="qtop"><span class="qnum">'+(n<10?"0":"")+n+'</span>'+
+      '<span class="qtext">'+esc(item.t)+'</span></div>'+
+      (item.h?'<p class="qhelp">'+esc(item.h)+'</p>':'')+'<div class="qbody">';
+    if(item.type==="radio"){
+      html+='<div class="opts">';
+      item.o.forEach(function(o){
+        html+='<label class="opt"><input type="radio" name="'+item.id+'" value="'+esc(o)+'"'+
+          (v===o?" checked":"")+(ro?" disabled":"")+'><span>'+esc(o)+'</span></label>';
+      });
+      html+='</div>';
+    } else if(item.type==="short"){
+      html+='<input type="text" data-field="'+item.id+'" value="'+esc(v||"")+'" placeholder="Your answer"'+(ro?' disabled':'')+'>';
+    } else {
+      html+='<textarea class="'+(item.type==="long"?"tall":"")+'" data-field="'+item.id+
+        '" placeholder="Write as much as you like — or &ldquo;I don\u2019t know&rdquo;"'+(ro?' disabled':'')+'>'+esc(v||"")+'</textarea>';
+    }
+    html+='</div></div>';
+  });
+  if(open) html+="</div>";
+  wrap.innerHTML=html;
+  progress(w);
+}
+function total(w){ return Q[w].filter(function(i){return !i.s}).length }
+function answered(w){
+  return Object.keys(STATE[w]).filter(function(k){
+    return STATE[w][k]!==undefined && STATE[w][k]!==""; }).length;
+}
+function progress(w){
+  var a=answered(w), t=total(w), pct=t?Math.round(a/t*100):0;
+  var bar=document.getElementById("bar-"+w), cnt=document.getElementById("cnt-"+w);
+  if(bar) bar.style.width=pct+"%";
+  if(cnt) cnt.textContent=a+" / "+t+" answered";
+  var mp=total("miguel")?answered("miguel")/total("miguel"):0;
+  var kp=total("karsen")?answered("karsen")/total("karsen"):0;
+  var el=document.querySelector('[data-fill="p-onboard"]');
+  if(el) el.style.height=Math.max(6,Math.round((mp+kp)/2*100))+"%";
+}
+function mark(w,id){
+  var el=document.getElementById("q-"+id); if(!el) return;
+  el.classList.toggle("done", STATE[w][id]!==undefined && STATE[w][id]!=="");
+}
+function whoOf(el){ return el.closest("#p-karsen")?"karsen":"miguel" }
+document.addEventListener("change",function(e){
+  if(e.target.type!=="radio") return;
+  var w=whoOf(e.target);
+  if(!canEdit(w)) return;
+  STATE[w][e.target.name]=e.target.value;
+  mark(w,e.target.name); progress(w); saveAnswer(w,e.target.name,e.target.value,true);
+});
+document.addEventListener("input",function(e){
+  var f=e.target.dataset&&e.target.dataset.field; if(!f) return;
+  var w=whoOf(e.target);
+  if(!canEdit(w)) return;
+  STATE[w][f]=e.target.value;
+  mark(w,f); progress(w);
+  clearTimeout(e.target._t);
+  e.target._t=setTimeout(function(){ saveAnswer(w,f,STATE[w][f],true); },900);
+});
+document.addEventListener("click",function(e){
+  var s=e.target.closest("[data-save]");
+  if(s){
+    var w=s.dataset.save;
+    if(!canEdit(w)){
+      var n=document.getElementById("note-"+w);
+      if(n) n.textContent="This track belongs to "+w.charAt(0).toUpperCase()+w.slice(1)+".";
+      return;
+    }
+    var st=STATE[w];
+    Object.keys(st).forEach(function(k){ saveAnswer(w,k,st[k],true); });
+    var note=document.getElementById("note-"+w);
+    if(note) note.textContent="Saved "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+  }
+  var x=e.target.closest("[data-export]"); if(x) dump(x.dataset.export);
+});
+function dump(w){
+  var lines=["DEMOCRACY BREWING — ONBOARDING",
+    "Track: "+w.charAt(0).toUpperCase()+w.slice(1),
+    "Submitted: "+new Date().toLocaleString(),""], n=0;
+  Q[w].forEach(function(item){
+    if(item.s){ lines.push("","── "+item.s.toUpperCase()+" ──"); return; }
+    n++;
+    lines.push("",(n<10?"0":"")+n+". "+item.t,"   "+(STATE[w][item.id]||"—"));
+  });
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([lines.join("\n")],{type:"text/plain"}));
+  a.download="democracy-onboarding-"+w+".txt"; a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* ═════ BOOT ═════ */
+(function(){
+  render("miguel"); render("karsen");
+  draw(); paintTaps();
+  boot();
+})();
+})();
+</script>
+</body>
+</html>
