@@ -454,6 +454,29 @@ textarea.tall{min-height:132px}
 .hashline{margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft);word-break:break-all;background:var(--blue-wash);padding:11px 13px;border-radius:9px}
 .hashline b{color:var(--blue-deep)}
 
+
+.navitem.sub{padding-left:24px;font-size:13.5px;opacity:.86}
+.navitem.sub .dot{width:4px;height:4px}
+.navitem.sub:before{content:"";position:absolute;left:13px;top:0;bottom:0;width:1px;background:rgba(255,255,255,.14)}
+.navitem{position:relative}
+.navitem.sub[aria-current="true"]{opacity:1}
+.navgroup{margin-bottom:3px}
+
+.taskhead .chev{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--ink-soft);
+  font-size:13px;font-family:'Josefin Sans',sans-serif;letter-spacing:.06em;display:flex;align-items:center;gap:7px;padding:5px 4px}
+.taskhead .chev:hover{color:var(--ink)}
+.taskhead .chev i{display:inline-block;transition:transform .2s;font-style:normal;font-size:11px}
+.taskhead .chev[aria-expanded="true"] i{transform:rotate(90deg)}
+.tsum{display:flex;gap:7px;flex-wrap:wrap}
+.tsum span{font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:100px;
+  background:var(--blue-wash);color:var(--blue-deep);font-weight:600}
+.tsum span.late{background:#f3e0d8;color:var(--clay-deep)}
+.tsum span.none{background:#e6efe4;color:var(--ok)}
+.wkrow{display:grid;grid-template-columns:74px 1fr 54px;gap:9px;align-items:center;margin-bottom:5px;font-size:12px}
+.wkrow .wkbar{height:6px;background:var(--blue-wash);border-radius:100px;overflow:hidden}
+.wkrow .wkbar i{display:block;height:100%;background:var(--blue);border-radius:100px}
+.wkrow .wkn{font-family:'JetBrains Mono',monospace;color:var(--ink-soft);text-align:right}
+.wkrow .wkd{font-family:'JetBrains Mono',monospace;color:var(--ink-soft)}
 </style>
 </head>
 <body>
@@ -520,9 +543,11 @@ textarea.tall{min-height:132px}
     <div class="taskhead">
       <h3 id="task-title">Your tasks</h3>
       <span class="taskcount" id="task-count"></span>
-      <span style="flex:1"></span>
+      <div class="tsum" id="task-summary"></div>
+      <button class="chev" id="task-toggle" aria-expanded="false" aria-controls="taskbody"><i>&#9654;</i><span id="task-toggle-label">Show</span></button>
       <button class="mbtn" id="task-add" style="display:none">+ New task</button>
     </div>
+    <div id="taskbody" hidden>
     <div class="taskfilters">
       <div class="segs" id="task-filter-who" style="display:none"></div>
       <div class="segs" id="task-filter-when"></div>
@@ -534,6 +559,7 @@ textarea.tall{min-height:132px}
       <button class="mbtn solid" id="nt-save">Add</button>
     </div>
     <div id="tasklist"></div>
+    </div>
   </div>
 
   <div class="grid2" style="margin-bottom:16px">
@@ -549,10 +575,18 @@ textarea.tall{min-height:132px}
     </div>
     <div>
       <div class="card" style="margin-bottom:14px">
-        <div class="eyebrow">Capacity · 15 hours a week</div>
-        <div class="capbar"><i style="width:93%"></i></div>
-        <p class="mono" style="font-size:12.5px;color:var(--ink-soft)">14 of 15 committed · Aug 10–14</p>
-        <p style="margin-top:10px;font-size:13.5px;color:var(--ink-soft)">Task-based and flexible. Shown as capacity, not a timesheet — what matters is what got delivered and what's left to trade against.</p>
+        <div class="eyebrow" id="cap-title">Capacity · this week</div>
+        <div class="capbar"><i id="cap-fill" style="width:0%"></i></div>
+        <p class="mono" style="font-size:12.5px;color:var(--ink-soft)" id="cap-line">—</p>
+        <div class="rowact" id="cap-edit" style="margin-top:11px;display:none">
+          <button class="mbtn" data-cap="-0.5">&minus;&nbsp;30 min</button>
+          <input id="cap-val" type="number" step="0.5" min="0" max="60" style="width:76px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;text-align:center;background:var(--card)">
+          <button class="mbtn" data-cap="0.5">+&nbsp;30 min</button>
+          <button class="mbtn solid" id="cap-save">Save</button>
+          <span class="mini" id="cap-msg" style="align-self:center"></span>
+        </div>
+        <div id="cap-hist" style="margin-top:14px"></div>
+        <p style="margin-top:11px;font-size:13.5px;color:var(--ink-soft)">Task-based and flexible. Shown as capacity, not a timesheet — what matters is what got delivered and what's left to trade against. It updates every week, so you can see the shape of the work as it goes rather than hearing about it in month three.</p>
       </div>
       <div class="card">
         <div class="eyebrow">Waiting on</div>
@@ -611,6 +645,27 @@ textarea.tall{min-height:132px}
       <div class="meta"><span id="cnt-karsen">0 / 0</span><span>~15 min</span></div>
     </button>
   </div></div>
+  <div class="eyebrow" style="margin:26px 0 10px">Also in here</div>
+  <div class="grid3" id="onbextra">
+    <button class="card" id="onb-agreement" style="text-align:left;cursor:pointer;border:1px solid var(--line);display:none" data-goto="p-agreement">
+      <div class="eyebrow">The Agreement</div>
+      <h3 style="font-size:19px;margin:6px 0 7px">One page, signed</h3>
+      <p style="font-size:13.5px;line-height:1.5;color:var(--ink-soft)">Fifteen hours, $532 a week, 5% on events I originate, and the Day-90 checkpoint. Nothing new — just written where we can both point at it.</p>
+      <div class="mini" style="margin-top:9px;color:var(--gold);font-weight:600" id="onb-agreement-state">Open →</div>
+    </button>
+    <button class="card" id="onb-scope" style="text-align:left;cursor:pointer;border:1px solid var(--line);display:none" data-goto="p-scope">
+      <div class="eyebrow">Scope</div>
+      <h3 style="font-size:19px;margin:6px 0 7px">The do's and the don'ts</h3>
+      <p style="font-size:13.5px;line-height:1.5;color:var(--ink-soft)">What fifteen hours buys and what it doesn't, written down so month three is never a debate. New requests are trades, not additions.</p>
+      <div class="mini" style="margin-top:9px;color:var(--gold);font-weight:600">Open →</div>
+    </button>
+    <a class="card" href="proposal.html" target="_blank" rel="noopener" style="text-align:left;display:block;text-decoration:none;color:inherit;border:1px solid var(--line)">
+      <div class="eyebrow">The Proposal</div>
+      <h3 style="font-size:19px;margin:6px 0 7px">The Growth Engine deck</h3>
+      <p style="font-size:13.5px;line-height:1.5;color:var(--ink-soft)">The seventeen-slide execution plan the group read in August — the market, the three engines, the economics and the structure. Kept here so it stops living in a link somebody has to dig up.</p>
+      <div class="mini" style="margin-top:9px;color:var(--gold);font-weight:600">Open in a new tab →</div>
+    </a>
+  </div>
   <div class="previewnote" id="notrack" style="display:none">There's no track for you to fill in — Miguel and Karsen are covering this round. Everything they answer shapes the plan that shows up on the rest of these pages.</div>
 </section>
 
@@ -647,16 +702,20 @@ textarea.tall{min-height:132px}
 <section class="page" id="p-numbers">
   <div class="phead">
     <div class="eyebrow">Tap 02 · The Numbers</div>
-    <h2>Build the view you actually want.</h2>
-    <p class="lede">Pick a metric, pick how to see it, pick how to slice it. Save it with a name and it's waiting for you next time — yours only, nobody else's view changes.</p>
+    <h2>Everything I'm doing, in numbers.</h2>
+    <p class="lede">One page, three engines. Some of these the dashboard works out for itself from the work as it happens — those are live from today. The rest get recorded as they're measured, starting with the baseline on August 28. Nothing here is a guess, and nothing here is flattering by accident.</p>
   </div>
 
-  <div class="card" id="baselinecard" style="margin-bottom:18px">
-    <div class="eyebrow" style="margin-bottom:11px">The baseline · real measurements</div>
+  <div class="grid4" id="headline" style="margin-bottom:20px"></div>
+
+  <div id="engines"></div>
+
+  <div class="card" id="baselinecard" style="margin:20px 0 18px">
+    <div class="eyebrow" style="margin-bottom:11px">Recorded measurements</div>
     <div id="baseline"></div>
     <div class="rowact" id="metricadd" style="margin-top:14px;display:none">
-      <input id="mt-key" placeholder="Metric key (ig_followers, gbp_views…)" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;flex:1;min-width:170px;background:var(--card)">
-      <input id="mt-val" type="number" placeholder="Value" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;width:110px;background:var(--card)">
+      <select id="mt-key" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;background:var(--card);flex:1;min-width:190px"></select>
+      <input id="mt-val" type="number" step="any" placeholder="Value" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;width:110px;background:var(--card)">
       <select id="mt-house" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;background:var(--card)">
         <option value="all">All houses</option><option value="downtown">Downtown</option>
         <option value="eastie">Eastie</option><option value="cityhall">City Hall</option></select>
@@ -666,9 +725,15 @@ textarea.tall{min-height:132px}
     </div>
   </div>
 
+  <div class="phead" style="margin-top:8px">
+    <div class="eyebrow">Explore</div>
+    <h2 style="font-size:26px">Build the view you actually want.</h2>
+    <p class="lede">Pick a metric, pick how to see it, pick how to slice it. Save it with a name and it's waiting for you next time — yours only, nobody else's view changes.</p>
+  </div>
+
   <div class="samp">
     <span style="font-size:17px">⚠</span>
-    <div><b>Everything below is sample data</b>, here so you can see how it will work. Real numbers land with the baseline on August 28, and then this page never lies again.</div>
+    <div><b>The explorer below still runs on sample data</b>, here so you can see how it will work. It switches to the real series as the recorded measurements build up.</div>
   </div>
 
   <div class="saved" id="savedviews"></div>
@@ -1079,14 +1144,14 @@ var TAPS=[
 var PAGES=[
  {id:"p-home",label:"Home"},
  {id:"p-onboard",label:"Onboarding",tag:"Start"},
- {id:"p-miguel",label:"Track · Miguel"},
- {id:"p-karsen",label:"Track · Karsen"},
+ {id:"p-miguel",label:"Track · Miguel",sub:true},
+ {id:"p-karsen",label:"Track · Karsen",sub:true},
+ {id:"p-agreement",label:"The Agreement",tag:"Sign",sub:true},
+ {id:"p-scope",label:"Scope",sub:true},
  {id:"p-numbers",label:"The Numbers"},
  {id:"p-pipeline",label:"Pipeline",tag:"Live"},
  {id:"p-brand",label:"Brand & Content"},
- {id:"p-plan",label:"The Plan"},
- {id:"p-agreement",label:"The Agreement",tag:"Sign"},
- {id:"p-scope",label:"Scope"}
+ {id:"p-plan",label:"The Plan"}
 ];
 var nav=document.getElementById("nav");
 // The two answer tracks are working documents, not destinations.
@@ -1103,11 +1168,13 @@ function paintNav(){
   var cur = (document.querySelector(".page.on")||{}).id || "p-home";
   nav.innerHTML="";
   PAGES.forEach(function(p){
-    if(!admin && (p.id==="p-miguel"||p.id==="p-karsen")) return;
+    // Each person sees their own track; the admin sees both.
+    if(p.id==="p-miguel" && !(admin || (ME && ME.slug==="miguel"))) return;
+    if(p.id==="p-karsen" && !(admin || (ME && ME.slug==="karsen"))) return;
     if(p.id==="p-scope" && !scopeOk()) return;
     if(p.id==="p-agreement" && !agreementOk()) return;
     var b=document.createElement("button");
-    b.className="navitem"; b.dataset.goto=p.id;
+    b.className="navitem"+(p.sub?" sub":""); b.dataset.goto=p.id;
     b.setAttribute("aria-current", p.id===cur);
     b.innerHTML='<span class="dot"></span><span>'+p.label+'</span>'+
       (p.tag?'<span class="tag'+(p.soon?' soon':'')+'">'+p.tag+'</span>':'');
@@ -1612,10 +1679,20 @@ async function enter(p){
   await loadIds();
   await Promise.all([loadTasks(),loadViews(),loadResponses()]);
   paintTaps();
-  paintTaskFilters(); renderTasks(); renderSaved();
+  paintTaskFilters(); renderTasks(); renderTaskSummary(); renderSaved();
   render("miguel"); render("karsen");
   await loadGrowth();
   await loadDoc(); renderDoc();
+  var oa=document.getElementById("onb-agreement");
+  if(oa) oa.style.display=agreementOk()?"":"none";
+  var os=document.getElementById("onb-scope");
+  if(os) os.style.display=scopeOk()?"":"none";
+  var oas=document.getElementById("onb-agreement-state");
+  if(oas && DOC && ME){
+    var mine=sigOf(ME.slug);
+    var all=(DOC.parties||[]).every(function(s){return !!sigOf(s)});
+    oas.textContent = all ? "Signed by both →" : mine ? "You've signed — waiting on the other side →" : "Waiting for your signature →";
+  }
 }
 document.getElementById("whoami").addEventListener("click",async function(){
   if(sb) await sb.auth.signOut();
@@ -1689,9 +1766,9 @@ function paintTaskFilters(){
 }
 document.addEventListener("click",function(e){
   var w=e.target.closest("[data-who]");
-  if(w){ TASK_WHO=w.dataset.who; paintTaskFilters(); renderTasks(); return; }
+  if(w){ TASK_WHO=w.dataset.who; paintTaskFilters(); renderTasks(); renderTaskSummary(); return; }
   var wh=e.target.closest("[data-when]");
-  if(wh){ TASK_WHEN=wh.dataset.when; paintTaskFilters(); renderTasks(); return; }
+  if(wh){ TASK_WHEN=wh.dataset.when; paintTaskFilters(); renderTasks(); renderTaskSummary(); return; }
 });
 function renderTasks(){
   var box=document.getElementById("tasklist");
@@ -1734,7 +1811,7 @@ document.addEventListener("click",async function(e){
   var b=e.target.closest("[data-tick]"); if(!b||!ONLINE) return;
   var t=TASKS.filter(function(x){return x.id===b.dataset.tick})[0]; if(!t) return;
   var next=t.status==="done"?"todo":"done";
-  t.status=next; renderTasks();
+  t.status=next; renderTasks(); renderTaskSummary();
   await sb.from("tasks").update({status:next,done_at:next==="done"?new Date().toISOString():null})
     .eq("id",t.id);
 });
@@ -1762,7 +1839,7 @@ document.getElementById("nt-save").addEventListener("click",async function(){
     document.getElementById("nt-title").value="";
     document.getElementById("nt-due").value="";
     document.getElementById("addtask").classList.remove("on");
-    await loadTasks(); renderTasks();
+    await loadTasks(); renderTasks(); renderTaskSummary();
   }
 });
 
@@ -2313,35 +2390,165 @@ async function loadMetrics(){
   var r=await sb.from("metrics").select("*").order("period_end",{ascending:false});
   if(!r.error) METRICSD=r.data||[];
 }
-var MKEYL={ig_followers:"Instagram followers",ig_reach:"Instagram reach",gbp_views:"Google profile views",
-  gbp_actions:"Google profile actions",reviews:"Reviews",rating:"Average rating",covers:"Covers",
-  revenue:"Revenue",events_booked:"Events booked",pipeline_value:"Pipeline value",email_list:"Email list"};
+/* ═════════════════════════════════════════════════════════
+   THE NUMBERS — the whole engagement, in one page.
+   "live" metrics are computed from the work itself and are
+   true from today. Everything else waits for a measurement.
+   ═════════════════════════════════════════════════════════ */
+
+var ENGINES=[
+ {n:"01", name:"Brand &amp; Content", icon:"🎨",
+  note:"What went out, and whether anyone saw it.",
+  metrics:[
+   {k:"posts_published", l:"Posts published",     live:"posts"},
+   {k:"posts_scheduled", l:"Scheduled ahead",     live:"sched"},
+   {k:"posts_waiting",   l:"Waiting on approval", live:"waiting"},
+   {k:"ig_followers",    l:"Instagram followers"},
+   {k:"ig_reach",        l:"Instagram reach"},
+   {k:"ig_engagement",   l:"Engagement rate", unit:"%"}
+  ]},
+ {n:"02", name:"Digital &amp; Traffic", icon:"📍",
+  note:"Whether the city can find us without being told.",
+  metrics:[
+   {k:"gbp_views",      l:"Google profile views"},
+   {k:"gbp_actions",    l:"Google profile actions"},
+   {k:"gbp_directions", l:"Directions requested"},
+   {k:"reviews",        l:"Reviews"},
+   {k:"rating",         l:"Average rating"},
+   {k:"site_sessions",  l:"Website sessions"},
+   {k:"email_list",     l:"Email list size"}
+  ]},
+ {n:"03", name:"Sales &amp; Partnerships", icon:"🤝",
+  note:"The engine that pays for the other two.",
+  metrics:[
+   {k:"first_contacts",  l:"First contacts made",  live:"contacts"},
+   {k:"leads_sourced",   l:"Prospects on the list", live:"sourced"},
+   {k:"pipeline_open",   l:"Open pipeline value",  live:"pipeval", money:true},
+   {k:"proposals_out",   l:"Proposals out",        live:"proposals"},
+   {k:"events_won",      l:"Events won",           live:"won"},
+   {k:"revenue_won",     l:"Revenue booked",       live:"wonval", money:true},
+   {k:"commission_5",    l:"Commission earned · 5%", live:"comm", money:true}
+  ]}
+];
+
+// Everything a human can record by hand, for the dropdown.
+var RECORDABLE=[];
+ENGINES.forEach(function(e){ e.metrics.forEach(function(m){ if(!m.live) RECORDABLE.push(m); }); });
+
+function liveVal(key){
+  var open=LEADS.filter(function(l){return ["won","lost","dormant"].indexOf(l.stage)===-1});
+  var won =LEADS.filter(function(l){return l.stage==="won"});
+  var mine=idOf(ME?ME.slug:"");
+  switch(key){
+    case "posts":     return CONTENT.filter(function(c){return c.status==="published"}).length;
+    case "sched":     return CONTENT.filter(function(c){return c.status==="scheduled"||c.status==="approved"}).length;
+    case "waiting":   return CONTENT.filter(function(c){return c.status==="idea"||c.status==="draft"}).length;
+    case "contacts":  return LEADS.filter(function(l){return !!l.first_contact_at}).length;
+    case "sourced":   return LEADS.length;
+    case "pipeval":   return open.reduce(function(a,l){return a+Number(l.est_value||0)},0);
+    case "proposals": return LEADS.filter(function(l){return l.stage==="proposal"||l.stage==="handoff"}).length;
+    case "won":       return won.length;
+    case "wonval":    return won.reduce(function(a,l){return a+Number(l.actual_value||l.est_value||0)},0);
+    case "comm":      return won.filter(function(l){
+                        return l.first_contact_by && (!mine || l.first_contact_by===mine); })
+                        .reduce(function(a,l){
+                          return a+Number(l.actual_value||l.est_value||0)*(Number(l.commission_pct||5)/100)},0);
+  }
+  return null;
+}
+
+function recordedFor(key){
+  var rows=METRICSD.filter(function(m){return m.metric_key===key});
+  if(!rows.length) return null;
+  rows.sort(function(a,b){ return a.period_end<b.period_end?1:-1 });
+  var cur=rows[0];
+  var prior=rows.filter(function(r){return r.period_end<cur.period_end})[0]||null;
+  var delta = prior ? ((Number(cur.value)-Number(prior.value))/(Math.abs(Number(prior.value))||1))*100 : null;
+  return {value:Number(cur.value), when:cur.period_end, source:cur.source, delta:delta};
+}
+
+function metricCard(m){
+  var val, sub, cls="";
+  if(m.live){
+    val = liveVal(m.live);
+    val = m.money ? money(val) : Number(val||0).toLocaleString("en-US");
+    sub = '<span class="pill mine" style="font-size:9.5px">live</span>';
+  } else {
+    var r=recordedFor(m.k);
+    if(!r){
+      val="—";
+      sub='<span class="mini">not measured yet</span>';
+      cls=" style=\"opacity:.62\"";
+    } else {
+      val = m.money ? money(r.value)
+          : Number(r.value).toLocaleString("en-US",{maximumFractionDigits:2})+(m.unit||"");
+      sub = '<span class="mini">'+dstr(r.when)+(r.source?" · "+esc(r.source):"")+
+        (r.delta!==null?' · <b style="color:'+(r.delta>=0?"var(--ok)":"var(--clay-deep)")+'">'+
+          (r.delta>=0?"+":"")+r.delta.toFixed(0)+'%</b>':"")+'</span>';
+    }
+  }
+  return '<div class="card"'+cls+'><div class="eyebrow">'+m.l+'</div>'+
+    '<div style="font-family:\'JetBrains Mono\',monospace;font-size:25px;font-weight:700;color:var(--blue-ink);margin:6px 0 4px;line-height:1.1">'+val+'</div>'+
+    sub+'</div>';
+}
+
+function renderHeadline(){
+  var box=q("headline"); if(!box) return;
+  var cards=[
+    {l:"Open pipeline",   v:money(liveVal("pipeval")), s:"estimated F&amp;B value in play"},
+    {l:"First contacts",  v:String(liveVal("contacts")), s:"organisations I have spoken to"},
+    {l:"Posts published", v:String(liveVal("posts")), s:"across every house"},
+    {l:"Events won",      v:String(liveVal("won")), s:"booked and confirmed"}
+  ];
+  box.innerHTML=cards.map(function(c){
+    return '<div class="card" style="background:linear-gradient(165deg,var(--blue-wash),var(--card))">'+
+      '<div class="eyebrow">'+c.l+'</div>'+
+      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:31px;font-weight:700;color:var(--blue-ink);margin:7px 0 3px;line-height:1">'+c.v+'</div>'+
+      '<div class="mini">'+c.s+'</div></div>';
+  }).join("");
+}
+
+function renderEngines(){
+  var box=q("engines"); if(!box) return;
+  box.innerHTML=ENGINES.map(function(e){
+    return '<div style="margin-bottom:20px">'+
+      '<div class="eyebrow" style="margin-bottom:10px">'+e.icon+' Engine '+e.n+' · '+e.name+
+        ' <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink-soft)">— '+e.note+'</span></div>'+
+      '<div class="grid4">'+e.metrics.map(metricCard).join("")+'</div></div>';
+  }).join("");
+}
+
 function renderBaseline(){
   var box=q("baseline"); if(!box) return;
-  var samp=document.querySelector("#p-numbers .samp");
   if(!METRICSD.length){
-    box.innerHTML='<div class="emptybox">No real measurement recorded yet. The baseline lands August 28 — every number captured from that day forward is stored here with the date range it covers and where it came from, so nothing is ever a guess twice.</div>';
-    if(samp) samp.style.display="";
+    box.innerHTML='<div class="emptybox">Nothing recorded by hand yet. The baseline lands August 28 — from then on every reading is stored with the date range it covers and where it came from, so a number is never guessed twice.</div>';
     return;
   }
-  if(samp) samp.style.display="none";
-  // newest reading per house+key
   var seen={}, latest=[];
   METRICSD.forEach(function(m){
     var k=m.house+"|"+m.metric_key;
     if(!seen[k]){ seen[k]=1; latest.push(m); }
   });
-  box.innerHTML='<div class="grid4">'+latest.map(function(m){
-    var prior=METRICSD.filter(function(x){
-      return x.house===m.house && x.metric_key===m.metric_key && x.period_end<m.period_end; })[0];
-    var delta = prior ? ((Number(m.value)-Number(prior.value))/(Number(prior.value)||1))*100 : null;
-    return '<div class="card"><div class="eyebrow">'+(MKEYL[m.metric_key]||esc(m.metric_key))+'</div>'+
-      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:26px;font-weight:700;color:var(--blue-ink);margin-top:6px">'+
-        Number(m.value).toLocaleString("en-US")+'</div>'+
-      '<div class="mini">'+(HOUSEL[m.house]||m.house)+' · '+dstr(m.period_end)+
-        (delta!==null?' · <b style="color:'+(delta>=0?"var(--ok)":"var(--clay-deep)")+'">'+(delta>=0?"+":"")+delta.toFixed(0)+'%</b>':"")+
-        (m.source?' · '+esc(m.source):"")+'</div></div>';
-  }).join("")+'</div>';
+  box.innerHTML='<table class="ledger"><tr><th>Metric</th><th>House</th><th>Period</th><th>Source</th><th style="text-align:right">Value</th></tr>'+
+    latest.map(function(m){
+      var lab=RECORDABLE.filter(function(r){return r.k===m.metric_key})[0];
+      return '<tr><td>'+(lab?lab.l:esc(m.metric_key))+'</td>'+
+        '<td>'+(HOUSEL[m.house]||esc(m.house))+'</td>'+
+        '<td class="mini">'+dstr(m.period_start)+' → '+dstr(m.period_end)+'</td>'+
+        '<td class="mini">'+esc(m.source||"—")+'</td>'+
+        '<td class="num">'+Number(m.value).toLocaleString("en-US",{maximumFractionDigits:2})+'</td></tr>';
+    }).join("")+'</table>';
+}
+
+function fillMetricKeys(){
+  var sel=q("mt-key"); if(!sel||sel.options.length) return;
+  sel.innerHTML=RECORDABLE.map(function(m){
+    return '<option value="'+m.k+'">'+m.l.replace(/&amp;/g,"&")+'</option>';
+  }).join("");
+}
+
+function renderNumbers(){
+  renderHeadline(); renderEngines(); renderBaseline(); fillMetricKeys();
 }
 
 /* ───────── CAMPAIGNS ───────── */
@@ -2369,6 +2576,129 @@ function renderCamps(){
       '<span class="pill '+(live?"hot":done?"won":"")+'">'+(live?"live":done?"done":esc(c.status||"planned"))+'</span>'+
     '</div>';
   }).join("");
+}
+
+/* ───────── TASK SUMMARY + COLLAPSE ───────── */
+function renderTaskSummary(){
+  var box=q("task-summary"); if(!box) return;
+  var mine=TASKS.filter(function(t){
+    return t.status!=="done" && (ME && (ME.is_admin || t.assignee===idOf(ME.slug)));
+  });
+  var t0=today12(), nx=weekStart(1);
+  var late=mine.filter(function(t){ return t.due_on && new Date(t.due_on+"T12:00:00")<t0 });
+  var soon=mine.filter(function(t){
+    if(!t.due_on) return false;
+    var d=new Date(t.due_on+"T12:00:00"); return d>=t0 && d<nx;
+  });
+  var bits=[];
+  if(late.length) bits.push('<span class="late">'+late.length+' overdue</span>');
+  if(soon.length) bits.push('<span>'+soon.length+' this week</span>');
+  if(!mine.length) bits.push('<span class="none">all clear</span>');
+  else if(!bits.length) bits.push('<span>'+mine.length+' open</span>');
+  box.innerHTML=bits.join("");
+}
+
+function bindTaskCollapse(){
+  var btn=q("task-toggle"), body=q("taskbody"), lab=q("task-toggle-label");
+  if(!btn||!body) return;
+  btn.addEventListener("click",function(){
+    var open=btn.getAttribute("aria-expanded")==="true";
+    btn.setAttribute("aria-expanded", String(!open));
+    body.hidden=open;
+    if(lab) lab.textContent=open?"Show":"Hide";
+  });
+}
+
+/* ───────── CAPACITY, WEEK BY WEEK ───────── */
+var WEEKS=[];
+
+function mondayOf(d){
+  var x=new Date(d); x.setHours(12,0,0,0);
+  var day=(x.getDay()+6)%7;            // Monday = 0
+  x.setDate(x.getDate()-day);
+  return x;
+}
+function isoDate(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function weekLabel(iso){
+  var a=new Date(iso+"T12:00:00"), b=new Date(a); b.setDate(b.getDate()+4);
+  var m=function(x){return x.toLocaleDateString("en-US",{month:"short"})};
+  return m(a)+" "+a.getDate()+"–"+(m(a)===m(b)?"":m(b)+" ")+b.getDate();
+}
+
+async function loadWeeks(){
+  WEEKS=[];
+  if(!ONLINE||!ME) return;
+  var r=await sb.from("work_weeks").select("*").order("week_start",{ascending:false}).limit(12);
+  if(!r.error) WEEKS=r.data||[];
+  // The admin owns the record, so only the admin opens a new week.
+  var cur=isoDate(mondayOf(new Date()));
+  if(ME.is_admin && !WEEKS.filter(function(w){return w.week_start===cur})[0]){
+    var ins=await sb.from("work_weeks").insert({week_start:cur,planned:15,logged:0});
+    if(!ins.error){
+      var r2=await sb.from("work_weeks").select("*").order("week_start",{ascending:false}).limit(12);
+      if(!r2.error) WEEKS=r2.data||[];
+    }
+  }
+}
+
+function curWeek(){
+  var cur=isoDate(mondayOf(new Date()));
+  return WEEKS.filter(function(w){return w.week_start===cur})[0]||null;
+}
+
+function renderCapacity(){
+  var line=q("cap-line"), fill=q("cap-fill"), hist=q("cap-hist"), title=q("cap-title");
+  if(!line||!fill) return;
+  var w=curWeek();
+  var planned=w?Number(w.planned):15, logged=w?Number(w.logged):0;
+  var pct=planned?Math.min(100,(logged/planned)*100):0;
+  fill.style.width=pct.toFixed(0)+"%";
+  if(title) title.textContent="Capacity · this week";
+  var left=Math.max(0,planned-logged);
+  line.textContent=(logged%1?logged.toFixed(1):logged)+" of "+planned+" hours · "+
+    weekLabel(isoDate(mondayOf(new Date())))+
+    (w?(left?" · "+(left%1?left.toFixed(1):left)+" left":" · full"):" · not opened yet");
+
+  var edit=q("cap-edit");
+  if(edit) edit.style.display=(ME&&ME.is_admin)?"flex":"none";
+  var val=q("cap-val"); if(val && document.activeElement!==val) val.value=logged;
+
+  if(hist){
+    var prev=WEEKS.filter(function(x){return x.week_start!==isoDate(mondayOf(new Date()))}).slice(0,4);
+    hist.innerHTML=prev.length
+      ? '<div class="eyebrow" style="margin-bottom:7px">Weeks before this one</div>'+prev.map(function(x){
+          var p=Number(x.planned)||15, l=Number(x.logged)||0;
+          return '<div class="wkrow"><span class="wkd">'+weekLabel(x.week_start)+'</span>'+
+            '<span class="wkbar"><i style="width:'+Math.min(100,(l/p)*100).toFixed(0)+'%"></i></span>'+
+            '<span class="wkn">'+(l%1?l.toFixed(1):l)+"/"+p+'</span></div>';
+        }).join("")
+      : "";
+  }
+}
+
+async function saveCap(delta){
+  var msg=q("cap-msg"), val=q("cap-val");
+  if(!ONLINE||!ME||!ME.is_admin||!val) return;
+  var n=Number(val.value||0)+(delta||0);
+  if(!isFinite(n)||n<0) n=0;
+  val.value=n;
+  if(delta) return;                     // stepper only nudges the field
+  var cur=isoDate(mondayOf(new Date()));
+  if(msg) msg.textContent="Saving…";
+  var r=await sb.from("work_weeks").upsert({week_start:cur,planned:15,logged:n,updated_at:new Date().toISOString()},{onConflict:"week_start"});
+  if(r.error){ if(msg) msg.textContent="Couldn't save: "+r.error.message; return; }
+  if(msg) msg.textContent="Saved";
+  await loadWeeks(); renderCapacity();
+}
+
+function bindCapacity(){
+  document.addEventListener("click",function(e){
+    var s=e.target.closest("[data-cap]");
+    if(s){ saveCap(Number(s.dataset.cap)); return; }
+    if(e.target.closest("#cap-save")) saveCap(0);
+  });
 }
 
 /* ───────── WIRING ───────── */
@@ -2437,14 +2767,14 @@ function bindGrowth(){
 
   if(q("mtadd")) q("mtadd").addEventListener("click",async function(){
     if(!ONLINE||!ME||!ME.is_admin) return;
-    var k=q("mt-key").value.trim(), v=q("mt-val").value;
+    var k=q("mt-key").value, v=q("mt-val").value;
     if(!k||v==="") return;
     await sb.from("metrics").upsert({metric_key:k,value:Number(v),house:q("mt-house").value,
       period_start:q("mt-start").value||new Date().toISOString().slice(0,10),
       period_end:q("mt-end").value||new Date().toISOString().slice(0,10),
       source:"manual"},{onConflict:"house,metric_key,period_start,period_end"});
-    q("mt-key").value=""; q("mt-val").value="";
-    await loadMetrics(); renderBaseline();
+    q("mt-val").value="";
+    await loadMetrics(); renderNumbers();
   });
 
   document.querySelectorAll(".drawer").forEach(function(d){
@@ -2456,10 +2786,10 @@ function bindGrowth(){
 }
 
 async function loadGrowth(){
-  await Promise.all([loadLeads(),loadContent(),loadAssets(),loadMetrics(),loadCamps()]);
+  await Promise.all([loadLeads(),loadContent(),loadAssets(),loadMetrics(),loadCamps(),loadWeeks()]);
   renderFunnel(); renderLeads(); renderLedger();
   renderCstats(); renderContent(); renderAssets();
-  renderBaseline(); renderCamps();
+  renderNumbers(); renderCamps(); renderCapacity(); renderTaskSummary();
   var ma=q("metricadd"); if(ma) ma.style.display=(ME&&ME.is_admin)?"flex":"none";
   var cn=q("cnew"); if(cn) cn.style.display=(ME&&ME.is_admin)?"":"none";
 }
@@ -2583,6 +2913,8 @@ function bindAgreement(){
   draw(); paintTaps();
   bindGrowth();
   bindAgreement();
+  bindTaskCollapse();
+  bindCapacity();
   boot();
 })();
 })();

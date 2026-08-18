@@ -19,3 +19,10 @@
   for = "/index.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+# Same for the proposal — a cached copy of an old commission number
+# is exactly the kind of thing that causes an argument in month three.
+[[headers]]
+  for = "/proposal.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
