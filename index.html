@@ -378,9 +378,9 @@ textarea.tall{min-height:132px}
 .fstage{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:13px 11px;text-align:center;cursor:pointer;transition:.16s}
 .fstage:hover{border-color:var(--amber);transform:translateY(-2px)}
 .fstage[aria-pressed="true"]{background:var(--blue-wash);border-color:var(--blue)}
-.fstage .fn{font-family:'JetBrains Mono',monospace;font-size:23px;font-weight:700;color:var(--blue-ink);line-height:1}
-.fstage .fl{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px}
-.fstage .fv{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);margin-top:3px}
+.fstage .fn{display:block;font-family:'JetBrains Mono',monospace;font-size:23px;font-weight:700;color:var(--blue-ink);line-height:1}
+.fstage .fl{display:block;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px}
+.fstage .fv{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);margin-top:3px;min-height:14px}
 @media(max-width:900px){.funnel{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:560px){.funnel{grid-template-columns:repeat(2,1fr)}}
 
@@ -486,6 +486,17 @@ textarea.tall{min-height:132px}
 .waitchips{display:flex;flex-wrap:wrap;gap:7px}
 .waitchips span{font-size:12px;padding:5px 12px;border-radius:100px;background:var(--paper);
   border:1px solid var(--line);color:var(--ink-soft)}
+
+.signmsg{margin-top:10px;font-size:13px;color:var(--ok);min-height:18px;font-weight:600}
+.signmsg.bad{color:var(--clay-deep)}
+
+.touchcard{margin-bottom:16px;border-left:3px solid var(--amber)}
+.touchrow{display:grid;grid-template-columns:112px 1fr auto;gap:12px;align-items:center;
+  padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.touchrow:last-of-type{border-bottom:none}
+.touchrow:hover b{color:var(--blue-deep)}
+.touchrow b{font-size:14.5px}
+@media(max-width:640px){.touchrow{grid-template-columns:1fr;gap:4px}}
 </style>
 </head>
 <body>
@@ -806,8 +817,10 @@ textarea.tall{min-height:132px}
   <div class="phead">
     <div class="eyebrow">Tap 03 · Pipeline</div>
     <h2>I open the doors. Karsen closes them.</h2>
-    <p class="lede">Every conversation logged from the first hello, visible to all of you. No lead lives in one person's inbox — and every first contact is timestamped the moment it happens.</p>
+    <p class="lede">This is the CRM. Every organisation, every conversation, every follow-up owed — logged from the first hello and visible to all of you. No lead lives in one person's inbox, and every first contact is timestamped the moment it happens.</p>
   </div>
+
+  <div id="touch"></div>
 
   <div class="funnel" id="funnel"></div>
 
@@ -2104,6 +2117,34 @@ function renderFunnel(){
   }).join("");
 }
 
+// A CRM earns its keep by naming who is owed a follow-up today.
+// Renders nothing at all when nothing is owed — an empty prompt is clutter.
+function renderTouch(){
+  var box=q("touch"); if(!box) return;
+  var t0=today12(), nx=weekStart(1);
+  var due=LEADS.filter(function(l){
+    if(["won","lost"].indexOf(l.stage)!==-1) return false;
+    return l.next_action_on && new Date(l.next_action_on+"T12:00:00") < nx;
+  }).sort(function(a,b){ return a.next_action_on < b.next_action_on ? -1 : 1 });
+
+  if(!due.length){ box.innerHTML=""; return; }
+
+  var late=due.filter(function(l){ return new Date(l.next_action_on+"T12:00:00") < t0 });
+  box.innerHTML='<div class="card touchcard">'+
+    '<div class="eyebrow" style="margin-bottom:11px">Needs a touch'+
+      (late.length?' &middot; <b style="color:var(--clay-deep)">'+late.length+' overdue</b>':'')+'</div>'+
+    due.slice(0,8).map(function(l){
+      var od=new Date(l.next_action_on+"T12:00:00") < t0;
+      return '<div class="touchrow" data-lead="'+l.id+'">'+
+        '<span class="pill '+(od?"hot":"")+'">'+dueTxt(l.next_action_on)+'</span>'+
+        '<div><b>'+esc(l.company)+'</b>'+
+          (l.next_action?'<div class="mini">'+esc(l.next_action)+'</div>':'')+'</div>'+
+        '<span class="lval">'+money(l.actual_value||l.est_value)+'</span></div>';
+    }).join("")+
+    (due.length>8?'<p class="mini" style="margin-top:9px">'+(due.length-8)+' more below.</p>':'')+
+  '</div>';
+}
+
 function renderLeads(){
   var box=q("leadlist"); if(!box) return;
   var rows=leadsShown();
@@ -2228,7 +2269,7 @@ async function saveLead(){
   else { row.sourced_by=mine; row.source="outbound"; r=await sb.from("leads").insert(row); }
   if(r.error){ msg.textContent="Couldn't save: "+r.error.message; return; }
   q("lform").classList.remove("on");
-  await loadLeads(); renderFunnel(); renderLeads(); renderLedger();
+  await loadLeads(); renderFunnel(); renderLeads(); renderTouch(); renderLedger();
 }
 
 function renderLedger(){
@@ -2794,7 +2835,7 @@ function bindGrowth(){
   if(f) f.addEventListener("click",function(e){
     var b=e.target.closest("[data-stage]"); if(!b) return;
     LFILTER.stage = LFILTER.stage===b.dataset.stage ? "" : b.dataset.stage;
-    renderFunnel(); renderLeads();
+    renderFunnel(); renderLeads(); renderTouch();
   });
   var ll=q("leadlist");
   if(ll) ll.addEventListener("click",function(e){
@@ -2874,7 +2915,7 @@ function bindGrowth(){
 
 async function loadGrowth(){
   await Promise.all([loadLeads(),loadContent(),loadAssets(),loadMetrics(),loadCamps(),loadWeeks()]);
-  renderFunnel(); renderLeads(); renderLedger();
+  renderFunnel(); renderLeads(); renderTouch(); renderLedger();
   renderCstats(); renderContent(); renderAssets();
   renderNumbers(); renderCamps(); renderCapacity(); renderTaskSummary();
   var ma=q("metricadd"); if(ma) ma.style.display=(ME&&ME.is_admin)?"flex":"none";
@@ -2929,7 +2970,8 @@ function renderDoc(){
       return '<div class="sigcard"><div class="party">'+(PARTY_LABEL[slug]||"Party")+'</div>'+
         '<label for="signame" class="mini" style="display:block;margin-bottom:5px">Type your full name to sign</label>'+
         '<input class="siginput" id="signame" placeholder="'+esc(who)+'" autocomplete="name">'+
-        '<button class="mbtn solid" id="signbtn" data-sign="'+esc(slug)+'">I agree to these terms</button></div>';
+        '<button class="mbtn solid" id="signbtn" data-sign="'+esc(slug)+'">I agree to these terms</button>'+
+        '<div class="signmsg" id="signmsg"></div></div>';
     }
     return '<div class="sigcard"><div class="party">'+(PARTY_LABEL[slug]||"Party")+'</div>'+
       '<div class="sname">'+esc(who)+'</div>'+
@@ -2943,23 +2985,32 @@ function renderDoc(){
         .map(function(s){return esc(nameOf(idOf(s))||s)}).join(" and ")+".");
 }
 
+// Accents, capitals and stray spaces must never be the reason a signature fails.
+function plainName(s){
+  return String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .toLowerCase().replace(/\s+/g," ").trim();
+}
 async function signDoc(slug){
-  var msg=q("dmsg"), inp=q("signame");
+  var msg=q("signmsg")||q("dmsg"), inp=q("signame");
   if(!ONLINE||!ME||!DOC||!inp) return;
   var typed=inp.value.trim();
   var expected=(nameOf(idOf(slug))||"").trim();
-  if(typed.length<3){ msg.textContent="Type your full name to sign."; return; }
-  if(expected && typed.toLowerCase().indexOf(expected.toLowerCase().split(" ")[0])===-1){
-    msg.textContent="That doesn't match the name on your account — check the spelling."; return;
+  function say(t,bad){ if(!msg) return; msg.textContent=t; msg.className="signmsg"+(bad?" bad":""); }
+  if(typed.length<3){ say("Type your full name to sign.",true); inp.focus(); return; }
+  if(expected){
+    var want=plainName(expected).split(" ").filter(function(w){return w.length>=3});
+    var got=plainName(typed);
+    var match=want.some(function(w){ return got.indexOf(w)!==-1 });
+    if(!match){ say("That doesn't look like your name — it should read close to \u201c"+expected+"\u201d.",true); inp.focus(); return; }
   }
   if(!window.confirm("Sign this agreement as \""+typed+"\"?\n\nThis is recorded permanently and cannot be undone.")) return;
-  msg.textContent="Recording…";
+  say("Recording\u2026");
   var r=await sb.from("signatures").insert({
     document_id:DOC.id, member_id:idOf(slug), typed_name:typed,
     doc_sha256:DOC.sha256, user_agent:navigator.userAgent.slice(0,240)
   });
-  if(r.error){ msg.textContent="Couldn't record: "+r.error.message; return; }
-  msg.textContent="Signed and recorded. Download a copy below \u2014 I'll email the confirmation too.";
+  if(r.error){ say("Couldn't record: "+r.error.message,true); return; }
+  say("Signed and recorded.");
   await loadDoc(); renderDoc();
 }
 
