@@ -430,6 +430,30 @@ textarea.tall{min-height:132px}
 .mini{font-size:12.5px;color:var(--ink-soft)}
 .rowact{display:flex;gap:7px;flex-wrap:wrap}
 
+
+/* ═════ AGREEMENT ═════ */
+.doc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:34px 38px;max-width:820px}
+.doc h3{font-size:15px;letter-spacing:.02em;margin:26px 0 9px;color:var(--blue-ink);font-weight:700}
+.doc h3:first-of-type{margin-top:6px}
+.doc p{font-size:14.5px;line-height:1.68;margin-bottom:11px;color:var(--ink)}
+.doc p.dmeta{font-size:13.5px;color:var(--ink-soft);border-bottom:1px solid var(--line);padding-bottom:15px;margin-bottom:8px}
+.doc p.dnote{font-style:italic;color:var(--ink-soft);font-size:13.5px;border-left:2px solid var(--amber);padding-left:14px;margin-top:14px}
+@media(max-width:640px){.doc{padding:22px 20px}}
+
+.sigwrap{max-width:820px;margin-top:18px}
+.sigrow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.sigrow{grid-template-columns:1fr}}
+.sigcard{border:1px solid var(--line);border-radius:13px;padding:20px 22px;background:var(--card)}
+.sigcard.done{background:#f4f8f2;border-color:#bcd4b6}
+.sigcard .party{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-bottom:9px}
+.sigcard .sname{font-size:24px;line-height:1.2;color:var(--blue-ink)}
+.sigcard.done .sname{font-family:'JetBrains Mono',monospace;font-size:19px;color:var(--ok);font-weight:700}
+.sigcard .swhen{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft);margin-top:7px}
+.sigcard .await{font-size:14px;color:var(--ink-soft);font-style:italic;margin-top:4px}
+.siginput{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;font:inherit;font-size:16px;background:var(--paper);margin:4px 0 10px}
+.hashline{margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft);word-break:break-all;background:var(--blue-wash);padding:11px 13px;border-radius:9px}
+.hashline b{color:var(--blue-deep)}
+
 </style>
 </head>
 <body>
@@ -928,6 +952,28 @@ textarea.tall{min-height:132px}
   </div>
 </section>
 
+<section class="page" id="p-agreement">
+  <div class="phead">
+    <div class="eyebrow">The Agreement</div>
+    <h2 id="dtitle">Letter of Agreement</h2>
+    <p class="lede" id="dsub">One page, so nothing lives in anyone's memory of an August meeting. Nothing here is new — it is what the Execution Plan said, written where we can both point at it.</p>
+  </div>
+
+  <div class="doc" id="docbody"></div>
+
+  <div class="sigwrap">
+    <div class="eyebrow" style="margin:22px 0 11px">Signatures</div>
+    <div class="sigrow" id="sigrow"></div>
+    <div class="hashline" id="hashline"></div>
+    <div class="rowact" style="margin-top:14px">
+      <button class="mbtn" id="dprint">Print / save as PDF</button>
+      <button class="mbtn" id="ddown">Download a copy</button>
+      <span class="mini" id="dmsg" style="align-self:center"></span>
+    </div>
+    <p class="mini" style="margin-top:14px">Signing here records your name, the exact time, and a fingerprint of the text you actually read. That record is append-only — it cannot be edited or removed afterwards, by anyone, including me. Both parties can download a signed copy from this page at any time, so neither of us depends on this dashboard existing forever.</p>
+  </div>
+</section>
+
 <!-- ═════ SCOPE ═════ -->
 <section class="page" id="p-scope">
   <div class="phead">
@@ -1039,12 +1085,16 @@ var PAGES=[
  {id:"p-pipeline",label:"Pipeline",tag:"Live"},
  {id:"p-brand",label:"Brand & Content"},
  {id:"p-plan",label:"The Plan"},
+ {id:"p-agreement",label:"The Agreement",tag:"Sign"},
  {id:"p-scope",label:"Scope"}
 ];
 var nav=document.getElementById("nav");
 // The two answer tracks are working documents, not destinations.
 // Only the admin gets them in the sidebar; everyone else reaches
 // their own from Onboarding or straight from their task list.
+function agreementOk(){
+  return !!(ME && (ME.is_admin || ["miguel","james"].indexOf(ME.slug)!==-1));
+}
 function scopeOk(){
   return !!(ME && (ME.is_admin || ["miguel","james","laura"].indexOf(ME.slug)!==-1));
 }
@@ -1055,6 +1105,7 @@ function paintNav(){
   PAGES.forEach(function(p){
     if(!admin && (p.id==="p-miguel"||p.id==="p-karsen")) return;
     if(p.id==="p-scope" && !scopeOk()) return;
+    if(p.id==="p-agreement" && !agreementOk()) return;
     var b=document.createElement("button");
     b.className="navitem"; b.dataset.goto=p.id;
     b.setAttribute("aria-current", p.id===cur);
@@ -1564,6 +1615,7 @@ async function enter(p){
   paintTaskFilters(); renderTasks(); renderSaved();
   render("miguel"); render("karsen");
   await loadGrowth();
+  await loadDoc(); renderDoc();
 }
 document.getElementById("whoami").addEventListener("click",async function(){
   if(sb) await sb.auth.signOut();
@@ -2412,11 +2464,125 @@ async function loadGrowth(){
   var cn=q("cnew"); if(cn) cn.style.display=(ME&&ME.is_admin)?"":"none";
 }
 
+/* ═════════════════════════════════════════════════════════
+   THE AGREEMENT — document + append-only signatures
+   ═════════════════════════════════════════════════════════ */
+
+var DOC=null, SIGS=[];
+var PARTY_LABEL={miguel:"For Democracy Brewing",nico:"The Contractor",james:"For Democracy Brewing",laura:"For Democracy Brewing",karsen:"For Democracy Brewing"};
+
+async function loadDoc(){
+  DOC=null; SIGS=[];
+  if(!ONLINE||!ME) return;
+  var d=await sb.from("documents").select("*").eq("slug","loa-2026").maybeSingle();
+  if(d.error||!d.data) return;
+  DOC=d.data;
+  var s=await sb.from("signatures").select("*").eq("document_id",DOC.id);
+  if(!s.error) SIGS=s.data||[];
+}
+
+function sigOf(slug){
+  var id=idOf(slug);
+  return SIGS.filter(function(x){return x.member_id===id})[0]||null;
+}
+
+function renderDoc(){
+  var box=q("docbody"); if(!box) return;
+  if(!DOC){
+    box.innerHTML='<div class="emptybox">The agreement has not been published yet.</div>';
+    var sr0=q("sigrow"); if(sr0) sr0.innerHTML="";
+    var hl0=q("hashline"); if(hl0) hl0.textContent="";
+    return;
+  }
+  q("dtitle").textContent=DOC.title;
+  box.innerHTML=DOC.body;   // stored by the admin only; RLS blocks anyone else writing it
+
+  var row=q("sigrow");
+  row.innerHTML=(DOC.parties||[]).map(function(slug){
+    var s=sigOf(slug);
+    var who=nameOf(idOf(slug))||slug;
+    var isMe=ME && ME.slug===slug;
+    if(s){
+      return '<div class="sigcard done"><div class="party">'+(PARTY_LABEL[slug]||"Party")+'</div>'+
+        '<div class="sname">'+esc(s.typed_name)+'</div>'+
+        '<div class="swhen">Signed '+new Date(s.signed_at).toLocaleString()+'</div>'+
+        '<div class="swhen">Text fingerprint '+esc(s.doc_sha256.slice(0,16))+'…</div></div>';
+    }
+    if(isMe){
+      return '<div class="sigcard"><div class="party">'+(PARTY_LABEL[slug]||"Party")+'</div>'+
+        '<label for="signame" class="mini" style="display:block;margin-bottom:5px">Type your full name to sign</label>'+
+        '<input class="siginput" id="signame" placeholder="'+esc(who)+'" autocomplete="name">'+
+        '<button class="mbtn solid" id="signbtn" data-sign="'+esc(slug)+'">I agree to these terms</button></div>';
+    }
+    return '<div class="sigcard"><div class="party">'+(PARTY_LABEL[slug]||"Party")+'</div>'+
+      '<div class="sname">'+esc(who)+'</div>'+
+      '<div class="await">Not signed yet</div></div>';
+  }).join("");
+
+  var all=(DOC.parties||[]).every(function(s){return !!sigOf(s)});
+  q("hashline").innerHTML='<b>Text fingerprint (SHA-256):</b> '+esc(DOC.sha256)+
+    '<br><b>Status:</b> '+(all?"Fully executed — both parties signed.":
+      "Awaiting "+(DOC.parties||[]).filter(function(s){return !sigOf(s)})
+        .map(function(s){return esc(nameOf(idOf(s))||s)}).join(" and ")+".");
+}
+
+async function signDoc(slug){
+  var msg=q("dmsg"), inp=q("signame");
+  if(!ONLINE||!ME||!DOC||!inp) return;
+  var typed=inp.value.trim();
+  var expected=(nameOf(idOf(slug))||"").trim();
+  if(typed.length<3){ msg.textContent="Type your full name to sign."; return; }
+  if(expected && typed.toLowerCase().indexOf(expected.toLowerCase().split(" ")[0])===-1){
+    msg.textContent="That doesn't match the name on your account — check the spelling."; return;
+  }
+  if(!window.confirm("Sign this agreement as \""+typed+"\"?\n\nThis is recorded permanently and cannot be undone.")) return;
+  msg.textContent="Recording…";
+  var r=await sb.from("signatures").insert({
+    document_id:DOC.id, member_id:idOf(slug), typed_name:typed,
+    doc_sha256:DOC.sha256, user_agent:navigator.userAgent.slice(0,240)
+  });
+  if(r.error){ msg.textContent="Couldn't record: "+r.error.message; return; }
+  msg.textContent="Signed and recorded. Download a copy below \u2014 I'll email the confirmation too.";
+  await loadDoc(); renderDoc();
+}
+
+function docPlainText(){
+  if(!DOC) return "";
+  var tmp=document.createElement("div"); tmp.innerHTML=DOC.body;
+  var lines=[DOC.title.toUpperCase(),DOC.subtitle||"",""];
+  Array.prototype.forEach.call(tmp.children,function(el){
+    lines.push(el.tagName==="H3" ? "\n"+el.textContent.toUpperCase() : el.textContent);
+  });
+  lines.push("","— SIGNATURES —");
+  (DOC.parties||[]).forEach(function(slug){
+    var s=sigOf(slug);
+    lines.push((PARTY_LABEL[slug]||"Party")+": "+
+      (s ? s.typed_name+"  ·  signed "+new Date(s.signed_at).toISOString() : "not signed"));
+  });
+  lines.push("","Text fingerprint (SHA-256): "+DOC.sha256);
+  return lines.join("\n");
+}
+
+function bindAgreement(){
+  var d=q("ddown");
+  if(d) d.addEventListener("click",function(){
+    var a=document.createElement("a");
+    a.href=URL.createObjectURL(new Blob([docPlainText()],{type:"text/plain"}));
+    a.download="democracy-letter-of-agreement.txt"; a.click(); URL.revokeObjectURL(a.href);
+  });
+  var p=q("dprint");
+  if(p) p.addEventListener("click",function(){ window.print() });
+  document.addEventListener("click",function(e){
+    var b=e.target.closest("[data-sign]"); if(b) signDoc(b.dataset.sign);
+  });
+}
+
 /* ═════ BOOT ═════ */
 (function(){
   render("miguel"); render("karsen");
   draw(); paintTaps();
   bindGrowth();
+  bindAgreement();
   boot();
 })();
 })();
