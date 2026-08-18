@@ -372,6 +372,64 @@ textarea.tall{min-height:132px}
   .ctl{width:100%}
 }
 @media(max-width:520px){.taps{grid-template-columns:repeat(2,1fr)}.counter{display:none}}
+
+/* ═════ GROWTH ENGINE — pipeline, content, metrics ═════ */
+.funnel{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-bottom:16px}
+.fstage{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:13px 11px;text-align:center;cursor:pointer;transition:.16s}
+.fstage:hover{border-color:var(--amber);transform:translateY(-2px)}
+.fstage[aria-pressed="true"]{background:var(--blue-wash);border-color:var(--blue)}
+.fstage .fn{font-family:'JetBrains Mono',monospace;font-size:23px;font-weight:700;color:var(--blue-ink);line-height:1}
+.fstage .fl{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px}
+.fstage .fv{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);margin-top:3px}
+@media(max-width:900px){.funnel{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:560px){.funnel{grid-template-columns:repeat(2,1fr)}}
+
+.lrow{display:grid;grid-template-columns:1fr auto auto auto;gap:12px;align-items:center;padding:13px 15px;border:1px solid var(--line);border-radius:11px;background:var(--card);margin-bottom:8px;transition:.15s}
+.lrow:hover{border-color:var(--amber)}
+.lrow .lco{font-weight:600;font-size:15px}
+.lrow .lme{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+.lrow .lval{font-family:'JetBrains Mono',monospace;font-size:13.5px;color:var(--gold);font-weight:600;white-space:nowrap}
+@media(max-width:700px){.lrow{grid-template-columns:1fr;gap:8px}}
+
+.pill{display:inline-block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:100px;background:var(--blue-wash);color:var(--blue-deep);font-weight:600}
+.pill.won{background:#e2f0e0;color:var(--ok)}
+.pill.lost{background:#f0e2e2;color:#8a3d3d}
+.pill.hot{background:var(--amber);color:var(--brown)}
+.pill.mine{background:#efe6cf;color:var(--brown-lt)}
+
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:13px}
+.fgrid label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:5px;font-weight:600}
+.fgrid input,.fgrid select,.fgrid textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--card);font:inherit;font-size:14px;color:var(--ink)}
+.fgrid textarea{min-height:64px;resize:vertical}
+.fwide{grid-column:1/-1}
+
+.drawer{position:fixed;inset:0;background:rgba(28,34,49,.42);display:none;z-index:60;padding:26px;overflow:auto}
+.drawer.on{display:block}
+.dpanel{max-width:720px;margin:0 auto;background:var(--paper);border-radius:16px;padding:26px 28px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.dclose{float:right;background:none;border:none;font-size:24px;cursor:pointer;color:var(--ink-soft);line-height:1}
+
+.tline{border-left:2px solid var(--line);padding-left:16px;margin-top:14px}
+.tline .ev{position:relative;padding-bottom:14px;font-size:13.5px}
+.tline .ev:before{content:"";position:absolute;left:-21px;top:5px;width:8px;height:8px;border-radius:50%;background:var(--amber)}
+.tline .ev b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--blue-deep)}
+.tline .ev span{color:var(--ink-soft);font-family:'JetBrains Mono',monospace;font-size:11px}
+
+.calrow{display:grid;grid-template-columns:88px 1fr auto auto;gap:12px;align-items:center;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);margin-bottom:7px}
+.calrow .cd{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--blue-deep);font-weight:600}
+@media(max-width:700px){.calrow{grid-template-columns:1fr}}
+
+.ledger{width:100%;border-collapse:collapse;font-size:14px}
+.ledger th{text-align:left;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);padding:9px 10px;border-bottom:1px solid var(--line)}
+.ledger td{padding:11px 10px;border-bottom:1px solid var(--line)}
+.ledger td.num{font-family:'JetBrains Mono',monospace;text-align:right;color:var(--gold);font-weight:600}
+.ledger tr:last-child td{border-bottom:none}
+
+.emptybox{padding:26px;text-align:center;border:1px dashed var(--line);border-radius:12px;color:var(--ink-soft);font-size:14px;font-style:italic}
+.bar{height:7px;background:var(--line);border-radius:100px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--amber));border-radius:100px}
+.mini{font-size:12.5px;color:var(--ink-soft)}
+.rowact{display:flex;gap:7px;flex-wrap:wrap}
+
 </style>
 </head>
 <body>
@@ -564,9 +622,24 @@ textarea.tall{min-height:132px}
 <!-- ═════ THE NUMBERS ═════ -->
 <section class="page" id="p-numbers">
   <div class="phead">
-    <div class="eyebrow">Tap 02 · The Numbers <span class="soonbadge">Soon</span></div>
+    <div class="eyebrow">Tap 02 · The Numbers</div>
     <h2>Build the view you actually want.</h2>
     <p class="lede">Pick a metric, pick how to see it, pick how to slice it. Save it with a name and it's waiting for you next time — yours only, nobody else's view changes.</p>
+  </div>
+
+  <div class="card" id="baselinecard" style="margin-bottom:18px">
+    <div class="eyebrow" style="margin-bottom:11px">The baseline · real measurements</div>
+    <div id="baseline"></div>
+    <div class="rowact" id="metricadd" style="margin-top:14px;display:none">
+      <input id="mt-key" placeholder="Metric key (ig_followers, gbp_views…)" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;flex:1;min-width:170px;background:var(--card)">
+      <input id="mt-val" type="number" placeholder="Value" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;width:110px;background:var(--card)">
+      <select id="mt-house" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;background:var(--card)">
+        <option value="all">All houses</option><option value="downtown">Downtown</option>
+        <option value="eastie">Eastie</option><option value="cityhall">City Hall</option></select>
+      <input id="mt-start" type="date" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;background:var(--card)">
+      <input id="mt-end" type="date" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;background:var(--card)">
+      <button class="mbtn" id="mtadd">Record</button>
+    </div>
   </div>
 
   <div class="samp">
@@ -633,11 +706,49 @@ textarea.tall{min-height:132px}
 <!-- ═════ PIPELINE ═════ -->
 <section class="page" id="p-pipeline">
   <div class="phead">
-    <div class="eyebrow">Tap 03 · Pipeline <span class="soonbadge">Soon</span></div>
+    <div class="eyebrow">Tap 03 · Pipeline</div>
     <h2>I open the doors. Karsen closes them.</h2>
-    <p class="lede">Every conversation logged from the first hello, visible to all of you. No lead lives in one person's inbox.</p>
+    <p class="lede">Every conversation logged from the first hello, visible to all of you. No lead lives in one person's inbox — and every first contact is timestamped the moment it happens.</p>
   </div>
-  <div class="card" style="margin-bottom:15px">
+
+  <div class="funnel" id="funnel"></div>
+
+  <div class="controls" style="margin-bottom:14px">
+    <div class="ctl" style="flex:1;min-width:200px">
+      <label for="lq">Search</label>
+      <input id="lq" placeholder="Company, contact, note…" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--card);font:inherit;font-size:14px">
+    </div>
+    <div class="ctl">
+      <label for="lcat">Category</label>
+      <select id="lcat">
+        <option value="">All</option><option value="office">Office</option><option value="hotel">Hotel</option>
+        <option value="restaurant">Restaurant</option><option value="university">University</option>
+        <option value="agency">Agency / planner</option><option value="nonprofit">Non-profit</option><option value="other">Other</option>
+      </select>
+    </div>
+    <div class="ctl">
+      <label for="lhouse">House</label>
+      <select id="lhouse">
+        <option value="">All</option><option value="downtown">Downtown Crossing</option>
+        <option value="eastie">East Boston</option><option value="cityhall">City Hall Plaza</option><option value="any">Any</option>
+      </select>
+    </div>
+    <div class="ctlspacer"></div>
+    <div class="miniact">
+      <button class="mbtn" id="lexport">Export CSV</button>
+      <button class="mbtn solid" id="lnew">+ New lead</button>
+    </div>
+  </div>
+
+  <div id="leadlist"></div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="eyebrow" style="margin-bottom:11px">Commission ledger · 5% of F&amp;B on events I originated</div>
+    <table class="ledger" id="ledger"></table>
+    <p class="mini" style="margin-top:12px">Attribution rule, as written in the agreement: first contact made by me, event booked within 12 months of that contact. The timestamp on every first hello is recorded automatically and cannot be edited after the fact — that is the whole point of logging it here rather than in an inbox.</p>
+  </div>
+
+  <div class="card" style="margin-top:15px">
     <div class="eyebrow" style="margin-bottom:11px">How a lead travels</div>
     <div style="display:flex;flex-wrap:wrap;gap:9px;align-items:center;font-size:14px">
       <span style="background:var(--blue-wash);padding:9px 14px;border-radius:8px">First hello — me</span>
@@ -649,29 +760,134 @@ textarea.tall{min-height:132px}
       <span style="background:var(--amber);color:var(--brown);padding:9px 14px;border-radius:8px;font-weight:600">Booked — Karsen</span>
     </div>
   </div>
-  <div class="previewnote">This fills once Karsen's track comes back — one of her questions asks who's already in play, so nobody gets contacted twice. After that, every account, every stage and every estimated value shows here, live.</div>
 </section>
+
+<!-- lead drawer -->
+<div class="drawer" id="ldraw"><div class="dpanel">
+  <button class="dclose" id="ldclose" aria-label="Close">×</button>
+  <div id="ldbody"></div>
+</div></div>
+
+<!-- new/edit lead drawer -->
+<div class="drawer" id="lform"><div class="dpanel">
+  <button class="dclose" id="lfclose" aria-label="Close">×</button>
+  <div class="eyebrow" style="margin-bottom:14px" id="lftitle">New lead</div>
+  <div class="fgrid">
+    <div class="fwide"><label for="f-company">Company *</label><input id="f-company" placeholder="e.g. Suffolk Construction"></div>
+    <div><label for="f-contact">Contact name</label><input id="f-contact"></div>
+    <div><label for="f-role">Their role</label><input id="f-role" placeholder="Office manager, HR, planner…"></div>
+    <div><label for="f-email">Email</label><input id="f-email" type="email"></div>
+    <div><label for="f-phone">Phone</label><input id="f-phone"></div>
+    <div><label for="f-cat">Category</label><select id="f-cat">
+      <option value="office">Office</option><option value="hotel">Hotel</option><option value="restaurant">Restaurant</option>
+      <option value="university">University</option><option value="agency">Agency / planner</option>
+      <option value="nonprofit">Non-profit</option><option value="other">Other</option></select></div>
+    <div><label for="f-house">House</label><select id="f-house">
+      <option value="any">Any</option><option value="downtown">Downtown Crossing</option>
+      <option value="eastie">East Boston</option><option value="cityhall">City Hall Plaza</option></select></div>
+    <div><label for="f-stage">Stage</label><select id="f-stage">
+      <option value="sourced">Sourced — found, not contacted</option>
+      <option value="contacted">Contacted — first hello sent</option>
+      <option value="engaged">Engaged — they replied</option>
+      <option value="proposal">Proposal — numbers out</option>
+      <option value="handoff">Handoff — Karsen has it</option>
+      <option value="won">Won — booked</option>
+      <option value="lost">Lost</option>
+      <option value="dormant">Dormant</option></select></div>
+    <div><label for="f-etype">Event type</label><select id="f-etype">
+      <option value="">—</option><option value="happy_hour">Happy hour</option>
+      <option value="pdr">Private room (60–70)</option><option value="buyout">Full buyout (150–250)</option>
+      <option value="other">Other</option></select></div>
+    <div><label for="f-head">Headcount</label><input id="f-head" type="number" min="0"></div>
+    <div><label for="f-est">Estimated F&amp;B value ($)</label><input id="f-est" type="number" min="0"></div>
+    <div><label for="f-actual">Actual value ($) — once won</label><input id="f-actual" type="number" min="0"></div>
+    <div><label for="f-edate">Event date</label><input id="f-edate" type="date"></div>
+    <div><label for="f-next">Next action</label><input id="f-next" placeholder="Drop off a crowler, follow up…"></div>
+    <div><label for="f-nexton">Next action on</label><input id="f-nexton" type="date"></div>
+    <div class="fwide"><label for="f-notes">Notes</label><textarea id="f-notes"></textarea></div>
+  </div>
+  <div class="rowact" style="margin-top:6px">
+    <button class="mbtn solid" id="lsave">Save lead</button>
+    <button class="mbtn" id="lcancel">Cancel</button>
+    <span class="mini" id="lmsg" style="align-self:center"></span>
+  </div>
+  <p class="mini" style="margin-top:13px">Moving a lead to <b>Contacted</b> stamps the first-contact time automatically. That stamp is the attribution record — it is written once and never rewritten.</p>
+</div></div>
 
 <!-- ═════ BRAND ═════ -->
 <section class="page" id="p-brand">
   <div class="phead">
-    <div class="eyebrow">Tap 04 · Brand &amp; Content <span class="soonbadge">Soon</span></div>
+    <div class="eyebrow">Tap 04 · Brand &amp; Content</div>
     <h2>One voice, three houses.</h2>
-    <p class="lede">What's going out, where, and whether it's working. Plus the brand system itself, kept current instead of drifting.</p>
+    <p class="lede">What's going out, where, and whether it's working. Plus the brand system itself, kept current instead of drifting into a PDF nobody can find.</p>
   </div>
-  <div class="grid3">
-    <div class="card"><div class="eyebrow">Coming here</div>
-      <ul class="slist yes"><li>What's posted this week, across every house</li>
-      <li>Which posts actually moved something</li></ul></div>
-    <div class="card"><div class="eyebrow">Coming here</div>
-      <ul class="slist yes"><li>The brand guidelines, extended to cover every house</li>
-      <li>Logos, fonts and photos anyone can find</li></ul></div>
-    <div class="card"><div class="eyebrow">Coming here</div>
-      <ul class="slist yes"><li>How the three Google listings are performing</li>
-      <li>Reviews, and whether we answered them</li></ul></div>
+
+  <div class="grid4" id="cstats" style="margin-bottom:18px"></div>
+
+  <div class="controls" style="margin-bottom:14px">
+    <div class="ctl">
+      <label for="cst">Status</label>
+      <select id="cst"><option value="">All</option><option value="idea">Idea</option><option value="draft">Draft</option>
+        <option value="approved">Approved</option><option value="scheduled">Scheduled</option><option value="published">Published</option></select>
+    </div>
+    <div class="ctl">
+      <label for="cch">Channel</label>
+      <select id="cch"><option value="">All</option><option value="instagram">Instagram</option><option value="gbp">Google Business</option>
+        <option value="email">Email</option><option value="facebook">Facebook</option><option value="site">Website</option></select>
+    </div>
+    <div class="ctl">
+      <label for="chouse">House</label>
+      <select id="chouse"><option value="">All</option><option value="all">All houses</option><option value="downtown">Downtown Crossing</option>
+        <option value="eastie">East Boston</option><option value="cityhall">City Hall Plaza</option></select>
+    </div>
+    <div class="ctlspacer"></div>
+    <div class="miniact"><button class="mbtn solid" id="cnew">+ New post</button></div>
   </div>
-  <div class="previewnote">The December 2024 guidelines cover two houses. There are more than two now. Extending that document is one of the first things I'll do — and it lives here, so it stops being a PDF nobody can find.</div>
+
+  <div id="callist"></div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="eyebrow" style="margin-bottom:11px">Asset library</div>
+    <div id="assetlist"></div>
+    <div class="rowact" style="margin-top:13px">
+      <input id="a-name" placeholder="Asset name" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;flex:1;min-width:160px;background:var(--card)">
+      <input id="a-url" placeholder="Link (Drive, Dropbox, Canva…)" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;flex:2;min-width:200px;background:var(--card)">
+      <select id="a-kind" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;background:var(--card)">
+        <option value="logo">Logo</option><option value="photo">Photo</option><option value="video">Video</option>
+        <option value="deck">Deck</option><option value="menu">Menu</option><option value="font">Font</option><option value="doc">Document</option></select>
+      <button class="mbtn" id="aadd">Add</button>
+    </div>
+    <p class="mini" style="margin-top:11px">Anyone signed in can add a link here. The point is that nobody has to ask "where are the logos" twice.</p>
+  </div>
 </section>
+
+<div class="drawer" id="cform"><div class="dpanel">
+  <button class="dclose" id="cfclose" aria-label="Close">×</button>
+  <div class="eyebrow" style="margin-bottom:14px" id="cftitle">New post</div>
+  <div class="fgrid">
+    <div class="fwide"><label for="c-title">Title *</label><input id="c-title" placeholder="What is this post?"></div>
+    <div><label for="c-channel">Channel</label><select id="c-channel">
+      <option value="instagram">Instagram</option><option value="gbp">Google Business</option><option value="email">Email</option>
+      <option value="facebook">Facebook</option><option value="site">Website</option></select></div>
+    <div><label for="c-house">House</label><select id="c-house">
+      <option value="all">All houses</option><option value="downtown">Downtown Crossing</option>
+      <option value="eastie">East Boston</option><option value="cityhall">City Hall Plaza</option></select></div>
+    <div><label for="c-campaign">Campaign</label><input id="c-campaign" placeholder="Oktoberfest, Local Beers…"></div>
+    <div><label for="c-pillar">Content pillar</label><input id="c-pillar" placeholder="The Craft, The Co-op, The Neighbourhood…"></div>
+    <div><label for="c-status">Status</label><select id="c-status">
+      <option value="idea">Idea</option><option value="draft">Draft</option><option value="approved">Approved</option>
+      <option value="scheduled">Scheduled</option><option value="published">Published</option><option value="killed">Killed</option></select></div>
+    <div><label for="c-sched">Scheduled for</label><input id="c-sched" type="date"></div>
+    <div class="fwide"><label for="c-hook">Hook — the first three seconds</label><input id="c-hook"></div>
+    <div class="fwide"><label for="c-caption">Caption</label><textarea id="c-caption"></textarea></div>
+    <div class="fwide"><label for="c-asset">Asset link</label><input id="c-asset" placeholder="Drive / Dropbox / file URL"></div>
+  </div>
+  <div class="rowact" style="margin-top:6px">
+    <button class="mbtn solid" id="csave">Save post</button>
+    <button class="mbtn" id="ccancel">Cancel</button>
+    <span class="mini" id="cmsg" style="align-self:center"></span>
+  </div>
+</div></div>
 
 <!-- ═════ PLAN ═════ -->
 <section class="page" id="p-plan">
@@ -700,6 +916,12 @@ textarea.tall{min-height:132px}
       <h4>Day 90 — a reading, not an argument</h4>
       <p>We sit down with the targets we agreed on August 28 and the numbers this dashboard has been showing all along. Nothing in that meeting will be new information to anyone.</p></div>
   </div>
+  <div class="card" style="margin-top:22px">
+    <div class="eyebrow" style="margin-bottom:11px">The campaign calendar · twelve months, as work</div>
+    <div id="camplist"></div>
+    <p class="mini" style="margin-top:13px">Each campaign carries its own communication task, its phases, its touchpoints and one number it has to move. Nothing here is decoration — every line becomes tasks on this dashboard when its phase opens.</p>
+  </div>
+
   <div class="callout">
     <h4>One thing worth saying out loud</h4>
     <p>A corporate event cycle runs sixty to ninety days from first hello to signed. Conversations starting in August become bookings in October and November. Month one looks quiet on purpose — that's the part that pays later, and it's why the Day-30 targets will measure conversations rather than contracts.</p>
@@ -802,9 +1024,9 @@ var TAPS_READY=false;
 /* ═════ NAV & TAPS ═════ */
 var TAPS=[
  {id:"p-onboard", name:"Onboarding", state:"Pouring", live:true, fill:0},
- {id:"p-numbers", name:"The Numbers",state:"Soon",    live:false},
- {id:"p-pipeline",name:"Pipeline",   state:"Soon",    live:false},
- {id:"p-brand",   name:"Brand",      state:"Soon",    live:false},
+ {id:"p-numbers", name:"The Numbers",state:"Live",    live:true, fill:40},
+ {id:"p-pipeline",name:"Pipeline",   state:"Pouring", live:true, fill:100},
+ {id:"p-brand",   name:"Brand",      state:"Live",    live:true, fill:65},
  {id:"p-plan",    name:"The Plan",   state:"Building",live:true, fill:35},
  {id:"p-scope",   name:"Scope",      state:"Ready",   live:true, fill:100}
 ];
@@ -813,9 +1035,9 @@ var PAGES=[
  {id:"p-onboard",label:"Onboarding",tag:"Start"},
  {id:"p-miguel",label:"Track · Miguel"},
  {id:"p-karsen",label:"Track · Karsen"},
- {id:"p-numbers",label:"The Numbers",tag:"Soon",soon:true},
- {id:"p-pipeline",label:"Pipeline",tag:"Soon",soon:true},
- {id:"p-brand",label:"Brand & Content",tag:"Soon",soon:true},
+ {id:"p-numbers",label:"The Numbers"},
+ {id:"p-pipeline",label:"Pipeline",tag:"Live"},
+ {id:"p-brand",label:"Brand & Content"},
  {id:"p-plan",label:"The Plan"},
  {id:"p-scope",label:"Scope"}
 ];
@@ -1341,6 +1563,7 @@ async function enter(p){
   paintTaps();
   paintTaskFilters(); renderTasks(); renderSaved();
   render("miguel"); render("karsen");
+  await loadGrowth();
 }
 document.getElementById("whoami").addEventListener("click",async function(){
   if(sb) await sb.auth.signOut();
@@ -1673,10 +1896,527 @@ function dump(w){
   URL.revokeObjectURL(a.href);
 }
 
+/* ═════════════════════════════════════════════════════════
+   GROWTH ENGINE — pipeline, content, assets, metrics, plan
+   Everything below reads and writes Supabase directly, so
+   whatever the scheduled agents write overnight is on screen
+   the next time anyone opens the page.
+   ═════════════════════════════════════════════════════════ */
+
+var LEADS=[], CONTENT=[], ASSETS=[], METRICSD=[], CAMPS=[];
+
+var STAGES=[
+  {k:"sourced",  l:"Sourced"},
+  {k:"contacted",l:"Contacted"},
+  {k:"engaged",  l:"Engaged"},
+  {k:"proposal", l:"Proposal"},
+  {k:"handoff",  l:"Handoff"},
+  {k:"won",      l:"Won"},
+  {k:"lost",     l:"Lost"}
+];
+var STAGEL={};STAGES.forEach(function(s){STAGEL[s.k]=s.l});STAGEL.dormant="Dormant";
+var HOUSEL={downtown:"Downtown Crossing",eastie:"East Boston",cityhall:"City Hall Plaza",any:"Any house",all:"All houses"};
+var CHANL={instagram:"Instagram",gbp:"Google Business",email:"Email",facebook:"Facebook",site:"Website"};
+var ETYPEL={happy_hour:"Happy hour",pdr:"Private room",buyout:"Full buyout",other:"Event"};
+
+function money(n){
+  if(n===null||n===undefined||n==="") return "—";
+  n=Number(n); if(!isFinite(n)) return "—";
+  return "$"+n.toLocaleString("en-US",{maximumFractionDigits:0});
+}
+function dstr(d){
+  if(!d) return "—";
+  var x=new Date(d); if(isNaN(x)) return "—";
+  return x.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
+}
+function q(id){ return document.getElementById(id); }
+
+/* ───────── LEADS ───────── */
+async function loadLeads(){
+  LEADS=[];
+  if(!ONLINE||!ME) return;
+  var r=await sb.from("leads").select("*").order("updated_at",{ascending:false});
+  if(!r.error) LEADS=r.data||[];
+}
+
+var LFILTER={stage:"",cat:"",house:"",qq:""};
+
+function leadsShown(){
+  return LEADS.filter(function(l){
+    if(LFILTER.stage && l.stage!==LFILTER.stage) return false;
+    if(LFILTER.cat   && l.category!==LFILTER.cat) return false;
+    if(LFILTER.house && l.house!==LFILTER.house) return false;
+    if(LFILTER.qq){
+      var hay=((l.company||"")+" "+(l.contact_name||"")+" "+(l.notes||"")+" "+(l.next_action||"")).toLowerCase();
+      if(hay.indexOf(LFILTER.qq)===-1) return false;
+    }
+    return true;
+  });
+}
+
+function renderFunnel(){
+  var box=q("funnel"); if(!box) return;
+  box.innerHTML=STAGES.map(function(s){
+    var rows=LEADS.filter(function(l){return l.stage===s.k});
+    var val=rows.reduce(function(a,l){return a+Number(l.actual_value||l.est_value||0)},0);
+    return '<button class="fstage" data-stage="'+s.k+'" aria-pressed="'+(LFILTER.stage===s.k)+'">'+
+      '<span class="fn">'+rows.length+'</span>'+
+      '<span class="fl">'+s.l+'</span>'+
+      '<span class="fv">'+(val?money(val):"—")+'</span></button>';
+  }).join("");
+}
+
+function renderLeads(){
+  var box=q("leadlist"); if(!box) return;
+  var rows=leadsShown();
+  if(!rows.length){
+    box.innerHTML='<div class="emptybox">'+(LEADS.length
+      ? "No leads match those filters."
+      : "Nothing here yet. Every company I talk to lands on this list from the first hello — press <b>New lead</b>, or wait for the overnight prospecting to fill it.")+'</div>';
+    return;
+  }
+  box.innerHTML=rows.map(function(l){
+    var overdue = l.next_action_on && new Date(l.next_action_on) < today12();
+    var cls = l.stage==="won"?"won":l.stage==="lost"?"lost":overdue?"hot":"";
+    return '<div class="lrow" data-lead="'+l.id+'">'+
+      '<div><div class="lco">'+esc(l.company)+'</div><div class="lme">'+
+        (l.contact_name?esc(l.contact_name)+(l.contact_role?" · "+esc(l.contact_role):"")+" · ":"")+
+        (HOUSEL[l.house]||l.house||"")+
+        (l.next_action?' · <b>next:</b> '+esc(l.next_action)+(l.next_action_on?" ("+dstr(l.next_action_on)+")":""):"")+
+      '</div></div>'+
+      '<span class="pill '+cls+'">'+(STAGEL[l.stage]||l.stage)+'</span>'+
+      (l.event_type?'<span class="pill">'+(ETYPEL[l.event_type]||l.event_type)+'</span>':'<span></span>')+
+      '<span class="lval">'+money(l.actual_value||l.est_value)+'</span>'+
+    '</div>';
+  }).join("");
+}
+
+async function openLead(id){
+  var l=LEADS.filter(function(x){return x.id===id})[0]; if(!l) return;
+  var ev=[];
+  var r=await sb.from("lead_events").select("*").eq("lead_id",id).order("at",{ascending:false});
+  if(!r.error) ev=r.data||[];
+  var body=q("ldbody");
+  body.innerHTML=
+    '<div class="eyebrow">'+(HOUSEL[l.house]||"")+' · '+(l.category||"")+'</div>'+
+    '<h2 style="font-size:27px;margin:6px 0 4px">'+esc(l.company)+'</h2>'+
+    '<p class="mini" style="margin-bottom:15px">'+
+      (l.contact_name?esc(l.contact_name):"No contact named yet")+
+      (l.contact_role?" · "+esc(l.contact_role):"")+
+      (l.email?' · <a href="mailto:'+esc(l.email)+'">'+esc(l.email)+'</a>':"")+
+      (l.phone?" · "+esc(l.phone):"")+'</p>'+
+    '<div class="grid3" style="margin-bottom:14px">'+
+      '<div class="card"><div class="eyebrow">Stage</div><div style="font-size:19px;font-weight:600;margin-top:5px">'+(STAGEL[l.stage]||l.stage)+'</div></div>'+
+      '<div class="card"><div class="eyebrow">Value</div><div style="font-size:19px;font-weight:600;margin-top:5px;color:var(--gold)">'+money(l.actual_value||l.est_value)+'</div></div>'+
+      '<div class="card"><div class="eyebrow">First contact</div><div style="font-size:14px;margin-top:7px">'+
+        (l.first_contact_at?dstr(l.first_contact_at)+'<br><span class="mini">by '+esc(nameOf(l.first_contact_by)||"—")+'</span>':'<span class="mini">Not contacted yet</span>')+
+      '</div></div>'+
+    '</div>'+
+    (l.notes?'<div class="card" style="margin-bottom:14px"><div class="eyebrow">Notes</div><p style="margin-top:7px;font-size:14px;white-space:pre-wrap">'+esc(l.notes)+'</p></div>':"")+
+    '<div class="rowact" style="margin-bottom:8px">'+
+      '<input id="ld-note" placeholder="Log what just happened…" style="flex:1;min-width:190px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;background:var(--card)">'+
+      '<select id="ld-kind" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;background:var(--card)">'+
+        '<option value="note">Note</option><option value="email">Email</option><option value="call">Call</option><option value="visit">Visit</option></select>'+
+      '<button class="mbtn" data-lognote="'+l.id+'">Log it</button>'+
+      '<button class="mbtn solid" data-editlead="'+l.id+'">Edit</button>'+
+    '</div>'+
+    '<div class="eyebrow" style="margin-top:18px">History — append only</div>'+
+    '<div class="tline">'+(ev.length?ev.map(function(e){
+      return '<div class="ev"><b>'+esc(e.kind.replace("_"," "))+'</b>'+
+        (e.detail?esc(e.detail)+" ":"")+
+        (e.from_stage?esc(STAGEL[e.from_stage]||e.from_stage)+" → "+esc(STAGEL[e.to_stage]||e.to_stage)+" ":"")+
+        '<span>'+new Date(e.at).toLocaleString()+(e.actor?" · "+esc(nameOf(e.actor)||""):"")+'</span></div>';
+    }).join(""):'<div class="ev"><span>Nothing logged yet.</span></div>')+'</div>';
+  q("ldraw").classList.add("on");
+}
+
+function fillForm(l){
+  var v={company:"",contact_name:"",contact_role:"",email:"",phone:"",category:"office",house:"any",
+    stage:"sourced",event_type:"",headcount:"",est_value:"",actual_value:"",event_date:"",
+    next_action:"",next_action_on:"",notes:""};
+  if(l) Object.keys(v).forEach(function(k){ if(l[k]!==null&&l[k]!==undefined) v[k]=l[k]; });
+  q("f-company").value=v.company; q("f-contact").value=v.contact_name; q("f-role").value=v.contact_role;
+  q("f-email").value=v.email; q("f-phone").value=v.phone; q("f-cat").value=v.category;
+  q("f-house").value=v.house; q("f-stage").value=v.stage; q("f-etype").value=v.event_type||"";
+  q("f-head").value=v.headcount; q("f-est").value=v.est_value; q("f-actual").value=v.actual_value;
+  q("f-edate").value=v.event_date||""; q("f-next").value=v.next_action;
+  q("f-nexton").value=v.next_action_on||""; q("f-notes").value=v.notes;
+  q("lmsg").textContent="";
+  q("lftitle").textContent=l?"Edit lead":"New lead";
+  q("lform").dataset.editing=l?l.id:"";
+  q("lform").classList.add("on");
+}
+
+async function saveLead(){
+  var msg=q("lmsg");
+  if(!ONLINE||!ME){ msg.textContent="Not connected."; return; }
+  var company=q("f-company").value.trim();
+  if(!company){ msg.textContent="A company name is required."; return; }
+  var mine=idOf(ME.slug);
+  var stage=q("f-stage").value;
+  var row={
+    company:company,
+    contact_name:q("f-contact").value.trim()||null,
+    contact_role:q("f-role").value.trim()||null,
+    email:q("f-email").value.trim()||null,
+    phone:q("f-phone").value.trim()||null,
+    category:q("f-cat").value, house:q("f-house").value, stage:stage,
+    event_type:q("f-etype").value||null,
+    headcount:q("f-head").value?Number(q("f-head").value):null,
+    est_value:q("f-est").value?Number(q("f-est").value):null,
+    actual_value:q("f-actual").value?Number(q("f-actual").value):null,
+    event_date:q("f-edate").value||null,
+    next_action:q("f-next").value.trim()||null,
+    next_action_on:q("f-nexton").value||null,
+    notes:q("f-notes").value.trim()||null
+  };
+  var editing=q("lform").dataset.editing;
+  var prev=editing?LEADS.filter(function(x){return x.id===editing})[0]:null;
+  var contacted=["contacted","engaged","proposal","handoff","won"].indexOf(stage)!==-1;
+
+  // The first-contact stamp is written once, the first time a lead leaves "sourced".
+  // It is never rewritten afterwards — that is what makes it evidence.
+  if(contacted && (!prev || !prev.first_contact_at)){
+    row.first_contact_at=new Date().toISOString();
+    row.first_contact_by=mine;
+  }
+  if(stage==="handoff" && (!prev || !prev.handoff_at)) row.handoff_at=new Date().toISOString();
+  if(stage==="won"     && (!prev || !prev.closed_at))  row.closed_at=new Date().toISOString();
+  if(stage==="lost"    && (!prev || !prev.closed_at))  row.closed_at=new Date().toISOString();
+
+  msg.textContent="Saving…";
+  var r;
+  if(editing){ r=await sb.from("leads").update(row).eq("id",editing); }
+  else { row.sourced_by=mine; row.source="outbound"; r=await sb.from("leads").insert(row); }
+  if(r.error){ msg.textContent="Couldn't save: "+r.error.message; return; }
+  q("lform").classList.remove("on");
+  await loadLeads(); renderFunnel(); renderLeads(); renderLedger();
+}
+
+function renderLedger(){
+  var t=q("ledger"); if(!t) return;
+  var mine=idOf(ME?ME.slug:"");
+  var won=LEADS.filter(function(l){
+    if(l.stage!=="won") return false;
+    if(!l.first_contact_by||!l.first_contact_at) return false;
+    if(mine && l.first_contact_by!==mine) return false;
+    if(l.closed_at){                                   // booked within 12 months of first contact
+      var gap=(new Date(l.closed_at)-new Date(l.first_contact_at))/86400000;
+      if(gap>365) return false;
+    }
+    return true;
+  });
+  if(!won.length){
+    t.innerHTML='<tr><td><div class="emptybox" style="border:none;padding:14px 0;text-align:left">'+
+      'No commissionable events yet. Anything won that started with a first hello logged here shows up in this table automatically, with the 5% already worked out.'+
+      '</div></td></tr>';
+    return;
+  }
+  var tot=0, com=0;
+  var body=won.map(function(l){
+    var v=Number(l.actual_value||l.est_value||0);
+    var c=v*(Number(l.commission_pct||5)/100);
+    tot+=v; com+=c;
+    return '<tr><td>'+esc(l.company)+'<div class="mini">first hello '+dstr(l.first_contact_at)+'</div></td>'+
+      '<td>'+(ETYPEL[l.event_type]||"Event")+'<div class="mini">'+dstr(l.event_date)+'</div></td>'+
+      '<td class="num">'+money(v)+'</td><td class="num">'+money(c)+'</td></tr>';
+  }).join("");
+  t.innerHTML='<tr><th>Account</th><th>Event</th><th style="text-align:right">F&amp;B value</th><th style="text-align:right">5%</th></tr>'+body+
+    '<tr><td colspan="2"><b>Total</b></td><td class="num">'+money(tot)+'</td><td class="num">'+money(com)+'</td></tr>';
+}
+
+function exportLeads(){
+  var cols=["company","contact_name","contact_role","email","phone","category","house","stage",
+    "event_type","headcount","est_value","actual_value","event_date","first_contact_at",
+    "next_action","next_action_on","notes"];
+  var out=[cols.join(",")];
+  leadsShown().forEach(function(l){
+    out.push(cols.map(function(c){
+      var v=l[c]==null?"":String(l[c]).replace(/"/g,'""');
+      return /[",\n]/.test(v)?'"'+v+'"':v;
+    }).join(","));
+  });
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([out.join("\n")],{type:"text/csv"}));
+  a.download="democracy-pipeline-"+new Date().toISOString().slice(0,10)+".csv"; a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* ───────── CONTENT ───────── */
+async function loadContent(){
+  CONTENT=[];
+  if(!ONLINE||!ME) return;
+  var r=await sb.from("content").select("*").order("scheduled_for",{nullsFirst:false});
+  if(!r.error) CONTENT=r.data||[];
+}
+var CFILTER={status:"",channel:"",house:""};
+function renderCstats(){
+  var box=q("cstats"); if(!box) return;
+  var wk=weekStart(0), nx=weekStart(1);
+  var thisWeek=CONTENT.filter(function(c){
+    if(!c.scheduled_for) return false;
+    var d=new Date(c.scheduled_for+"T12:00:00");
+    return d>=wk && d<nx;
+  });
+  var pending=CONTENT.filter(function(c){return c.status==="idea"||c.status==="draft"});
+  var pub=CONTENT.filter(function(c){return c.status==="published"});
+  var byAgent=CONTENT.filter(function(c){return c.origin==="agent"&&c.status==="idea"});
+  var cards=[
+    ["Scheduled this week",thisWeek.length,"target is 3–4"],
+    ["Waiting on approval",pending.length,"ideas and drafts"],
+    ["Published all time",pub.length,"across every house"],
+    ["Drafted overnight",byAgent.length,"by the content agent"]
+  ];
+  box.innerHTML=cards.map(function(c){
+    return '<div class="card"><div class="eyebrow">'+c[0]+'</div>'+
+      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:29px;font-weight:700;color:var(--blue-ink);margin-top:6px">'+c[1]+'</div>'+
+      '<div class="mini">'+c[2]+'</div></div>';
+  }).join("");
+}
+function renderContent(){
+  var box=q("callist"); if(!box) return;
+  var rows=CONTENT.filter(function(c){
+    if(CFILTER.status && c.status!==CFILTER.status) return false;
+    if(CFILTER.channel && c.channel!==CFILTER.channel) return false;
+    if(CFILTER.house && c.house!==CFILTER.house) return false;
+    return true;
+  });
+  if(!rows.length){
+    box.innerHTML='<div class="emptybox">Nothing on the calendar yet. Press <b>New post</b>, or let the overnight content agent draft the week and approve what you like.</div>';
+    return;
+  }
+  box.innerHTML=rows.map(function(c){
+    return '<div class="calrow" data-content="'+c.id+'">'+
+      '<span class="cd">'+(c.scheduled_for?dstr(c.scheduled_for).replace(", "+new Date(c.scheduled_for).getFullYear(),""):"unscheduled")+'</span>'+
+      '<div><b style="font-size:14.5px">'+esc(c.title)+'</b>'+
+        (c.campaign?' <span class="pill">'+esc(c.campaign)+'</span>':"")+
+        (c.origin==="agent"?' <span class="pill mine">agent</span>':"")+
+        (c.hook?'<div class="mini">'+esc(c.hook)+'</div>':"")+'</div>'+
+      '<span class="pill">'+(CHANL[c.channel]||c.channel)+'</span>'+
+      '<span class="pill '+(c.status==="published"?"won":c.status==="killed"?"lost":"")+'">'+esc(c.status)+'</span>'+
+    '</div>';
+  }).join("");
+}
+function fillCForm(c){
+  var v={title:"",channel:"instagram",house:"all",campaign:"",pillar:"",status:"idea",
+    scheduled_for:"",hook:"",caption:"",asset_url:""};
+  if(c) Object.keys(v).forEach(function(k){ if(c[k]!==null&&c[k]!==undefined) v[k]=c[k]; });
+  q("c-title").value=v.title; q("c-channel").value=v.channel; q("c-house").value=v.house;
+  q("c-campaign").value=v.campaign; q("c-pillar").value=v.pillar; q("c-status").value=v.status;
+  q("c-sched").value=v.scheduled_for||""; q("c-hook").value=v.hook;
+  q("c-caption").value=v.caption; q("c-asset").value=v.asset_url;
+  q("cmsg").textContent="";
+  q("cftitle").textContent=c?"Edit post":"New post";
+  q("cform").dataset.editing=c?c.id:"";
+  q("cform").classList.add("on");
+}
+async function saveContent(){
+  var msg=q("cmsg");
+  if(!ONLINE||!ME){ msg.textContent="Not connected."; return; }
+  if(!ME.is_admin){ msg.textContent="Only the admin edits the calendar."; return; }
+  var title=q("c-title").value.trim();
+  if(!title){ msg.textContent="Give it a title."; return; }
+  var row={title:title,channel:q("c-channel").value,house:q("c-house").value,
+    campaign:q("c-campaign").value.trim()||null,pillar:q("c-pillar").value.trim()||null,
+    status:q("c-status").value,scheduled_for:q("c-sched").value||null,
+    hook:q("c-hook").value.trim()||null,caption:q("c-caption").value.trim()||null,
+    asset_url:q("c-asset").value.trim()||null};
+  if(row.status==="published") row.published_at=new Date().toISOString();
+  var editing=q("cform").dataset.editing;
+  msg.textContent="Saving…";
+  var r;
+  if(editing) r=await sb.from("content").update(row).eq("id",editing);
+  else { row.created_by=idOf(ME.slug); row.origin="nico"; r=await sb.from("content").insert(row); }
+  if(r.error){ msg.textContent="Couldn't save: "+r.error.message; return; }
+  q("cform").classList.remove("on");
+  await loadContent(); renderCstats(); renderContent();
+}
+
+/* ───────── ASSETS ───────── */
+async function loadAssets(){
+  ASSETS=[];
+  if(!ONLINE||!ME) return;
+  var r=await sb.from("assets").select("*").order("created_at",{ascending:false});
+  if(!r.error) ASSETS=r.data||[];
+}
+function renderAssets(){
+  var box=q("assetlist"); if(!box) return;
+  if(!ASSETS.length){
+    box.innerHTML='<div class="emptybox">No assets linked yet. Miguel\'s track asks where the graphic materials live — whatever comes back goes here so it is never hunted for again.</div>';
+    return;
+  }
+  box.innerHTML=ASSETS.map(function(a){
+    return '<div class="calrow"><span class="cd">'+esc(a.kind||"file")+'</span>'+
+      '<div><b style="font-size:14.5px">'+esc(a.name)+'</b>'+
+        (a.url?'<div class="mini"><a href="'+esc(a.url)+'" target="_blank" rel="noopener">'+esc(a.url).slice(0,64)+'…</a></div>':"")+'</div>'+
+      '<span class="pill">'+(HOUSEL[a.house]||"all")+'</span>'+
+      '<span class="mini">'+dstr(a.created_at)+'</span></div>';
+  }).join("");
+}
+
+/* ───────── METRICS / BASELINE ───────── */
+async function loadMetrics(){
+  METRICSD=[];
+  if(!ONLINE||!ME) return;
+  var r=await sb.from("metrics").select("*").order("period_end",{ascending:false});
+  if(!r.error) METRICSD=r.data||[];
+}
+var MKEYL={ig_followers:"Instagram followers",ig_reach:"Instagram reach",gbp_views:"Google profile views",
+  gbp_actions:"Google profile actions",reviews:"Reviews",rating:"Average rating",covers:"Covers",
+  revenue:"Revenue",events_booked:"Events booked",pipeline_value:"Pipeline value",email_list:"Email list"};
+function renderBaseline(){
+  var box=q("baseline"); if(!box) return;
+  var samp=document.querySelector("#p-numbers .samp");
+  if(!METRICSD.length){
+    box.innerHTML='<div class="emptybox">No real measurement recorded yet. The baseline lands August 28 — every number captured from that day forward is stored here with the date range it covers and where it came from, so nothing is ever a guess twice.</div>';
+    if(samp) samp.style.display="";
+    return;
+  }
+  if(samp) samp.style.display="none";
+  // newest reading per house+key
+  var seen={}, latest=[];
+  METRICSD.forEach(function(m){
+    var k=m.house+"|"+m.metric_key;
+    if(!seen[k]){ seen[k]=1; latest.push(m); }
+  });
+  box.innerHTML='<div class="grid4">'+latest.map(function(m){
+    var prior=METRICSD.filter(function(x){
+      return x.house===m.house && x.metric_key===m.metric_key && x.period_end<m.period_end; })[0];
+    var delta = prior ? ((Number(m.value)-Number(prior.value))/(Number(prior.value)||1))*100 : null;
+    return '<div class="card"><div class="eyebrow">'+(MKEYL[m.metric_key]||esc(m.metric_key))+'</div>'+
+      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:26px;font-weight:700;color:var(--blue-ink);margin-top:6px">'+
+        Number(m.value).toLocaleString("en-US")+'</div>'+
+      '<div class="mini">'+(HOUSEL[m.house]||m.house)+' · '+dstr(m.period_end)+
+        (delta!==null?' · <b style="color:'+(delta>=0?"var(--ok)":"var(--clay-deep)")+'">'+(delta>=0?"+":"")+delta.toFixed(0)+'%</b>':"")+
+        (m.source?' · '+esc(m.source):"")+'</div></div>';
+  }).join("")+'</div>';
+}
+
+/* ───────── CAMPAIGNS ───────── */
+async function loadCamps(){
+  CAMPS=[];
+  if(!ONLINE||!ME) return;
+  var r=await sb.from("campaigns").select("*").order("starts_on");
+  if(!r.error) CAMPS=r.data||[];
+}
+function renderCamps(){
+  var box=q("camplist"); if(!box) return;
+  if(!CAMPS.length){
+    box.innerHTML='<div class="emptybox">The twelve-month campaign calendar lands with the annual plan on August 28.</div>';
+    return;
+  }
+  var now=today12();
+  box.innerHTML=CAMPS.map(function(c){
+    var live = c.starts_on && c.ends_on && new Date(c.starts_on)<=now && new Date(c.ends_on)>=now;
+    var done = c.ends_on && new Date(c.ends_on)<now;
+    return '<div class="calrow">'+
+      '<span class="cd">'+(c.starts_on?dstr(c.starts_on).replace(/, \d{4}/,""):"—")+'</span>'+
+      '<div><b style="font-size:14.5px">'+esc(c.name)+'</b>'+
+        (c.big_idea?'<div class="mini">'+esc(c.big_idea)+'</div>':"")+'</div>'+
+      '<span class="pill">'+esc(c.phase||"—")+'</span>'+
+      '<span class="pill '+(live?"hot":done?"won":"")+'">'+(live?"live":done?"done":esc(c.status||"planned"))+'</span>'+
+    '</div>';
+  }).join("");
+}
+
+/* ───────── WIRING ───────── */
+function bindGrowth(){
+  var f=q("funnel");
+  if(f) f.addEventListener("click",function(e){
+    var b=e.target.closest("[data-stage]"); if(!b) return;
+    LFILTER.stage = LFILTER.stage===b.dataset.stage ? "" : b.dataset.stage;
+    renderFunnel(); renderLeads();
+  });
+  var ll=q("leadlist");
+  if(ll) ll.addEventListener("click",function(e){
+    var r=e.target.closest("[data-lead]"); if(r) openLead(r.dataset.lead);
+  });
+  ["lq","lcat","lhouse"].forEach(function(id){
+    var el=q(id); if(!el) return;
+    el.addEventListener("input",function(){
+      LFILTER.qq=(q("lq").value||"").toLowerCase().trim();
+      LFILTER.cat=q("lcat").value; LFILTER.house=q("lhouse").value;
+      renderLeads();
+    });
+  });
+  if(q("lnew"))    q("lnew").addEventListener("click",function(){ fillForm(null) });
+  if(q("lsave"))   q("lsave").addEventListener("click",saveLead);
+  if(q("lcancel")) q("lcancel").addEventListener("click",function(){ q("lform").classList.remove("on") });
+  if(q("lfclose")) q("lfclose").addEventListener("click",function(){ q("lform").classList.remove("on") });
+  if(q("ldclose")) q("ldclose").addEventListener("click",function(){ q("ldraw").classList.remove("on") });
+  if(q("lexport")) q("lexport").addEventListener("click",exportLeads);
+
+  document.addEventListener("click",async function(e){
+    var ed=e.target.closest("[data-editlead]");
+    if(ed){ q("ldraw").classList.remove("on");
+      fillForm(LEADS.filter(function(x){return x.id===ed.dataset.editlead})[0]); return; }
+    var lg=e.target.closest("[data-lognote]");
+    if(lg){
+      var txt=q("ld-note").value.trim(); if(!txt) return;
+      await sb.from("lead_events").insert({lead_id:lg.dataset.lognote,actor:idOf(ME.slug),
+        kind:q("ld-kind").value,detail:txt});
+      openLead(lg.dataset.lognote); return;
+    }
+    var cc=e.target.closest("[data-content]");
+    if(cc && ME && ME.is_admin){
+      fillCForm(CONTENT.filter(function(x){return x.id===cc.dataset.content})[0]); return;
+    }
+  });
+
+  ["cst","cch","chouse"].forEach(function(id){
+    var el=q(id); if(!el) return;
+    el.addEventListener("change",function(){
+      CFILTER.status=q("cst").value; CFILTER.channel=q("cch").value; CFILTER.house=q("chouse").value;
+      renderContent();
+    });
+  });
+  if(q("cnew"))    q("cnew").addEventListener("click",function(){ fillCForm(null) });
+  if(q("csave"))   q("csave").addEventListener("click",saveContent);
+  if(q("ccancel")) q("ccancel").addEventListener("click",function(){ q("cform").classList.remove("on") });
+  if(q("cfclose")) q("cfclose").addEventListener("click",function(){ q("cform").classList.remove("on") });
+
+  if(q("aadd")) q("aadd").addEventListener("click",async function(){
+    var n=q("a-name").value.trim(); if(!n||!ONLINE||!ME) return;
+    await sb.from("assets").insert({name:n,url:q("a-url").value.trim()||null,
+      kind:q("a-kind").value,uploaded_by:idOf(ME.slug)});
+    q("a-name").value=""; q("a-url").value="";
+    await loadAssets(); renderAssets();
+  });
+
+  if(q("mtadd")) q("mtadd").addEventListener("click",async function(){
+    if(!ONLINE||!ME||!ME.is_admin) return;
+    var k=q("mt-key").value.trim(), v=q("mt-val").value;
+    if(!k||v==="") return;
+    await sb.from("metrics").upsert({metric_key:k,value:Number(v),house:q("mt-house").value,
+      period_start:q("mt-start").value||new Date().toISOString().slice(0,10),
+      period_end:q("mt-end").value||new Date().toISOString().slice(0,10),
+      source:"manual"},{onConflict:"house,metric_key,period_start,period_end"});
+    q("mt-key").value=""; q("mt-val").value="";
+    await loadMetrics(); renderBaseline();
+  });
+
+  document.querySelectorAll(".drawer").forEach(function(d){
+    d.addEventListener("click",function(e){ if(e.target===d) d.classList.remove("on") });
+  });
+  document.addEventListener("keydown",function(e){
+    if(e.key==="Escape") document.querySelectorAll(".drawer.on").forEach(function(d){d.classList.remove("on")});
+  });
+}
+
+async function loadGrowth(){
+  await Promise.all([loadLeads(),loadContent(),loadAssets(),loadMetrics(),loadCamps()]);
+  renderFunnel(); renderLeads(); renderLedger();
+  renderCstats(); renderContent(); renderAssets();
+  renderBaseline(); renderCamps();
+  var ma=q("metricadd"); if(ma) ma.style.display=(ME&&ME.is_admin)?"flex":"none";
+  var cn=q("cnew"); if(cn) cn.style.display=(ME&&ME.is_admin)?"":"none";
+}
+
 /* ═════ BOOT ═════ */
 (function(){
   render("miguel"); render("karsen");
   draw(); paintTaps();
+  bindGrowth();
   boot();
 })();
 })();
