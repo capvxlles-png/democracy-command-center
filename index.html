@@ -497,6 +497,27 @@ textarea.tall{min-height:132px}
 .touchrow:hover b{color:var(--blue-deep)}
 .touchrow b{font-size:14.5px}
 @media(max-width:640px){.touchrow{grid-template-columns:1fr;gap:4px}}
+
+.find{border-left:3px solid var(--line);padding:2px 0 2px 16px;margin-bottom:16px}
+.find h4{font-size:15.5px;font-weight:700;color:var(--blue-ink);margin-bottom:6px;line-height:1.35}
+.find p{font-size:14.5px;line-height:1.62;color:var(--ink);max-width:78ch}
+.find.good{border-left-color:var(--ok)}
+.find.bad{border-left-color:var(--clay-deep)}
+.find.warn{border-left-color:var(--amber)}
+.find.move{border-left-color:var(--blue)}
+.srcs{margin-top:8px;display:flex;flex-wrap:wrap;gap:7px}
+.srcs a{font-size:11px;letter-spacing:.03em;padding:3px 9px;border-radius:100px;background:var(--blue-wash);
+  color:var(--blue-deep);text-decoration:none;border:1px solid transparent}
+.srcs a:hover{border-color:var(--blue);text-decoration:underline}
+.statbig{font-family:'JetBrains Mono',monospace;font-size:29px;font-weight:700;color:var(--blue-ink);margin:7px 0 3px;line-height:1}
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.ledger.cmp{min-width:900px}
+.ledger.cmp td{vertical-align:top;font-size:13.5px;line-height:1.45}
+.ledger.cmp td.no{color:var(--clay-deep)}
+.ledger.cmp td.yes{color:var(--ok);font-weight:600}
+.ledger.cmp td.mid{color:var(--gold)}
+.ledger.cmp tr.us{background:var(--blue-wash)}
+.ledger.cmp tr.us td{font-weight:600}
 </style>
 </head>
 <body>
@@ -1000,6 +1021,17 @@ textarea.tall{min-height:132px}
   </div>
 </div></div>
 
+<section class="page" id="p-market">
+  <div class="phead">
+    <div class="eyebrow">Tap 05 · The Market</div>
+    <h2>What we're actually up against.</h2>
+    <p class="lede">Read against the three engines, because that is how the work is organised: what we already have going for us, what is genuinely broken, and what we do about it. Every number below carries its source and its date. Anything that could not be verified says so instead of guessing — including the places where checking the facts contradicted our own pitch.</p>
+  </div>
+
+  <div class="segs enginetabs" id="mkttabs"></div>
+  <div id="mktpanel"></div>
+</section>
+
 <!-- ═════ PLAN ═════ -->
 <section class="page" id="p-plan">
   <div class="phead">
@@ -1160,6 +1192,7 @@ var TAPS=[
  {id:"p-numbers", name:"The Numbers",state:"Live",    live:true, fill:40},
  {id:"p-pipeline",name:"Pipeline",   state:"Pouring", live:true, fill:100},
  {id:"p-brand",   name:"Brand",      state:"Live",    live:true, fill:65},
+ {id:"p-market",  name:"The Market", state:"Live",    live:true, fill:80},
  {id:"p-plan",    name:"The Plan",   state:"Building",live:true, fill:35},
  {id:"p-scope",   name:"Scope",      state:"Ready",   live:true, fill:100}
 ];
@@ -1173,6 +1206,7 @@ var PAGES=[
  {id:"p-numbers",label:"The Numbers"},
  {id:"p-pipeline",label:"Pipeline",tag:"Live"},
  {id:"p-brand",label:"Brand & Content"},
+ {id:"p-market",label:"The Market",tag:"New"},
  {id:"p-plan",label:"The Plan"}
 ];
 var nav=document.getElementById("nav");
@@ -2829,6 +2863,314 @@ function bindCapacity(){
   });
 }
 
+var MKT = {
+
+market: {
+  stats: [
+    {l:"Temple Place, June 19", v:"12,900", s:"visitors in one day &mdash; the highest in seven years, during the World Cup watch party",
+     src:[{l:"Boston.com, 13 Aug 2026",u:"https://www.boston.com/news/local-news/2026/08/13/downtown-boston-was-buzzing-in-july-heres-a-look-at-the-numbers/"}]},
+    {l:"Monday downtown", v:"&minus;30%", s:"below 2019. Roughly 4.2M people in 2025 against 5.9M in 2019",
+     src:[{l:"Boston Globe, 18 May 2026",u:"https://www.bostonglobe.com/2026/05/18/business/downtown-boston-mondays-return-office/"}]},
+    {l:"Weekend vs weekday", v:"104% / 75%", s:"weekends are past 2019. Weekday daytime is still a quarter short",
+     src:[{l:"Boston.com, 13 Aug 2026",u:"https://www.boston.com/news/local-news/2026/08/13/downtown-boston-was-buzzing-in-july-heres-a-look-at-the-numbers/"}]},
+    {l:"Downtown workers", v:"~253,000", s:"based in Downtown Boston &mdash; but ~20,000 fewer than five years ago",
+     src:[{l:"Mass. Taxpayers Foundation, Feb 2025",u:"https://www.masstaxpayers.org/sites/default/files/publications/2025-02/MTF%20EBP%20Technical%20Appendix%20(February%202025).pdf"}]}
+  ],
+  changed: [
+    {t:"Trillium lost the Greenway, and replaced it with three downtown footprints",
+     b:"Their beer garden on the Rose Kennedy Greenway ran from 2017 to 2025 and did not return &mdash; the Conservancy ran an RFP and picked Boston Harbor Distillery instead. Trillium answered by opening an indoor winter garden at Winthrop Center, an outdoor one at The Connector on Devonshire Street, and a waterfront garden at the Boston Harbor Hotel. The after-office corridor we are aiming at is being contested right now, this year, by the best-funded craft brand in the city.",
+     src:[{l:"Boston.com, 21 Jan 2026",u:"https://www.boston.com/food/food-news/2026/01/21/trilliums-greenway-beer-garden-not-returning/"},{l:"Boston.com, 26 May 2026",u:"https://www.boston.com/food/food-news/2026/05/26/trillium-opens-new-waterfront-beer-garden-at-boston-harbor-hotel/"},{l:"Boston Restaurants, Jun 2026",u:"https://bostonrestaurants.blogspot.com/2026/06/trillium-opens-outdoor-beer-garden-at.html"}]},
+    {t:"Night Shift is no longer independent, and its own website has not caught up",
+     b:"Hendler Family Brewing, the parent of Jack's Abby, acquired Night Shift in October 2024. The founders left. The stated reason was a shared back office and, in Sam Hendler's words, a shared sales staff the brands could not afford alone. Their private events now funnel through a five-venue parent portfolio. Their own Our Story page still describes the company as &ldquo;a proudly independent business&rdquo; owned 80% by three co-founders &mdash; nearly two years after the sale.",
+     src:[{l:"Boston.com, 8 Oct 2024",u:"https://www.boston.com/culture/beer/2024/10/08/jacks-abby-acquires-night-shift-brewing/"},{l:"Brewbound",u:"https://www.brewbound.com/news/jacks-abby-and-night-shift-leaders-discuss-deal-and-future-for-combined-company/"},{l:"Night Shift, Our Story",u:"https://nightshiftbrewing.com/our-story/"}]},
+    {t:"Downtown nights are opening up, on a pilot",
+     b:"The city ran social districts on Temple Place and Union&ndash;Marshall from 8 June to 31 July 2026, with a 3am last call and Temple Place closed to cars. Downtown spending rose 15% over a two-week window, some match days by 45%. One nearby bar reported +20% the day the district opened. Whether these return in 2027 has not been announced &mdash; they were authorised as time-limited pilots.",
+     src:[{l:"City of Boston, 18 Jun 2026",u:"https://www.boston.gov/news/two-downtown-social-districts-announced-through-july-31"},{l:"Boston Globe, 17 Jul 2026",u:"https://www.bostonglobe.com/2026/07/17/storylab/boston-world-cup-data/"}]}
+  ],
+  wrong: [
+    {t:"We are near the Freedom Trail. We are not on it.",
+     b:"The Trail runs down Tremont past the Granary Burying Ground, then turns onto School Street toward the Old Corner Bookstore. It never enters Downtown Crossing. Temple Place runs from Tremont to Washington, so the Trail crosses the top of our street and then goes the other way. Say &ldquo;a block off the Freedom Trail&rdquo; and it holds. Say &ldquo;on the Freedom Trail&rdquo; and the first person with a map takes the rest of the deck less seriously.",
+     src:[{l:"Freedom Trail route",u:"https://freetoursbyfoot.com/the-freedom-trail/"},{l:"Freedom Trail Foundation",u:"https://www.thefreedomtrail.org/about"}]},
+    {t:"There is no single Boston office vacancy rate",
+     b:"For the same quarter, Cushman &amp; Wakefield reported 19.0% with negative absorption while JLL reported 23.6% with positive absorption &mdash; and JLL noted the first back-to-back quarters of positive absorption since 2019. They measure different inventory. Never put an unattributed vacancy figure on a slide.",
+     src:[{l:"Cushman &amp; Wakefield, Q2 2026",u:"https://www.cushmanwakefield.com/en/united-states/insights/us-marketbeats/boston-marketbeats/office"},{l:"JLL, Q2 2026",u:"https://www.jll.com/en-us/insights/market-dynamics/boston-office"}]},
+    {t:"Summer 2026 is not a normal year to plan against",
+     b:"The World Cup pushed Massachusetts beer sales up 12% and on-premise sales up 27% in the tournament's first fortnight &mdash; the biggest jump of eleven US host markets. But hotel occupancy was flat year on year, and the economist Axios spoke to reads the effect as displacing normal summer visitors rather than adding new ones. Any 2027 projection anchored to this summer will overshoot. Better we say that first than get caught by it later.",
+     src:[{l:"Boston Globe, 17 Jul 2026",u:"https://www.bostonglobe.com/2026/07/17/storylab/boston-world-cup-data/"},{l:"Axios Boston, 9 Jul 2026",u:"https://www.axios.com/local/boston/2026/07/09/world-cup-boston-economic-impact"}]}
+  ],
+  season: [
+    {t:"The trough is November to March, not the summer",
+     b:"Boston hotel occupancy runs 81&ndash;88% from April to October, drops to about 75% in March and November, and falls to roughly 61% in January, February and December. The hard problem is not filling a July Saturday &mdash; it is the winter. And the only lever that works on a winter is corporate business pre-sold the previous summer, which makes June to September the highest-leverage block of the whole year.",
+     src:[{l:"Pinnacle Advisory via NEREJ, 21 Feb 2025",u:"https://nerej.com/boston-cambridge-lodging-market-year-end-review-and-2025-outlook-by-rachel-roginsky"}]},
+    {t:"December is a weak hotel month and a strong party month &mdash; do not confuse them",
+     b:"That 61% December occupancy measures people sleeping in hotels. Holiday parties are booked by local companies whose staff sleep at home. The two numbers describe different businesses. Nobody should talk us out of December using a hotel statistic.",
+     src:[]},
+    {t:"The beer garden closes 27 October",
+     b:"Democracy's City Hall Plaza season runs 20 April to 27 October 2026. As of today that is roughly ten weeks left &mdash; and anything we intend to sell, shoot or capture there has a hard deadline, not a soft one.",
+     src:[{l:"Democracy Brewing",u:"https://www.democracybrewing.com/locations/cityhall"}]}
+  ]
+},
+
+e1: {
+  intro:"One brand across three houses, and whether anyone can tell the story apart from the beer. The competitive bar here is lower than it looks &mdash; which is the opportunity.",
+  good: [
+    {t:"We own the only authentic ownership story left in Boston beer",
+     b:"Night Shift belongs to the state's largest craft brewer and its founders are gone. Trillium is a founder-and-farm narrative with 300 staff. Lamplighter holds the community-and-values lane, but from Cambridge. In Boston proper, worker-owned is ours alone &mdash; and it is not a nice sentiment, it is the thing that sells to an HR or DEI budget holder choosing between four rooms that all serve good beer.",
+     src:[{l:"Boston Globe, 8 Oct 2024",u:"https://www.bostonglobe.com/2024/10/08/business/beer-industry-craft-consolidation/"}]},
+    {t:"The content bar in this category is on the floor",
+     b:"Lamplighter's entire news blog holds three posts: a barista job description from August 2026, a community post from January, and a barback listing from November 2024. No competitor is winning on owned content. Consistency alone would put us ahead, which is a rare thing to be able to say.",
+     src:[{l:"Lamplighter news",u:"https://lamplighterbrewing.com/blogs/news"}]},
+    {t:"There is a documented, repeatable PR pattern to copy",
+     b:"Night Shift's May 2026 beer-garden season launch landed the same day across Boston.com, Patch, Mass Brew Bros and several radio sites, tied to four product launches. That is one announcement engineered for syndication rather than four separate posts &mdash; and it costs nothing but planning.",
+     src:[{l:"Boston.com, 12 May 2026",u:"https://www.boston.com/food/food-news/2026/05/12/night-shift-outdoor-beer-gardens-2026-season/"},{l:"Patch",u:"https://patch.com/massachusetts/boston/3-popular-boston-beer-gardens-return-new-beers-food-trucks"}]}
+  ],
+  bad: [
+    {t:"Three houses, one voice &mdash; while the competition runs a handle per venue",
+     b:"Trillium operates a master account plus location accounts. Night Shift does the same. Each house gets its own audience, its own neighbourhood, its own reason to follow. We speak for Downtown, Eastie and City Hall through a single feed, which means the Eastie regular and the City Hall tourist get each other's content and neither gets theirs.",
+     src:[{l:"@trilliumcanton",u:"https://www.instagram.com/trilliumcanton/?hl=en"},{l:"@nightshiftlovejoy",u:"https://www.instagram.com/nightshiftlovejoy/"}]},
+    {t:"The brand guidelines cover two houses. There are three.",
+     b:"The December 2024 guidelines are better than most places this size have, and they name Downtown and East Boston. City Hall Plaza is not in them, and if Maine opens it will not be either. A guideline that does not cover the estate stops being a guideline and becomes a suggestion."},
+    {t:"We cannot benchmark anyone's posting cadence, including our own",
+     b:"Instagram blocks automated collection, so no competitor follower count or posting frequency in this benchmark is verified &mdash; and we have no baseline of our own either. Until the 28 August measurement lands, every claim about social performance in this category, ours or theirs, is a story."}
+  ],
+  move: [
+    {t:"Split the houses, keep one voice",
+     b:"A handle per house, one visual system, one editorial line. The system is what makes three feeds cheaper to run than one, not more expensive &mdash; the same shoot feeds all three, cut differently."},
+    {t:"Extend the guidelines to the full estate before anything else is designed",
+     b:"City Hall Plaza and any future house get added to the December 2024 document. This is a Q1 deliverable and it gates the rest of the visual work."},
+    {t:"Engineer one syndicated announcement per season instead of posting into the void",
+     b:"Oktoberfest, the holiday calendar, the spring garden opening. One package, one date, sent to Boston.com, Eater, Universal Hub, Patch and Mass Brew Bros at once, per the Night Shift pattern."}
+  ],
+  gap: ["Which brands feel related to Democracy","What is untouchable in the identity","What would you change tomorrow","Where the graphic materials live","The correct list of houses, written properly"]
+},
+
+e2: {
+  intro:"Whether the city can find us without being told. This is the engine where the research both confirmed our thesis and caught us overselling.",
+  stats: [
+    {l:"Monday attendance", v:"&minus;30%", s:"vs 2019 &mdash; the dead-Monday thesis in the deck is now sourced, not asserted",
+     src:[{l:"Boston Globe, 18 May 2026",u:"https://www.bostonglobe.com/2026/05/18/business/downtown-boston-mondays-return-office/"}]},
+    {l:"Monday vs Tue&ndash;Thu", v:"84%", s:"down from 88% in 2019. Big employers concentrate mandates midweek",
+     src:[{l:"Boston Globe, 18 May 2026",u:"https://www.bostonglobe.com/2026/05/18/business/downtown-boston-mondays-return-office/"}]},
+    {l:"July foot traffic", v:"+10.5%", s:"year on year in the Downtown Crossing measurement zone &mdash; which contains our front door",
+     src:[{l:"Boston.com, 13 Aug 2026",u:"https://www.boston.com/news/local-news/2026/08/13/downtown-boston-was-buzzing-in-july-heres-a-look-at-the-numbers/"}]},
+    {l:"Fidelity, September", v:"6,000+", s:"staff return to Summer Street full-time from September 2026, up from two weeks in four",
+     src:[{l:"Boston Globe, 12 May 2026",u:"https://www.bostonglobe.com/2026/05/12/business/return-to-office-fidelity-boston/"}]}
+  ],
+  good: [
+    {t:"The dead-hours argument holds, and now it has a citation",
+     b:"Monday downtown is 30% below 2019 by the Downtown Boston Alliance's own count, and Monday has slipped from 88% to 84% of the midweek average. Every large employer concentrates its mandate on Tuesday, Wednesday or Thursday. The case for buying traffic into specific dead hours is not a hunch any more."},
+    {t:"Our own street just posted a seven-year record",
+     b:"Temple Place recorded 12,900 visitors on 19 June 2026, its highest single day in seven years. The Placer.ai zone the Alliance measures runs from Essex to Court and from the Common to Congress &mdash; 35 Temple Place sits inside it. That is a measurement we get for free, forever.",
+     src:[{l:"Boston.com, 13 Aug 2026",u:"https://www.boston.com/news/local-news/2026/08/13/downtown-boston-was-buzzing-in-july-heres-a-look-at-the-numbers/"}]},
+    {t:"6,000 Fidelity staff arrive at walking distance in September",
+     b:"Fidelity moves to full-time in-person at its Summer Street headquarters from September 2026. TD Bank is doubling its Boston space on the same logic. This is not a forecast; it is a dated event a short walk from the Downtown house, and it lands in the same month as Oktoberfest.",
+     src:[{l:"Boston Globe, 12 May 2026",u:"https://www.bostonglobe.com/2026/05/12/business/return-to-office-fidelity-boston/"},{l:"Boston.com, 12 May 2026",u:"https://www.boston.com/news/business/2026/05/12/td-bank-doubles-its-space-amid-return-to-office-push/"}]}
+  ],
+  bad: [
+    {t:"The office worker is the weaker half of the story we have been telling",
+     b:"Weekday daytime traffic is at 75% of 2019 and has been stuck there. Weekends are at 104% &mdash; fully recovered and past baseline. We have been selling the Financial District office crowd as the core audience when the data says the recovered audience is the weekend and visitor crowd. Both are real. Only one is growing.",
+     src:[{l:"Boston.com, 13 Aug 2026",u:"https://www.boston.com/news/local-news/2026/08/13/downtown-boston-was-buzzing-in-july-heres-a-look-at-the-numbers/"}]},
+    {t:"We are not on the Freedom Trail, and the deck implies we are",
+     b:"The Trail turns onto School Street and never reaches Downtown Crossing. This has to be corrected in the language before it is corrected for us, in a room, by someone with a phone."},
+    {t:"We have no keyword landing pages and are missing from the free B2B directories",
+     b:"Dorchester runs four segment pages with URLs built from search queries &mdash; /corporate-event-space-boston/ is literally what an office manager types. Harpoon and Sam Adams are both listed on Meet Boston, the city's official convention bureau, tagged &ldquo;Group Friendly.&rdquo; That listing costs nothing. We are on none of it.",
+     src:[{l:"Dorchester corporate page",u:"https://www.dorchesterbrewing.com/corporate-event-space-boston/"},{l:"Meet Boston &mdash; Harpoon",u:"https://www.meetboston.com/listing/harpoon-brewery/14131/"}]}
+  ],
+  move: [
+    {t:"Three landing pages, written once, working forever",
+     b:"Corporate events, private parties, non-profit and community &mdash; each on a keyword URL, each pointed at the right house. This is the cheapest, highest-return item in the entire benchmark, and having three locations means three sets of local pages instead of one."},
+    {t:"Claim the free channels this month",
+     b:"Meet Boston, Cvent, EventUp, PartySlate. These are where corporate planners search and they cost nothing but the hours to fill them in properly."},
+    {t:"Rebuild all three Google profiles before Oktoberfest, not after",
+     b:"Hours, photos, the event space named explicitly, the September programming posted. The tourist searching &ldquo;brewery near me&rdquo; at 2pm and the office manager searching &ldquo;private event space Boston&rdquo; both land here first."}
+  ],
+  gap: ["Which accounts exist and how to get into them","Which days and hours are slowest, house by house","What customer and email lists exist","A Democracy email address for outbound"]
+},
+
+e3: {
+  intro:"The engine that pays for the other two. Two findings here are uncomfortable and both belong in the annual plan rather than in a drawer.",
+  stats: [
+    {l:"Holiday booking window", v:"4&ndash;6 mo", s:"ahead. 86% of companies want December &mdash; so this season is being sold now, in August",
+     src:[{l:"SPIN, Apr 2026",u:"https://wearespin.com/how-far-in-advance-should-you-book-office-party-venues/"},{l:"ezCater, Nov 2025",u:"https://www.ezcater.com/lunchrush/office/7-workplace-holiday-party-trends-to-watch/"}]},
+    {l:"Prefer an afternoon", v:"53%", s:"of employees want noon&ndash;5pm, not an evening &mdash; which is exactly our shift",
+     src:[{l:"ezCater, Nov 2025",u:"https://www.ezcater.com/lunchrush/office/7-workplace-holiday-party-trends-to-watch/"}]},
+    {l:"Average spend", v:"$59", s:"per head nationally, against $75&ndash;150 for a basic Boston venue event",
+     src:[{l:"ezCater, Nov 2025",u:"https://www.ezcater.com/lunchrush/office/7-workplace-holiday-party-trends-to-watch/"},{l:"Swank Events Boston, Mar 2026",u:"https://swankeventsboston.com/blog/boston-corporate-event-budget-2026/"}]},
+    {l:"Budgets rising", v:"51%", s:"of decision-makers are increasing spend; F&amp;B budgets up 31% year on year",
+     src:[{l:"ezCater, Nov 2025",u:"https://www.ezcater.com/lunchrush/office/7-workplace-holiday-party-trends-to-watch/"}]}
+  ],
+  good: [
+    {t:"Not one competitor publishes a price, a response time, or in most cases a name",
+     b:"Trillium names Emily Grant with a direct line &mdash; and that is the entire list. Night Shift gives a generic inbox. Lamplighter gives an events@ address. Harpoon and Dorchester route through forms. None of the five publishes an event price on a live page, and none promises a response time. A published rate card, a named human and a 24-hour promise would make Democracy the only brewery in Boston a planner can qualify in under a minute.",
+     src:[{l:"Trillium private events",u:"https://trilliumbrewing.com/pages/private-events"},{l:"Night Shift private events",u:"https://nightshiftbrewing.com/events/private-events/"}]},
+    {t:"The afternoon preference matches the shift we already agreed",
+     b:"53% of employees want a party between noon and 5pm and 56% prefer a Friday. The role runs Tuesday to Thursday 10&ndash;2 and Friday 11&ndash;2. The most in-demand event slot in the market is the one we are already staffed for &mdash; no evening coverage required, no scope renegotiation."},
+    {t:"The mid-size downtown room is genuinely unclaimed",
+     b:"Harpoon plays at 400 standing, Trillium at 500 in Canton, Night Shift at 480 at Lovejoy. Lamplighter owns the 40&ndash;160 band but sits in Cambridge. Nobody in Boston proper is purpose-built for the 60&ndash;100 person corporate room, which is exactly what the PDR is.",
+     src:[{l:"Harpoon private events",u:"https://harpoonbrewery.com/private-events/"},{l:"Lamplighter private events",u:"https://lamplighterbrewing.com/pages/private-events"}]}
+  ],
+  bad: [
+    {t:"Harpoon already has Boston Common and Emerson College",
+     b:"They run a beer garden on the UnCommon Corner from May to late October, free admission, in partnership with the City Parks Department and Emerson College's UnCommon Stage &mdash; a 5,000 sq ft performance area with WERS broadcasting from it. Our City Hall Plaza positioning and our Emerson partnership plank both walk straight into an incumbent that holds the City relationship and the college relationship. This needs a differentiated answer in the plan, not silence.",
+     src:[{l:"Harpoon Beer Garden",u:"https://harpoonbrewery.com/harpoon-beer-garden/"},{l:"City of Boston",u:"https://www.boston.gov/news/mayor-wu-announces-return-uncommon-corner-and-beer-garden-boston-common"}]},
+    {t:"We are late for a meaningful share of December 2026",
+     b:"Parties of 100+ book four to six months ahead. Working backwards from December, the season is being bought right now and will be substantially closed by early October. The engagement started 10 August. We should say plainly that this year's holiday revenue is partly gone, sell hard into whatever is left, and put the real weight behind Q1 offsites and the 2027 calendar. A plan that promises a full holiday close is a plan that will miss.",
+     src:[{l:"SPIN, Apr 2026",u:"https://wearespin.com/how-far-in-advance-should-you-book-office-party-venues/"}]},
+    {t:"The 150&ndash;250 buyout is the wrong door to knock on first",
+     b:"It is the biggest number in the deck and the slowest to close. Harpoon takes group hospitality bookings at the beer garden from just 15 guests &mdash; a deliberately low floor that catches team outings the big rooms turn away. The fastest revenue is the 15&ndash;30 person team afternoon that closes in one email and seeds the relationship that becomes a buyout next December.",
+     src:[{l:"Harpoon Beer Garden",u:"https://harpoonbrewery.com/harpoon-beer-garden/"}]},
+    {t:"The Oktoberfest calendar is crowded and we are launching into the busiest fortnight",
+     b:"Sam Adams runs Octoberfest mid-to-late September at both venues, deliberately ahead of Harpoon. Harpoon's is in its 35th year, tickets from $35, the first weekend of October. Dorchester runs multiple free-entry weekends monetised through litre pours and paid stein-hoisting. Our 19 September launch lands on top of Sam Adams. As of today nobody has announced 2026 dates &mdash; the announcement window is open right now, which is an argument for moving first, not for moving later.",
+     src:[{l:"Harpoon Octoberfest 2025",u:"https://runsignup.com/TicketEvent/HarpoonOctoberfest2025"},{l:"Meet Boston Oktoberfest guide",u:"https://www.meetboston.com/blog/post/oktoberfest/"},{l:"Dorchester Oktoberfest",u:"https://www.dorchesterbrewing.com/events/event/oktoberfest-weekend-1/"}]}
+  ],
+  move: [
+    {t:"Publish the rate card. This week.",
+     b:"Capacities, a per-head number or a minimum spend, a guest floor, a named contact and a 24-hour response promise. It costs nothing but a decision and it is the only differentiator on this list that no competitor can copy without abandoning their own model."},
+    {t:"Lead with a 15-guest product, not a 250-guest one",
+     b:"A fixed-price, fixed-duration afternoon package &mdash; guided tasting plus food at a set per-head rate &mdash; needs no new infrastructure and is sellable next month. Sam Adams sells exactly this at $85 a head in the Bier Keller."},
+    {t:"Work Fidelity and TD Bank in September, by name",
+     b:"6,000 people returning full-time to Summer Street from September is the single most specific prospecting fact in this benchmark. It has a date, an address and a headcount."},
+    {t:"Answer Harpoon on the Common rather than pretending it is not there",
+     b:"They have scale, free admission and the City. We have worker ownership, three neighbourhoods and a room a company can close the door on. Compete on the private room and the values story, not on the public lawn."},
+    {t:"Sell the season we can still win",
+     b:"Q1 offsites, which nobody markets because January is assumed dead, and the 2027 holiday calendar, which opens for booking in spring. Both are unclaimed because everyone is fighting over December."}
+  ],
+  gap: ["Karsen's existing strategy and who is already in play","How private events really work today","The real average value of an event","What a prospect should never be promised","Which neighbours and institutions to get close to"]
+},
+
+table: {
+  html:
+    '<p class="lede" style="margin-bottom:18px">Everything a competitor publishes about selling a room, in one place. This is a sales tool, not an appendix &mdash; it is what tells us where to price and what to promise. Every figure was read off a live page or a listing on 18 August 2026.</p>'+
+    '<div class="tblwrap"><table class="ledger cmp">'+
+    '<tr><th>Brewery</th><th>Biggest room</th><th>Mid-size room</th><th>Price published?</th><th>Named contact</th><th>Response promise</th></tr>'+
+    '<tr><td><b>Harpoon</b><div class="mini">Seaport + Boston Common</div></td><td>400 standing / 180 seated<div class="mini">full beer hall buyout</div></td><td>70 standing / 40 seated<div class="mini">semi-private beer room</div></td><td class="no">No &mdash; minimum spend, 30-guest floor</td><td class="no">No</td><td class="no">None published</td></tr>'+
+    '<tr><td><b>Trillium</b><div class="mini">Fort Point, Fenway, Canton</div></td><td>500<div class="mini">Canton main dining room</div></td><td>100 reception / 72 seated<div class="mini">Fort Point private dining</div></td><td class="no">No &mdash; F&amp;B minimum undisclosed. $500/hr overtime, 3-hr minimum</td><td class="yes">Yes &mdash; Emily Grant, direct line</td><td class="no">None published</td></tr>'+
+    '<tr><td><b>Night Shift</b><div class="mini">Hendler Family Brewing</div></td><td>480 standing / 300 seated<div class="mini">Lovejoy Wharf buyout</div></td><td>90 standing / 50 seated<div class="mini">brewery view &amp; back bar</div></td><td class="no">No &mdash; every tier reads &ldquo;quote request&rdquo;</td><td class="no">No &mdash; generic inbox</td><td class="yes">24 hours, via TripleSeat</td></tr>'+
+    '<tr><td><b>Sam Adams</b><div class="mini">Downtown + Jamaica Plain</div></td><td>150 standing / 90 seated<div class="mini">downtown beer hall, 100-guest minimum</div></td><td>100 standing / 75 seated<div class="mini">JP taproom</div></td><td class="yes">Partly &mdash; JP rates listed: $5,000/3hrs taproom, $85pp Bier Keller</td><td class="no">No</td><td class="no">None published</td></tr>'+
+    '<tr><td><b>Lamplighter</b><div class="mini">Cambridge &times;2</div></td><td>160<div class="mini">CX upstairs</div></td><td>40&ndash;100<div class="mini">Broadway back taproom</div></td><td class="yes">Partly &mdash; fee structure published, 20% event fee, amounts not</td><td class="no">No &mdash; events@ inbox</td><td class="no">None published</td></tr>'+
+    '<tr><td><b>Dorchester</b></td><td>200 standing / 100 seated</td><td>100<div class="mini">private tap room</div></td><td class="no">No &mdash; third-party lists &ldquo;from $4,500&rdquo;</td><td class="mid">Named in reviews only &mdash; &ldquo;Joy&rdquo;</td><td class="no">None published</td></tr>'+
+    '<tr class="us"><td><b>Democracy</b><div class="mini">what we could publish</div></td><td>150&ndash;250<div class="mini">full buyout</div></td><td><b>60&ndash;70</b><div class="mini">the private room &mdash; the unclaimed band</div></td><td class="yes">Yes &mdash; if we decide to</td><td class="yes">Yes</td><td class="yes">24 hours</td></tr>'+
+    '</table></div>'+
+    '<div class="find move" style="margin-top:18px"><h4>What the table is really saying</h4>'+
+    '<p>Six competitors, and the buyer cannot get a number from any of them without a phone call. The two who publish anything &mdash; Sam Adams in Jamaica Plain and Lamplighter &mdash; publish it partially and off their main page. Only one names a human being. Only one promises a response time, and that is a CRM default rather than a decision.<br><br>'+
+    'This is not an oversight by six well-run businesses. It is an industry habit, and habits are the cheapest thing in the world to break. The last row is not aspiration &mdash; every cell in it is a choice we can make this week at no cost.</p></div>'+
+    '<div class="find warn" style="margin-top:14px"><h4>Read these figures with care</h4>'+
+    '<p>Capacities come from live venue pages and from Tripleseat, EventUp and Cvent listings. The Sam Adams Jamaica Plain rates come from Zola, sourced from the venue &mdash; their own pages block automated reading, so confirm by phone before quoting them anywhere that matters. The Lamplighter 2023 rate sheet still sitting on their public S3 bucket ($500&ndash;1,000 minimums, $500&ndash;1,250 rental) is three years old and is not in this table for that reason.</p></div>'
+},
+
+plan: {
+  intro:"Six decisions this benchmark forces on the annual plan. Each one is a thing to write down on 28 August, not a thing to think about.",
+  items: [
+    {t:"1 &middot; The audience splits in two, and we say so",
+     b:"The office worker is real but flat at 75% of 2019. The weekend and visitor crowd is at 104% and growing. The plan needs both, weighted honestly: B2B prospecting Tuesday to Thursday into offices that are actually staffed, and the paid consumer calendar built around Thursday to Saturday. No Monday launches, ever &mdash; the data is unambiguous."},
+    {t:"2 &middot; Oktoberfest moves first or accepts second place",
+     b:"Nobody has announced 2026 dates. Sam Adams historically goes mid-to-late September, Harpoon the first weekend of October. Our 19 September launch sits on top of Sam Adams. Either we announce before them and own the front of the season, or we deliberately take a different weekend. What we do not do is announce at the same time and hope."},
+    {t:"3 &middot; December 2026 gets a downgraded, honest target",
+     b:"Four-to-six month lead times mean a real share of this year's holiday season is already sold. The plan states that plainly, targets what is genuinely still winnable, and puts the weight on Q1 offsites and the 2027 calendar. Setting an ambitious December number now would be setting up the Day-90 review to fail."},
+    {t:"4 &middot; The entry product is 15&ndash;30 people, not 250",
+     b:"A fixed-price afternoon package, sellable in one email, is the first commercial deliverable. The buyout is the second-year outcome of the relationship that package starts."},
+    {t:"5 &middot; Publishing the number is the strategy, not a detail",
+     b:"Rate card, capacities, named contact, 24-hour promise. Six competitors hide all four. This is the positioning, and it belongs on a landing page built from the search query, per the Dorchester model."},
+    {t:"6 &middot; The City Hall Plaza story needs rewriting before it is presented",
+     b:"Harpoon holds Boston Common with the City and Emerson. Our answer is not a bigger lawn &mdash; it is the private room, three neighbourhoods, and being the only place in Boston where the money stays with the people pouring the beer. The selection criteria the City used for a previous Plaza vendor were social impact, diversity and inclusivity, and local ingredients. A worker-owned co-op scores well on that rubric, and that is worth pressing.",
+     src:[{l:"City of Boston &mdash; Plaza beer garden precedent",u:"https://www.boston.gov/news/temporary-beer-garden-now-open-city-hall-plaza"}]}
+  ]
+}
+
+};
+
+/* ───────── THE MARKET · benchmark, read against the three engines ───────── */
+
+var MKTTAB="market";
+
+function srcLinks(list){
+  if(!list||!list.length) return "";
+  return '<div class="srcs">'+list.map(function(s){
+    return '<a href="'+s.u+'" target="_blank" rel="noopener">'+esc(s.l)+'</a>';
+  }).join("")+'</div>';
+}
+
+function findingList(items,kind){
+  return items.map(function(f){
+    return '<div class="find '+kind+'">'+
+      '<h4>'+f.t+'</h4>'+
+      '<p>'+f.b+'</p>'+
+      srcLinks(f.src)+
+    '</div>';
+  }).join("");
+}
+
+function statRow(stats){
+  return '<div class="grid4" style="margin-bottom:20px">'+stats.map(function(s){
+    return '<div class="card" style="background:linear-gradient(165deg,var(--blue-wash),var(--card))">'+
+      '<div class="eyebrow">'+s.l+'</div>'+
+      '<div class="statbig">'+s.v+'</div>'+
+      '<div class="mini">'+s.s+'</div>'+
+      (s.src?srcLinks(s.src):"")+'</div>';
+  }).join("")+'</div>';
+}
+
+function enginePanel(e){
+  return '<p class="lede" style="margin-bottom:18px">'+e.intro+'</p>'+
+    (e.stats?statRow(e.stats):"")+
+    '<div class="eyebrow" style="margin:22px 0 10px">✅ What we have going for us</div>'+
+    findingList(e.good,"good")+
+    '<div class="eyebrow" style="margin:24px 0 10px">⚠️ What is actually broken</div>'+
+    findingList(e.bad,"bad")+
+    '<div class="eyebrow" style="margin:24px 0 10px">→ What we do about it</div>'+
+    findingList(e.move,"move")+
+    (e.gap?'<div class="waitbox" style="margin-top:22px"><div class="eyebrow" style="margin-bottom:8px">Still unanswered — waiting on the onboarding tracks</div>'+
+      '<div class="waitchips">'+e.gap.map(function(g){return '<span>'+g+'</span>'}).join("")+'</div>'+
+      '<p class="mini" style="margin-top:9px">Each of these is a question in Miguel\'s or Karsen\'s track. This section gets rewritten, not padded, when the answers land.</p></div>':"");
+}
+
+function renderMktTabs(){
+  var box=q("mkttabs"); if(!box) return;
+  var tabs=[
+    {k:"market",l:"The market"},
+    {k:"e1",l:"🎨 Brand & Content"},
+    {k:"e2",l:"📍 Digital & Traffic"},
+    {k:"e3",l:"🤝 Sales & Partnerships"},
+    {k:"table",l:"How they sell events"},
+    {k:"plan",l:"What it means for the plan"}
+  ];
+  box.innerHTML=tabs.map(function(t){
+    return '<button class="seg" data-mkt="'+t.k+'" aria-pressed="'+(MKTTAB===t.k)+'">'+t.l+'</button>';
+  }).join("");
+}
+
+function renderMktPanel(){
+  var box=q("mktpanel"); if(!box||typeof MKT==="undefined") return;
+  var d=MKT[MKTTAB];
+  if(!d){ box.innerHTML=""; return; }
+  if(MKTTAB==="market"){
+    box.innerHTML=statRow(d.stats)+
+      '<div class="eyebrow" style="margin:24px 0 10px">What changed in the last twelve months</div>'+
+      findingList(d.changed,"bad")+
+      '<div class="eyebrow" style="margin:24px 0 10px">Claims of ours that did not survive checking</div>'+
+      findingList(d.wrong,"warn")+
+      '<div class="eyebrow" style="margin:24px 0 10px">The shape of the year</div>'+
+      findingList(d.season,"move");
+    return;
+  }
+  if(MKTTAB==="table"){ box.innerHTML=d.html; return; }
+  if(MKTTAB==="plan"){
+    box.innerHTML='<p class="lede" style="margin-bottom:18px">'+d.intro+'</p>'+
+      findingList(d.items,"move");
+    return;
+  }
+  box.innerHTML=enginePanel(d);
+}
+
+function bindMarket(){
+  document.addEventListener("click",function(ev){
+    var t=ev.target.closest("[data-mkt]"); if(!t) return;
+    MKTTAB=t.dataset.mkt;
+    renderMktTabs(); renderMktPanel();
+    q("mkttabs").scrollIntoView({behavior:"smooth",block:"start"});
+  });
+}
+
 /* ───────── WIRING ───────── */
 function bindGrowth(){
   var f=q("funnel");
@@ -3054,6 +3396,8 @@ function bindAgreement(){
   bindTaskCollapse();
   bindCapacity();
   bindEngines();
+  bindMarket();
+  renderMktTabs(); renderMktPanel();
   boot();
 })();
 })();
