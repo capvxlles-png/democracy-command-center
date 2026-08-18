@@ -477,6 +477,15 @@ textarea.tall{min-height:132px}
 .wkrow .wkbar i{display:block;height:100%;background:var(--blue);border-radius:100px}
 .wkrow .wkn{font-family:'JetBrains Mono',monospace;color:var(--ink-soft);text-align:right}
 .wkrow .wkd{font-family:'JetBrains Mono',monospace;color:var(--ink-soft)}
+
+.enginetabs{margin-bottom:20px;flex-wrap:wrap}
+.enginetabs .seg{font-size:13.5px;padding:9px 16px}
+.engjump{border:1px solid var(--line);transition:.16s}
+.engjump:hover{border-color:var(--amber);transform:translateY(-2px)}
+.waitbox{border:1px dashed var(--line);border-radius:12px;padding:17px 19px;background:rgba(255,255,255,.42)}
+.waitchips{display:flex;flex-wrap:wrap;gap:7px}
+.waitchips span{font-size:12px;padding:5px 12px;border-radius:100px;background:var(--paper);
+  border:1px solid var(--line);color:var(--ink-soft)}
 </style>
 </head>
 <body>
@@ -706,9 +715,9 @@ textarea.tall{min-height:132px}
     <p class="lede">One page, three engines. Some of these the dashboard works out for itself from the work as it happens — those are live from today. The rest get recorded as they're measured, starting with the baseline on August 28. Nothing here is a guess, and nothing here is flattering by accident.</p>
   </div>
 
-  <div class="grid4" id="headline" style="margin-bottom:20px"></div>
+  <div class="segs enginetabs" id="engtabs"></div>
 
-  <div id="engines"></div>
+  <div id="engpanel"></div>
 
   <div class="card" id="baselinecard" style="margin:20px 0 18px">
     <div class="eyebrow" style="margin-bottom:11px">Recorded measurements</div>
@@ -728,7 +737,7 @@ textarea.tall{min-height:132px}
   <div class="phead" style="margin-top:8px">
     <div class="eyebrow">Explore</div>
     <h2 style="font-size:26px">Build the view you actually want.</h2>
-    <p class="lede">Pick a metric, pick how to see it, pick how to slice it. Save it with a name and it's waiting for you next time — yours only, nobody else's view changes.</p>
+    <p class="lede">The series below follow whichever engine is selected above. Pick a metric, pick how to see it, pick how to slice it — then save the view with a name and it's waiting for you next time. Yours only; nobody else's view changes.</p>
   </div>
 
   <div class="samp">
@@ -2467,68 +2476,28 @@ function recordedFor(key){
   return {value:Number(cur.value), when:cur.period_end, source:cur.source, delta:delta};
 }
 
-function metricCard(m){
-  var val, sub, cls="";
-  if(m.live){
-    val = liveVal(m.live);
-    val = m.money ? money(val) : Number(val||0).toLocaleString("en-US");
-    sub = '<span class="pill mine" style="font-size:9.5px">live</span>';
-  } else {
-    var r=recordedFor(m.k);
-    if(!r){
-      val="—";
-      sub='<span class="mini">not measured yet</span>';
-      cls=" style=\"opacity:.62\"";
-    } else {
-      val = m.money ? money(r.value)
-          : Number(r.value).toLocaleString("en-US",{maximumFractionDigits:2})+(m.unit||"");
-      sub = '<span class="mini">'+dstr(r.when)+(r.source?" · "+esc(r.source):"")+
-        (r.delta!==null?' · <b style="color:'+(r.delta>=0?"var(--ok)":"var(--clay-deep)")+'">'+
-          (r.delta>=0?"+":"")+r.delta.toFixed(0)+'%</b>':"")+'</span>';
-    }
-  }
-  return '<div class="card"'+cls+'><div class="eyebrow">'+m.l+'</div>'+
-    '<div style="font-family:\'JetBrains Mono\',monospace;font-size:25px;font-weight:700;color:var(--blue-ink);margin:6px 0 4px;line-height:1.1">'+val+'</div>'+
-    sub+'</div>';
-}
-
-function renderHeadline(){
-  var box=q("headline"); if(!box) return;
-  var cards=[
-    {l:"Open pipeline",   v:money(liveVal("pipeval")), s:"estimated F&amp;B value in play"},
-    {l:"First contacts",  v:String(liveVal("contacts")), s:"organisations I have spoken to"},
-    {l:"Posts published", v:String(liveVal("posts")), s:"across every house"},
-    {l:"Events won",      v:String(liveVal("won")), s:"booked and confirmed"}
-  ];
-  box.innerHTML=cards.map(function(c){
-    return '<div class="card" style="background:linear-gradient(165deg,var(--blue-wash),var(--card))">'+
-      '<div class="eyebrow">'+c.l+'</div>'+
-      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:31px;font-weight:700;color:var(--blue-ink);margin:7px 0 3px;line-height:1">'+c.v+'</div>'+
-      '<div class="mini">'+c.s+'</div></div>';
-  }).join("");
-}
-
-function renderEngines(){
-  var box=q("engines"); if(!box) return;
-  box.innerHTML=ENGINES.map(function(e){
-    return '<div style="margin-bottom:20px">'+
-      '<div class="eyebrow" style="margin-bottom:10px">'+e.icon+' Engine '+e.n+' · '+e.name+
-        ' <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink-soft)">— '+e.note+'</span></div>'+
-      '<div class="grid4">'+e.metrics.map(metricCard).join("")+'</div></div>';
-  }).join("");
-}
-
 function renderBaseline(){
   var box=q("baseline"); if(!box) return;
   if(!METRICSD.length){
     box.innerHTML='<div class="emptybox">Nothing recorded by hand yet. The baseline lands August 28 — from then on every reading is stored with the date range it covers and where it came from, so a number is never guessed twice.</div>';
     return;
   }
+  // only the readings that belong to the engine you're looking at
+  var scope=null;
+  if(ENGTAB!=="overview"){
+    var e=engineById(ENGTAB);
+    if(e) scope=e.metrics.map(function(m){return m.k});
+  }
   var seen={}, latest=[];
   METRICSD.forEach(function(m){
+    if(scope && scope.indexOf(m.metric_key)===-1) return;
     var k=m.house+"|"+m.metric_key;
     if(!seen[k]){ seen[k]=1; latest.push(m); }
   });
+  if(!latest.length){
+    box.innerHTML='<div class="emptybox">No readings recorded for this engine yet.</div>';
+    return;
+  }
   box.innerHTML='<table class="ledger"><tr><th>Metric</th><th>House</th><th>Period</th><th>Source</th><th style="text-align:right">Value</th></tr>'+
     latest.map(function(m){
       var lab=RECORDABLE.filter(function(r){return r.k===m.metric_key})[0];
@@ -2547,8 +2516,126 @@ function fillMetricKeys(){
   }).join("");
 }
 
+
+
+/* ───────── THE NUMBERS · tabbed by engine ───────── */
+
+var ENGTAB="overview";
+
+// which explorer series belongs to which engine
+var EXPLORER_BY_ENGINE={
+  "01":["reach"],
+  "02":["maps","visits","list"],
+  "03":["inquiries","revenue"]
+};
+
+function engineById(n){ return ENGINES.filter(function(e){return e.n===n})[0]; }
+
+function metricState(m){
+  if(m.live) return {has:true, val:(m.money?money(liveVal(m.live)):Number(liveVal(m.live)||0).toLocaleString("en-US")), tag:"live"};
+  var r=recordedFor(m.k);
+  if(!r) return {has:false};
+  return {has:true, tag:"recorded",
+    val:(m.money?money(r.value):Number(r.value).toLocaleString("en-US",{maximumFractionDigits:2})+(m.unit||"")),
+    sub:dstr(r.when)+(r.source?" · "+esc(r.source):""), delta:r.delta};
+}
+
+function bigCard(m){
+  var s=metricState(m);
+  return '<div class="card"><div class="eyebrow">'+m.l+'</div>'+
+    '<div style="font-family:\'JetBrains Mono\',monospace;font-size:27px;font-weight:700;color:var(--blue-ink);margin:7px 0 5px;line-height:1.1">'+s.val+'</div>'+
+    (s.tag==="live"
+      ? '<span class="pill mine" style="font-size:9.5px">live</span>'
+      : '<span class="mini">'+s.sub+
+        (s.delta!==null&&s.delta!==undefined?' · <b style="color:'+(s.delta>=0?"var(--ok)":"var(--clay-deep)")+'">'+
+          (s.delta>=0?"+":"")+s.delta.toFixed(0)+'%</b>':"")+'</span>')+
+    '</div>';
+}
+
+function waitingStrip(list){
+  if(!list.length) return "";
+  return '<div class="waitbox"><div class="eyebrow" style="margin-bottom:8px">Waiting on a measurement</div>'+
+    '<div class="waitchips">'+list.map(function(m){
+      return '<span>'+m.l.replace(/&amp;/g,"&")+'</span>'; }).join("")+'</div>'+
+    '<p class="mini" style="margin-top:9px">These need access to the accounts, or the August 28 baseline. Nothing here is estimated in the meantime.</p></div>';
+}
+
+function renderEngTabs(){
+  var box=q("engtabs"); if(!box) return;
+  var tabs=[{k:"overview",l:"Overview"}].concat(ENGINES.map(function(e){
+    return {k:e.n, l:e.icon+" "+e.name.replace(/&amp;/g,"&")};
+  }));
+  box.innerHTML=tabs.map(function(t){
+    return '<button class="seg" data-eng="'+t.k+'" aria-pressed="'+(ENGTAB===t.k)+'">'+t.l+'</button>';
+  }).join("");
+}
+
+function renderEngPanel(){
+  var box=q("engpanel"); if(!box) return;
+
+  if(ENGTAB==="overview"){
+    var hero=[
+      {l:"Open pipeline",   v:money(liveVal("pipeval")), s:"estimated F&amp;B value in play"},
+      {l:"First contacts",  v:String(liveVal("contacts")), s:"organisations I have spoken to"},
+      {l:"Posts published", v:String(liveVal("posts")), s:"across every house"},
+      {l:"Events won",      v:String(liveVal("won")), s:"booked and confirmed"}
+    ];
+    box.innerHTML='<div class="grid4" style="margin-bottom:18px">'+hero.map(function(c){
+      return '<div class="card" style="background:linear-gradient(165deg,var(--blue-wash),var(--card))">'+
+        '<div class="eyebrow">'+c.l+'</div>'+
+        '<div style="font-family:\'JetBrains Mono\',monospace;font-size:32px;font-weight:700;color:var(--blue-ink);margin:7px 0 3px;line-height:1">'+c.v+'</div>'+
+        '<div class="mini">'+c.s+'</div></div>';
+    }).join("")+'</div>'+
+    '<div class="grid3">'+ENGINES.map(function(e){
+      var live=e.metrics.filter(function(m){return metricState(m).has}).length;
+      var wait=e.metrics.length-live;
+      return '<button class="card engjump" data-eng="'+e.n+'" style="text-align:left;cursor:pointer;width:100%">'+
+        '<div class="eyebrow">'+e.icon+' Engine '+e.n+'</div>'+
+        '<h3 style="font-size:18px;margin:6px 0 6px">'+e.name+'</h3>'+
+        '<p style="font-size:13px;line-height:1.5;color:var(--ink-soft);margin-bottom:11px">'+e.note+'</p>'+
+        '<div class="bar"><i style="width:'+Math.round((live/e.metrics.length)*100)+'%"></i></div>'+
+        '<div class="mini" style="margin-top:7px">'+live+' reading'+(live===1?"":"s")+' live'+
+          (wait?' · '+wait+' waiting':'')+' →</div></button>';
+    }).join("")+'</div>';
+    return;
+  }
+
+  var e=engineById(ENGTAB); if(!e){ box.innerHTML=""; return; }
+  var shown=e.metrics.filter(function(m){return metricState(m).has});
+  var waiting=e.metrics.filter(function(m){return !metricState(m).has});
+  box.innerHTML=
+    '<p class="lede" style="margin-bottom:15px">'+e.note+'</p>'+
+    (shown.length?'<div class="grid4" style="margin-bottom:15px">'+shown.map(bigCard).join("")+'</div>'
+      :'<div class="emptybox" style="margin-bottom:15px">Nothing measured in this engine yet.</div>')+
+    waitingStrip(waiting);
+}
+
+// The explorer only offers series that belong to the engine you are looking at.
+function scopeExplorer(){
+  var sel=q("m-metric"); if(!sel) return;
+  var allowed = ENGTAB==="overview" ? Object.keys(METRICS) : (EXPLORER_BY_ENGINE[ENGTAB]||[]);
+  if(!allowed.length) allowed=Object.keys(METRICS);
+  sel.innerHTML=allowed.map(function(k){
+    return '<option value="'+k+'">'+METRICS[k].label+'</option>';
+  }).join("");
+  if(allowed.indexOf(VIEW.metric)===-1){
+    VIEW.metric=allowed[0];
+  }
+  sel.value=VIEW.metric;
+  if(typeof draw==="function") draw();
+}
+
 function renderNumbers(){
-  renderHeadline(); renderEngines(); renderBaseline(); fillMetricKeys();
+  renderEngTabs(); renderEngPanel(); renderBaseline(); fillMetricKeys(); scopeExplorer();
+}
+
+function bindEngines(){
+  document.addEventListener("click",function(ev){
+    var t=ev.target.closest("[data-eng]"); if(!t) return;
+    ENGTAB=t.dataset.eng;
+    renderEngTabs(); renderEngPanel(); renderBaseline(); scopeExplorer();
+    if(t.classList.contains("engjump")) q("engtabs").scrollIntoView({behavior:"smooth",block:"start"});
+  });
 }
 
 /* ───────── CAMPAIGNS ───────── */
@@ -2915,6 +3002,7 @@ function bindAgreement(){
   bindAgreement();
   bindTaskCollapse();
   bindCapacity();
+  bindEngines();
   boot();
 })();
 })();
