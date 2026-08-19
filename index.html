@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="build" content="2026-08-19 23:15 UTC">
+<meta name="build" content="2026-08-19 23:41 UTC">
 <title>Democracy Brewing — Growth Command Center</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%BA%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -867,6 +867,31 @@ textarea.tall{min-height:132px}
 .taskpanel .taskhead .tsum{margin-right:auto}
 .taskpanel .taskhead #task-add{margin-left:0}
 .taskpanel.hasmore .taskhead #task-add{margin-left:0}
+
+/* the switcher lives where the identity lives */
+#viewas{display:none !important}
+#whomenu{display:none;padding:12px 15px 15px;background:rgba(0,0,0,.2);
+  border-top:1px solid rgba(255,255,255,.08)}
+#whomenu.on{display:block;animation:wmin .2s ease}
+@keyframes wmin{from{opacity:0}to{opacity:1}}
+.wmlab{font-family:'Josefin Sans',sans-serif;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;
+  color:rgba(233,227,212,.45);margin-bottom:9px}
+.wmrow{display:flex;flex-wrap:wrap;gap:6px}
+.wmchip{display:flex;align-items:center;gap:7px;padding:5px 12px 5px 5px;border-radius:100px;
+  border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:var(--paper);
+  font:inherit;font-size:12.5px;cursor:pointer;transition:.15s}
+.wmchip:hover{border-color:var(--amber);background:rgba(255,255,255,.1)}
+.wmchip.on{background:var(--amber);border-color:var(--amber);color:var(--brown);font-weight:600}
+.wmchip .ini{width:21px;height:21px;border-radius:50%;background:rgba(255,255,255,.16);
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.wmchip.on .ini{background:rgba(0,0,0,.15)}
+.wmnote{font-size:10.5px;line-height:1.5;color:rgba(233,227,212,.36);margin-top:10px}
+.wmout{margin-top:12px;background:none;border:none;padding:4px 0;cursor:pointer;
+  font-family:'Josefin Sans',sans-serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(233,227,212,.4)}
+.wmout:hover{color:var(--clay)}
+.whoami .chevw{margin-left:auto;font-size:10px;color:rgba(233,227,212,.4);transition:transform .2s}
+.whoami[aria-expanded="true"] .chevw{transform:rotate(180deg)}
 </style>
 </head>
 <body>
@@ -908,12 +933,14 @@ textarea.tall{min-height:132px}
   </button>
   <nav id="nav"></nav>
   <div id="viewas"></div>
-  <button class="whoami" id="whoami">
+  <button class="whoami" id="whoami" aria-expanded="false" aria-controls="whomenu">
     <span class="av" id="av">?</span>
     <span class="txt" id="whotxt">Not signed in<small>Tap to choose</small></span>
+    <span class="chevw">&#9660;</span>
   </button>
+  <div id="whomenu"></div>
   <div style="padding:0 13px 13px"><button class="tourlink" data-tour="open">Show me around again</button></div>
-  <div class="buildstamp" id="buildstamp">Build 2026-08-19 23:15 UTC</div>
+  <div class="buildstamp" id="buildstamp">Build 2026-08-19 23:41 UTC</div>
 </aside>
 
 <main>
@@ -2197,7 +2224,7 @@ async function enter(p){
   ME=p;
   document.getElementById("gate").classList.add("off");
   document.getElementById("av").textContent=p.initial;
-  document.getElementById("whotxt").innerHTML=p.name+"<small>"+p.role_label+" · sign out</small>";
+  document.getElementById("whotxt").innerHTML=p.name+"<small>"+p.role_label+(p.is_admin?" · switch view":"")+"</small>";
   var h=document.getElementById("hellotxt");
   if(h) h.innerHTML=greetPrefix()+p.name+".<br>Here's where everything stands.";
   document.getElementById("task-add").style.display=p.is_admin?"":"none";
@@ -2233,11 +2260,10 @@ async function enter(p){
     oas.textContent = all ? "Signed by both →" : mine ? "You've signed — waiting on the other side →" : "Waiting for your signature →";
   }
 }
-document.getElementById("whoami").addEventListener("click",async function(){
-  if(sb) await sb.auth.signOut();
-  ME=null; PICKED=null;
-  document.getElementById("gate").classList.remove("off");
-  showPick();
+document.getElementById("whoami").addEventListener("click",function(){
+  // An admin almost always means "show me their screen", not "throw me out".
+  if(realAdmin()){ toggleWhoMenu(); return; }
+  signOutNow();
 });
 
 /* ═════ TASKS ═════ */
@@ -3888,10 +3914,10 @@ function paintPreviewBar(){
 }
 async function setViewAs(slug){
   VIEWAS=slug||null;
-  paintViewAs(); paintPreviewBar();
+  paintViewAs(); paintPreviewBar(); paintWhoMenu();
   var m=eff();
   document.getElementById("av").textContent=m.initial;
-  document.getElementById("whotxt").innerHTML=esc(m.name)+"<small>"+esc(m.role_label)+" · sign out</small>";
+  document.getElementById("whotxt").innerHTML=esc(m.name)+"<small>"+esc(m.role_label)+(m.is_admin?" · switch view":"")+"</small>";
   var h=document.getElementById("hellotxt");
   if(h) h.innerHTML=greetPrefix()+esc(m.name)+".<br>Here's where everything stands.";
   document.getElementById("task-title").textContent=m.is_admin?"The full list":"Everything assigned to you";
@@ -4899,6 +4925,54 @@ function bindChangelog(){
   });
 }
 
+/* ───────── WHO · looking vs being ─────────
+   Signing in as Miguel would need Miguel's password, and that is his to keep.
+   Looking at Miguel's screen needs nothing — it is my own session, re-filtered.
+   Those are different acts and the sidebar should stop confusing them. */
+
+function paintWhoMenu(){
+  var box=q("whomenu"); if(!box) return;
+  if(!realAdmin()){ box.classList.remove("on"); box.innerHTML=""; return; }
+  var cur=VIEWAS||"";
+  box.innerHTML=
+    '<div class="wmlab">See it as</div>'+
+    '<div class="wmrow">'+
+      '<button class="wmchip'+(cur===""?" on":"")+'" data-va="">'+
+        '<span class="ini">'+esc((ME&&ME.initial)||"N")+'</span>Me</button>'+
+      ROSTER.filter(function(p){ return !p.is_admin }).map(function(p){
+        return '<button class="wmchip'+(cur===p.slug?" on":"")+'" data-va="'+esc(p.slug)+'">'+
+          '<span class="ini">'+esc(p.initial)+'</span>'+esc(p.name)+'</button>';
+      }).join("")+
+    '</div>'+
+    '<p class="wmnote">No password. This is their screen, exactly as they get it — '+
+      'anything you save is still recorded as you.</p>'+
+    '<button class="wmout" data-signout="1">Sign out</button>';
+}
+
+function toggleWhoMenu(force){
+  var box=q("whomenu"); if(!box) return;
+  var on = force===undefined ? !box.classList.contains("on") : !!force;
+  if(on) paintWhoMenu();
+  box.classList.toggle("on", on);
+  var w=q("whoami"); if(w) w.setAttribute("aria-expanded", String(on));
+}
+
+function bindWhoMenu(){
+  document.addEventListener("click",function(e){
+    var c=e.target.closest("[data-va]");
+    if(c){ setViewAs(c.dataset.va||null); paintWhoMenu(); return; }
+    if(e.target.closest("[data-signout]")) signOutNow();
+  });
+}
+
+async function signOutNow(){
+  if(sb) await sb.auth.signOut();
+  ME=null; PICKED=null; VIEWAS=null;
+  toggleWhoMenu(false);
+  document.getElementById("gate").classList.remove("off");
+  showPick();
+}
+
 /* ───────── WIRING ───────── */
 function bindGrowth(){
   var f=q("funnel");
@@ -5138,6 +5212,7 @@ function bindAgreement(){
   bindLogCal();
   bindProposal();
   bindChangelog();
+  bindWhoMenu();
   renderMktTabs(); renderMktPanel();
   boot();
 })();
