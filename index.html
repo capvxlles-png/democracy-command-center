@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="build" content="2026-08-19 23:15 UTC">
 <title>Democracy Brewing — Growth Command Center</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%BA%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -591,10 +592,10 @@ textarea.tall{min-height:132px}
 .statebtn.pub{background:#e2f0e0;color:var(--ok)}
 .statebtn.dr{background:#f3e6d8;color:var(--brown-lt)}
 .statebtn:hover{filter:brightness(.95)}
-.tick{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:var(--paper);
-  color:var(--ink-soft);cursor:pointer;font-size:14px;transition:.15s}
-.tick.on{background:var(--blue-wash);border-color:var(--blue);color:var(--blue-deep);font-weight:700}
-.tick:hover{transform:scale(1.08)}
+.ledger.acc .tick{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:var(--paper);
+  color:var(--ink-soft);cursor:pointer;font-size:14px;margin-top:0;transition:.15s}
+.ledger.acc .tick.on{background:var(--blue-wash);border-color:var(--blue);color:var(--blue-deep);font-weight:700}
+.ledger.acc .tick:hover{transform:scale(1.08)}
 
 /* asset library */
 .assetgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:13px}
@@ -776,6 +777,96 @@ textarea.tall{min-height:132px}
 .propcard .pwhy{display:flex;gap:9px;align-items:flex-start;margin-top:11px;padding:11px 14px;
   background:rgba(255,255,255,.6);border-radius:10px;color:var(--brown-lt);font-size:13.5px;line-height:1.5}
 .propcard .pwhy .ico{color:var(--gold);margin-top:2px}
+
+/* the changelog carousel */
+#changelog{margin:30px 0 0}
+.chghead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:14px}
+.chghead .eyebrow{margin:0}
+.chgnav{display:flex;align-items:center;gap:7px}
+.chgcount{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft);margin-right:4px}
+.chgbtn{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--card);
+  color:var(--ink-soft);cursor:pointer;font-size:17px;line-height:1;transition:.15s}
+.chgbtn:hover{border-color:var(--amber);color:var(--ink);transform:translateY(-1px)}
+.chgcard{border:1px solid var(--line);border-radius:16px;padding:26px 28px;background:var(--card);
+  border-left:4px solid var(--blue);animation:chgin .28s cubic-bezier(.22,1,.36,1)}
+@keyframes chgin{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+.chgcard.new{border-left-color:var(--ok);background:linear-gradient(150deg,#f6faf5,var(--card) 62%)}
+.chgcard.updated{border-left-color:var(--blue);background:linear-gradient(150deg,var(--blue-wash),var(--card) 62%)}
+.chgcard.fixed{border-left-color:var(--amber);background:linear-gradient(150deg,#fffaf0,var(--card) 62%)}
+.chgcard.removed{border-left-color:var(--clay-deep);background:linear-gradient(150deg,#fdf7f4,var(--card) 62%)}
+.chgtop{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.chgbadge{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;font-weight:700;padding:5px 12px;border-radius:100px}
+.chgbadge.new{background:#e2f0e0;color:var(--ok)}
+.chgbadge.updated{background:var(--blue-wash);color:var(--blue-deep)}
+.chgbadge.fixed{background:#f7edd8;color:var(--brown-lt)}
+.chgbadge.removed{background:#f3e0d8;color:var(--clay-deep)}
+.chgbadge .ico{width:13px;height:13px}
+.chgdate{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft)}
+.chgcard h3{font-size:24px;font-weight:600;color:var(--ink);margin-bottom:9px;line-height:1.24}
+.chgwhat{font-size:15.5px;line-height:1.62;color:var(--ink);max-width:74ch}
+.chgwhy{margin-top:16px;padding:14px 17px;background:rgba(255,255,255,.66);border-radius:11px}
+.chgwhy .eyebrow{display:block;margin-bottom:6px}
+.chgwhy p{font-size:14px;line-height:1.58;color:var(--ink-soft);max-width:72ch}
+.chgdots{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
+.chgdots button{width:24px;height:4px;border-radius:100px;border:none;background:var(--line);cursor:pointer;padding:0;transition:.15s}
+.chgdots button:hover{background:var(--ink-soft)}
+.chgdots button.on{background:var(--amber);width:34px}
+@media(max-width:640px){.chgcard{padding:20px 20px}.chgcard h3{font-size:20px}}
+
+/* ═══ TASKS · one box, not two ═══ */
+.taskpanel{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--blue);
+  border-radius:16px;margin-bottom:18px;overflow:hidden;transition:border-color .2s}
+.taskpanel.late{border-left-color:var(--clay-deep)}
+.taskpanel.clear{border-left-color:var(--ok)}
+.taskpanel > #taskcall{border:none;background:none;margin:0;border-radius:0;padding:24px 26px 6px}
+.taskpanel.late > #taskcall{background:linear-gradient(160deg,#fdf7f4,transparent 78%)}
+.taskpanel.clear > #taskcall{background:linear-gradient(160deg,#f6faf5,transparent 78%)}
+.taskpanel .tasksec{margin:0}
+.taskpanel .taskhead{margin:0;padding:13px 22px 13px 26px;align-items:center;gap:12px;
+  border-top:1px solid var(--line);background:var(--paper)}
+.taskpanel .taskhead h3{font-size:14px;letter-spacing:.02em;color:var(--ink-soft);font-family:'Josefin Sans',sans-serif;
+  text-transform:uppercase;letter-spacing:.11em;font-weight:700;font-size:11.5px}
+.taskpanel .taskhead .chev{order:9}
+.taskpanel .taskhead #task-add{order:10}
+.taskpanel #taskbody{padding:20px 26px 24px;border-top:1px solid var(--line)}
+.taskpanel #taskbody .task:last-child{margin-bottom:0}
+.taskpanel .taskcount{font-size:11.5px}
+/* the call-out no longer needs its own frame */
+.taskcall .tclist{margin-top:16px;gap:1px}
+.tcitem{padding:10px 11px}
+.tcmore{display:flex;align-items:center;gap:8px;margin-top:11px;padding:9px 11px;border:none;background:none;
+  font:inherit;font-size:13px;color:var(--blue-deep);cursor:pointer;border-radius:9px;transition:.14s;
+  font-family:'Josefin Sans',sans-serif;letter-spacing:.05em;font-weight:600}
+.tcmore:hover{background:var(--blue-wash)}
+.tcmore i{font-style:normal;font-size:10px;transition:transform .2s;display:inline-block}
+.tcmore.open i{transform:rotate(90deg)}
+@media(max-width:640px){.taskpanel > #taskcall{padding:20px 18px 4px}
+  .taskpanel .taskhead{padding:12px 16px}.taskpanel #taskbody{padding:16px 18px 20px}}
+
+/* a build stamp, so what is live can be told apart from what is not */
+.buildstamp{padding:0 13px 12px;font-family:'JetBrains Mono',monospace;font-size:9.5px;
+  letter-spacing:.08em;color:rgba(247,241,226,.26);text-transform:uppercase}
+
+/* the list must span the card, not hug the text */
+.taskcall .tctext{flex:1;min-width:0}
+/* one box, one disclosure: the header chevron stands down when the list has its own */
+.taskpanel.hasmore .taskhead .chev{display:none}
+.taskpanel .taskcount{display:none}
+.taskpanel .taskhead h3{margin-right:auto}
+.taskpanel.hasmore .taskhead #task-add{margin-left:auto}
+.tcmore .ico{width:14px;height:14px;transition:transform .2s}
+.tcmore.open .ico{transform:rotate(90deg)}
+.taskcall .tcicon .ico{width:20px;height:20px}
+
+/* a name and its date should be readable in one glance, not a page apart */
+.taskcall .tcname{flex:1 1 auto;max-width:430px}
+.taskcall .tcwhen{margin-left:18px}
+/* the footer strip reads left to right: label, state, action */
+.taskpanel .taskhead h3{margin-right:0}
+.taskpanel .taskhead .tsum{margin-right:auto}
+.taskpanel .taskhead #task-add{margin-left:0}
+.taskpanel.hasmore .taskhead #task-add{margin-left:0}
 </style>
 </head>
 <body>
@@ -822,6 +913,7 @@ textarea.tall{min-height:132px}
     <span class="txt" id="whotxt">Not signed in<small>Tap to choose</small></span>
   </button>
   <div style="padding:0 13px 13px"><button class="tourlink" data-tour="open">Show me around again</button></div>
+  <div class="buildstamp" id="buildstamp">Build 2026-08-19 23:15 UTC</div>
 </aside>
 
 <main>
@@ -848,13 +940,14 @@ textarea.tall{min-height:132px}
     <div class="barfoot">Pull any handle to open it</div>
   </div>
 
+  <section class="taskpanel" id="taskpanel">
   <div id="taskcall"></div>
   <div class="tasksec" id="tasksec">
     <div class="taskhead">
       <h3 id="task-title">Your tasks</h3>
       <span class="taskcount" id="task-count"></span>
       <div class="tsum" id="task-summary"></div>
-      <button class="chev" id="task-toggle" aria-expanded="true" aria-controls="taskbody"><i>&#9654;</i><span id="task-toggle-label">Hide</span></button>
+      <button class="chev" id="task-toggle" aria-expanded="false" aria-controls="taskbody"><i>&#9654;</i><span id="task-toggle-label">Show</span></button>
       <button class="mbtn" id="task-add" style="display:none">+ New task</button>
     </div>
     <div id="taskbody">
@@ -871,10 +964,13 @@ textarea.tall{min-height:132px}
     <div id="tasklist"></div>
     </div>
   </div>
+  </section>
 
   <div id="thisweek"></div>
 
   <div id="nextup"></div>
+
+  <div id="changelog" tabindex="0"></div>
 
   <div id="feed"></div>
 
@@ -2118,7 +2214,7 @@ async function enter(p){
     var no=document.getElementById("notrack");
     if(no) no.style.display=(p.is_admin||mine)?"none":"";
   }
-  document.getElementById("task-title").textContent=p.is_admin?"All tasks":"Your tasks";
+  document.getElementById("task-title").textContent=p.is_admin?"The full list":"Everything assigned to you";
   await loadIds();
   await Promise.all([loadTasks(),loadViews(),loadResponses()]);
   paintTaps();
@@ -3135,12 +3231,14 @@ function renderTaskSummary(){
 function bindTaskCollapse(){
   var btn=q("task-toggle"), body=q("taskbody"), lab=q("task-toggle-label");
   if(!btn||!body) return;
-  if(btn.getAttribute("aria-expanded")==="true"){ body.hidden=false; if(lab) lab.textContent="Hide"; }
+  body.hidden = btn.getAttribute("aria-expanded")!=="true";
+  if(lab) lab.textContent = body.hidden ? "Show" : "Hide";
   btn.addEventListener("click",function(){
     var open=btn.getAttribute("aria-expanded")==="true";
     btn.setAttribute("aria-expanded", String(!open));
     body.hidden=open;
     if(lab) lab.textContent=open?"Show":"Hide";
+    paintTaskMore();
   });
 }
 
@@ -3796,7 +3894,7 @@ async function setViewAs(slug){
   document.getElementById("whotxt").innerHTML=esc(m.name)+"<small>"+esc(m.role_label)+" · sign out</small>";
   var h=document.getElementById("hellotxt");
   if(h) h.innerHTML=greetPrefix()+esc(m.name)+".<br>Here's where everything stands.";
-  document.getElementById("task-title").textContent=m.is_admin?"All tasks":"Your tasks";
+  document.getElementById("task-title").textContent=m.is_admin?"The full list":"Everything assigned to you";
   var ta=document.getElementById("task-add"); if(ta) ta.style.display=m.is_admin?"":"none";
   ["miguel","karsen"].forEach(function(t){
     var card=document.querySelector('.track[data-goto="p-'+t+'"]');
@@ -3992,9 +4090,10 @@ function renderTaskCall(){
 
   if(!open.length){
     box.className="taskcall clear";
-    box.innerHTML='<div class="tcicon">✓</div><div class="tctext">'+
+    box.innerHTML='<div class="tcicon">'+ico("check")+'</div><div class="tctext">'+
       '<h3>Nothing is waiting on you, '+esc(m.name.split(" ")[0])+'.</h3>'+
       '<p>Everything assigned to you is done. Anything new lands here and you get it in the weekly note.</p></div>';
+    paintTaskMore();
     return;
   }
 
@@ -4015,7 +4114,7 @@ function renderTaskCall(){
 
   box.className="taskcall"+(late.length?" late":"");
   box.innerHTML=
-    '<div class="tcicon">'+(late.length?"!":"→")+'</div>'+
+    '<div class="tcicon">'+ico(late.length?"alert":"task")+'</div>'+
     '<div class="tctext">'+
       '<h3>'+head+'</h3>'+
       '<p>'+lead+'They are yours to tick off — nobody else can do it for you.</p>'+
@@ -4028,12 +4127,33 @@ function renderTaskCall(){
           (m.is_admin&&t.assignee?'<span class="tcwho">'+esc(nameOf(t.assignee)||"")+'</span>':'')+
         '</button>';
       }).join("")+'</div>'+
-      (open.length>show.length?'<p class="mini" style="margin-top:9px">'+(open.length-show.length)+' more below.</p>':'')+
+      '<button class="tcmore" id="tcmore" data-tcmore="1">'+ico("chevron","sm")+'<span></span></button>'+
     '</div>';
+  var mb=q("tcmore"); if(mb) mb.dataset.rest=String(open.length-show.length);
+  paintTaskMore();
+}
+
+/* the panel is one box, so its two disclosure controls must never disagree */
+function taskListOpen(){
+  var b=q("task-toggle");
+  return !!(b && b.getAttribute("aria-expanded")==="true");
+}
+function paintTaskMore(){
+  var p=q("taskpanel"), c=q("taskcall");
+  if(p&&c) p.className="taskpanel"+(/\blate\b/.test(c.className)?" late":/\bclear\b/.test(c.className)?" clear":"");
+  var m=q("tcmore");
+  if(p) p.classList.toggle("hasmore", !!m);
+  if(!m) return;
+  var on=taskListOpen(), n=Number(m.dataset.rest||0);
+  m.classList.toggle("open", on);
+  m.querySelector("span").textContent =
+    on ? "Hide the full list" : n>0 ? "Show the other "+n : "Open the full list";
 }
 
 function bindTaskCall(){
   document.addEventListener("click",function(e){
+    var more=e.target.closest("[data-tcmore]");
+    if(more){ var t=q("task-toggle"); if(t) t.click(); return; }
     var b=e.target.closest("[data-tcgo]"); if(!b) return;
     var body=q("taskbody"), btn=q("task-toggle");
     if(body&&body.hidden&&btn) btn.click();
@@ -4407,13 +4527,6 @@ function feedItems(){
         url:(w.deliverable_url&&w.deliverable_url.charAt(0)!=="#")?w.deliverable_url:null});
     });
 
-  PAGES_DB.filter(function(p){
-      return p.published_at && p.id!=="p-home" && p.id!=="p-onboard" && canSee(p.id);
-    }).forEach(function(p){
-      out.push({at:p.published_at, kind:"access", icon:"unlock",
-        title:p.label+" is open", body:"Added to your sidebar.", go:p.id});
-    });
-
   if(m.is_admin){
     LEADS.filter(function(l){ return l.first_contact_at }).slice(0,4).forEach(function(l){
       out.push({at:l.first_contact_at, kind:"pipeline", icon:"handshake",
@@ -4431,7 +4544,7 @@ function renderFeed(){
   var box=q("feed"); if(!box) return;
   var items=feedItems();
   if(!items.length){ box.innerHTML=""; return; }
-  box.innerHTML='<div class="eyebrow" style="margin:30px 0 12px">What changed</div>'+
+  box.innerHTML='<div class="eyebrow" style="margin:30px 0 12px">Notices &amp; deliveries</div>'+
     '<div class="feedlist">'+items.map(function(f){
       var attr = f.url ? 'data-href="'+esc(f.url)+'"' : (f.go?'data-goto="'+esc(f.go)+'"':'');
       return '<button class="feeditem'+(f.pin?" pinned":"")+'" '+attr+'>'+
@@ -4481,7 +4594,7 @@ async function markNotifsRead(){
   await loadNotifs(); renderBell(); renderNotifPanel();
 }
 
-function renderHome(){ renderBell(); renderNotifPanel(); renderFeed(); renderPulse(); }
+function renderHome(){ renderBell(); renderNotifPanel(); renderChangelog(); renderFeed(); renderPulse(); }
 
 function bindHome(){
   var b=q("bell");
@@ -4580,7 +4693,9 @@ var ICONS={
   star:'<path d="M12 4l2.5 5.1 5.6.8-4 3.9 1 5.6-5.1-2.7-5.1 2.7 1-5.6-4-3.9 5.6-.8z"/>',
   bell:'<path d="M6.4 10.4a5.6 5.6 0 0111.2 0c0 4.4 1.6 5.8 1.6 5.8H4.8s1.6-1.4 1.6-5.8z"/><path d="M10.2 19.4a2 2 0 003.6 0"/>',
   check:'<path d="M4.8 12.6l4.6 4.6L19.2 7.4"/>',
-  arrow:'<path d="M4.5 12h14M13 6.5l5.5 5.5-5.5 5.5"/>'
+  arrow:'<path d="M4.5 12h14M13 6.5l5.5 5.5-5.5 5.5"/>',
+  alert:'<path d="M12 4.2l8.4 14.6a1 1 0 01-.87 1.5H4.47a1 1 0 01-.87-1.5z"/><path d="M12 9.9v4.1"/><circle cx="12" cy="16.9" r=".7" fill="currentColor" stroke="none"/>',
+  chevron:'<path d="M9.6 5.4L16.2 12l-6.6 6.6"/>'
 };
 
 function ico(name, cls){
@@ -4705,6 +4820,85 @@ function bindProposal(){
   });
 }
 
+/* ───────── WHAT CHANGED · a written changelog, not an inferred one ─────────
+   A timestamp only knows that something became visible. It cannot say what
+   the thing does or why it moved. So these are authored, one per change. */
+
+var CHG=[], CHGI=0;
+
+async function loadChangelog(){
+  CHG=[];
+  if(!ONLINE||!ME) return;
+  var r=await sb.from("changelog").select("*")
+    .order("shipped_on",{ascending:false}).order("sort",{ascending:false}).limit(30);
+  if(!r.error) CHG=r.data||[];
+}
+
+function myChangelog(){
+  var m=eff(); if(!m) return [];
+  return CHG.filter(function(c){
+    if(c.audience && c.audience.length && c.audience.indexOf(m.slug)===-1) return false;
+    if(c.link_page && !canSee(c.link_page)) return false;   // never advertise a locked door
+    return true;
+  });
+}
+
+var KINDL={new:"New", updated:"Updated", fixed:"Fixed", removed:"Removed"};
+var KINDI={new:"star", updated:"arrow", fixed:"check", removed:"unlock"};
+
+function renderChangelog(){
+  var box=q("changelog"); if(!box) return;
+  var list=myChangelog();
+  if(!list.length){ box.innerHTML=""; return; }
+  if(CHGI>=list.length) CHGI=0;
+  var c=list[CHGI];
+
+  box.innerHTML=
+  '<div class="chghead">'+
+    '<span class="eyebrow">What changed</span>'+
+    '<div class="chgnav">'+
+      '<span class="chgcount">'+(CHGI+1)+' / '+list.length+'</span>'+
+      '<button class="chgbtn" data-chg="prev" aria-label="Previous">&#8249;</button>'+
+      '<button class="chgbtn" data-chg="next" aria-label="Next">&#8250;</button>'+
+    '</div>'+
+  '</div>'+
+  '<div class="chgcard '+esc(c.kind)+'">'+
+    '<div class="chgtop">'+
+      '<span class="chgbadge '+esc(c.kind)+'">'+ico(KINDI[c.kind]||"star","sm")+(KINDL[c.kind]||c.kind)+'</span>'+
+      '<span class="chgdate">'+dstr(c.shipped_on)+'</span>'+
+    '</div>'+
+    '<h3>'+esc(c.title)+'</h3>'+
+    '<p class="chgwhat">'+esc(c.what)+'</p>'+
+    (c.why?'<div class="chgwhy"><span class="eyebrow">Why it changed</span><p>'+esc(c.why)+'</p></div>':'')+
+    '<div class="rowact" style="margin-top:16px">'+
+      (c.link_page?'<button class="mbtn solid" data-goto="'+esc(c.link_page)+'">Open it</button>':'')+
+      (c.link_url?'<button class="mbtn" data-href="'+esc(c.link_url)+'">Open it</button>':'')+
+    '</div>'+
+  '</div>'+
+  '<div class="chgdots">'+list.map(function(_,i){
+    return '<button class="'+(i===CHGI?"on":"")+'" data-chgdot="'+i+'" aria-label="Change '+(i+1)+'"></button>';
+  }).join("")+'</div>';
+}
+
+function bindChangelog(){
+  document.addEventListener("click",function(e){
+    var b=e.target.closest("[data-chg]");
+    if(b){
+      var n=myChangelog().length; if(!n) return;
+      CHGI = b.dataset.chg==="next" ? (CHGI+1)%n : (CHGI-1+n)%n;
+      renderChangelog(); return;
+    }
+    var d=e.target.closest("[data-chgdot]");
+    if(d){ CHGI=Number(d.dataset.chgdot); renderChangelog(); }
+  });
+  var box=q("changelog");
+  if(box) box.addEventListener("keydown",function(e){
+    var n=myChangelog().length; if(!n) return;
+    if(e.key==="ArrowRight"){ CHGI=(CHGI+1)%n; renderChangelog(); }
+    if(e.key==="ArrowLeft"){ CHGI=(CHGI-1+n)%n; renderChangelog(); }
+  });
+}
+
 /* ───────── WIRING ───────── */
 function bindGrowth(){
   var f=q("funnel");
@@ -4790,7 +4984,7 @@ function bindGrowth(){
 }
 
 async function loadGrowth(){
-  await Promise.all([loadLeads(),loadContent(),loadAssets(),loadMetrics(),loadCamps(),loadWeeks(),loadPages(),loadNotifs()]);
+  await Promise.all([loadLeads(),loadContent(),loadAssets(),loadMetrics(),loadCamps(),loadWeeks(),loadPages(),loadNotifs(),loadChangelog()]);
   renderFunnel(); renderLeads(); renderTouch(); renderLedger();
   renderCstats(); renderContent(); renderAssets();
   renderNumbers(); renderCamps(); renderCapacity(); renderTaskSummary();
@@ -4943,6 +5137,7 @@ function bindAgreement(){
   bindHome();
   bindLogCal();
   bindProposal();
+  bindChangelog();
   renderMktTabs(); renderMktPanel();
   boot();
 })();
