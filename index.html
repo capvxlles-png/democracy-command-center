@@ -518,6 +518,134 @@ textarea.tall{min-height:132px}
 .ledger.cmp td.mid{color:var(--gold)}
 .ledger.cmp tr.us{background:var(--blue-wash)}
 .ledger.cmp tr.us td{font-weight:600}
+
+.navitem.navgroup{font-weight:600}
+.navitem .chevron{margin-left:auto;font-size:15px;line-height:1;opacity:.5;transition:transform .18s;padding-left:6px}
+.navitem.navgroup.open .chevron{transform:rotate(90deg);opacity:.85}
+.navitem.navgroup .tag+.chevron{margin-left:6px}
+.navitem.navgroup+.navitem.sub{margin-top:1px}
+
+.logrow{display:grid;grid-template-columns:150px 1fr 220px;gap:20px;padding:20px 22px;border:1px solid var(--line);
+  border-radius:13px;background:var(--card);margin-bottom:11px}
+.logrow.now{border-color:var(--amber);border-left:3px solid var(--amber)}
+.logrow.ahead{opacity:.68;border-style:dashed}
+.logdate{font-family:'JetBrains Mono',monospace;font-size:13.5px;font-weight:700;color:var(--blue-ink)}
+.logbody p{font-size:14.5px;line-height:1.62;color:var(--ink);max-width:70ch}
+.logdeliv{border-left:1px solid var(--line);padding-left:18px}
+.delivlink{display:inline-block;font-size:14.5px;font-weight:600;color:var(--blue-deep);text-decoration:none;line-height:1.4}
+.delivlink:hover{color:var(--gold);text-decoration:underline}
+.delivlink.pending{color:var(--ink-soft);font-weight:400;font-style:italic}
+@media(max-width:820px){
+  .logrow{grid-template-columns:1fr;gap:12px}
+  .logdeliv{border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:12px}
+}
+
+.exportbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:18px 0 4px;
+  padding:15px 18px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.exportbar .mini{flex:1;min-width:220px}
+
+/* view-as + live */
+#viewas{padding:11px 13px 13px;border-top:1px solid rgba(255,255,255,.08);display:none}
+#viewas label{display:block;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(233,227,212,.5);margin-bottom:6px}
+#viewas select{width:100%;padding:7px 9px;border-radius:8px;border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.07);color:#e9e3d4;font:inherit;font-size:12.5px}
+#previewbar{display:none;position:sticky;top:0;z-index:40;align-items:center;gap:14px;flex-wrap:wrap;
+  background:var(--amber);color:var(--brown);padding:10px 18px;font-size:13.5px;font-weight:600}
+#previewbar.on{display:flex}
+#previewbar .mbtn{background:var(--brown);color:var(--amber-lt);border-color:var(--brown)}
+#livebar{position:fixed;bottom:18px;left:50%;transform:translate(-50%,14px);z-index:70;background:var(--blue-ink);
+  color:var(--foam);padding:9px 18px;border-radius:100px;font-size:13px;opacity:0;pointer-events:none;
+  transition:opacity .3s,transform .3s;box-shadow:0 8px 24px rgba(0,0,0,.22)}
+#livebar.on{opacity:1;transform:translate(-50%,0)}
+
+/* the task call-out */
+.taskcall{display:flex;gap:18px;align-items:flex-start;background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--blue);border-radius:14px;padding:22px 24px;margin-bottom:16px}
+.taskcall.late{border-left-color:var(--clay-deep);background:#fdf7f4}
+.taskcall.clear{border-left-color:var(--ok);background:#f6faf5}
+.taskcall .tcicon{width:38px;height:38px;border-radius:11px;background:var(--blue-wash);color:var(--blue-deep);
+  display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:700;flex-shrink:0}
+.taskcall.late .tcicon{background:#f3e0d8;color:var(--clay-deep)}
+.taskcall.clear .tcicon{background:#e4efe2;color:var(--ok)}
+.taskcall h3{font-size:20px;font-weight:600;margin-bottom:5px;color:var(--ink)}
+.taskcall p{font-size:14px;color:var(--ink-soft);line-height:1.55}
+.taskcall p b{color:var(--ink)}
+.taskcall p b.late{color:var(--clay-deep)}
+.tclist{margin-top:14px;display:flex;flex-direction:column;gap:2px}
+.tcitem{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:none;border:none;
+  padding:9px 10px;border-radius:9px;cursor:pointer;font:inherit;transition:.14s}
+.tcitem:hover{background:var(--blue-wash)}
+.tcdot{width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0}
+.tcdot.od{background:var(--clay-deep)}
+.tcname{font-size:14.5px;color:var(--ink);flex:1}
+.tcwhen{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft);white-space:nowrap}
+.tcwhen.od{color:var(--clay-deep);font-weight:600}
+.tcwho{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);
+  background:var(--paper);padding:3px 9px;border-radius:100px}
+@media(max-width:640px){.taskcall{flex-direction:column;gap:12px}.tcwho{display:none}}
+
+/* access matrix */
+.ledger.acc td{vertical-align:middle}
+.statebtn{border:none;border-radius:100px;padding:5px 13px;font:inherit;font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:700;cursor:pointer;transition:.15s}
+.statebtn.pub{background:#e2f0e0;color:var(--ok)}
+.statebtn.dr{background:#f3e6d8;color:var(--brown-lt)}
+.statebtn:hover{filter:brightness(.95)}
+.tick{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:var(--paper);
+  color:var(--ink-soft);cursor:pointer;font-size:14px;transition:.15s}
+.tick.on{background:var(--blue-wash);border-color:var(--blue);color:var(--blue-deep);font-weight:700}
+.tick:hover{transform:scale(1.08)}
+
+/* asset library */
+.assetgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:13px}
+.asset{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:12px;
+  overflow:hidden;background:var(--card);transition:.16s}
+.asset:hover{border-color:var(--amber);transform:translateY(-3px)}
+.athumb{display:block;height:112px;background-size:cover;background-position:center;background-color:var(--blue-wash)}
+.athumb.ph{display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--blue-wash)}
+.ameta{display:block;padding:11px 13px}
+.ameta b{display:block;font-size:13.5px;line-height:1.3;margin-bottom:3px;word-break:break-word}
+#dropzone{border:2px dashed var(--line);border-radius:13px;padding:26px;text-align:center;cursor:pointer;
+  transition:.16s;background:rgba(255,255,255,.4)}
+#dropzone:hover,#dropzone.over{border-color:var(--amber);background:var(--blue-wash)}
+#dropzone .dzbig{font-size:30px;margin-bottom:8px}
+#dropzone p{font-size:14px;color:var(--ink-soft)}
+#dropzone b{color:var(--blue-deep)}
+
+/* first-run walkthrough */
+#tour{position:fixed;inset:0;z-index:90;background:rgba(28,34,49,.62);display:none;align-items:flex-end;justify-content:center;padding:26px}
+#tour.on{display:flex}
+.tourcard{background:var(--card);border-radius:18px;padding:28px 32px;max-width:560px;width:100%;
+  box-shadow:0 22px 60px rgba(0,0,0,.32);animation:tourin .3s cubic-bezier(.22,1,.36,1)}
+@keyframes tourin{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.tourstep{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:9px}
+.tourcard h3{font-size:23px;font-weight:600;color:var(--ink);margin-bottom:9px;line-height:1.25}
+.tourcard p{font-size:15px;line-height:1.62;color:var(--ink-soft);max-width:60ch}
+.tourdots{display:flex;gap:6px;margin:20px 0 18px}
+.tourdots span{width:22px;height:4px;border-radius:100px;background:var(--line)}
+.tourdots span.done{background:var(--blue-wash)}
+.tourdots span.on{background:var(--amber)}
+.tournav{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.tourlit{position:relative;z-index:95;outline:3px solid var(--amber);outline-offset:4px;border-radius:12px;
+  box-shadow:0 0 0 9999px rgba(28,34,49,.55)}
+#nav .tourlit{box-shadow:none;outline-offset:2px}
+@media(max-width:640px){.tourcard{padding:22px 20px}.tourcard h3{font-size:20px}}
+
+/* where to go next */
+.nextcard{display:flex;gap:15px;align-items:flex-start;width:100%;text-align:left;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;padding:19px 20px;font:inherit;transition:.16s}
+.nextcard:hover{border-color:var(--amber);transform:translateY(-3px)}
+.nextcard.owed{border-left:4px solid var(--amber);background:linear-gradient(165deg,#fffaf0,var(--card))}
+.nxicon{font-size:23px;flex-shrink:0;line-height:1.2}
+.nxbody{flex:1;min-width:0}
+.nxlab{display:block;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:5px}
+.nxbody b{display:block;font-size:16.5px;color:var(--ink);margin-bottom:5px;line-height:1.3}
+.nxsub{display:block;font-size:13.5px;line-height:1.5;color:var(--ink-soft)}
+.nxgo{color:var(--gold);font-size:19px;flex-shrink:0;transition:transform .16s}
+.nextcard:hover .nxgo{transform:translateX(4px)}
+.tourlink{background:none;border:none;color:var(--amber-lt);font:inherit;font-size:11px;letter-spacing:.08em;
+  cursor:pointer;padding:0;text-decoration:underline;opacity:.75}
+.tourlink:hover{opacity:1}
 </style>
 </head>
 <body>
@@ -558,13 +686,18 @@ textarea.tall{min-height:132px}
     <p>Democracy Brewing</p>
   </button>
   <nav id="nav"></nav>
+  <div id="viewas"></div>
   <button class="whoami" id="whoami">
     <span class="av" id="av">?</span>
     <span class="txt" id="whotxt">Not signed in<small>Tap to choose</small></span>
   </button>
+  <div style="padding:0 13px 13px"><button class="tourlink" data-tour="open">Show me around again</button></div>
 </aside>
 
 <main>
+<div id="previewbar"></div>
+<div id="livebar"></div>
+<div id="tour"><div class="tourcard" id="tourbody"></div></div>
 
 <!-- ═════ HOME ═════ -->
 <section class="page on" id="p-home">
@@ -580,15 +713,16 @@ textarea.tall{min-height:132px}
     <div class="barfoot">Pull any handle to open it</div>
   </div>
 
+  <div id="taskcall"></div>
   <div class="tasksec" id="tasksec">
     <div class="taskhead">
       <h3 id="task-title">Your tasks</h3>
       <span class="taskcount" id="task-count"></span>
       <div class="tsum" id="task-summary"></div>
-      <button class="chev" id="task-toggle" aria-expanded="false" aria-controls="taskbody"><i>&#9654;</i><span id="task-toggle-label">Show</span></button>
+      <button class="chev" id="task-toggle" aria-expanded="true" aria-controls="taskbody"><i>&#9654;</i><span id="task-toggle-label">Hide</span></button>
       <button class="mbtn" id="task-add" style="display:none">+ New task</button>
     </div>
-    <div id="taskbody" hidden>
+    <div id="taskbody">
     <div class="taskfilters">
       <div class="segs" id="task-filter-who" style="display:none"></div>
       <div class="segs" id="task-filter-when"></div>
@@ -602,6 +736,8 @@ textarea.tall{min-height:132px}
     <div id="tasklist"></div>
     </div>
   </div>
+
+  <div id="nextup"></div>
 
   <div class="grid2" style="margin-bottom:16px">
     <div class="card">
@@ -981,7 +1117,21 @@ textarea.tall{min-height:132px}
   <div class="card" style="margin-top:20px">
     <div class="eyebrow" style="margin-bottom:11px">Asset library</div>
     <div id="assetlist"></div>
-    <div class="rowact" style="margin-top:13px">
+    <div id="dropzone" tabindex="0" role="button" style="margin-top:15px">
+      <div class="dzbig">📎</div>
+      <p><b>Drop a file here</b>, or click to choose one</p>
+      <p class="mini" style="margin-top:5px">Photos, video, PDFs, decks, spreadsheets · up to 25 MB each · several at once is fine</p>
+      <input type="file" id="a-file" multiple style="display:none"
+        accept="image/*,video/*,application/pdf,.pptx,.docx,.xlsx">
+    </div>
+    <div class="rowact" style="margin-top:11px">
+      <select id="a-house" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;background:var(--card)">
+        <option value="all">All houses</option><option value="downtown">Downtown Crossing</option>
+        <option value="eastie">East Boston</option><option value="cityhall">City Hall Plaza</option></select>
+      <span class="mini" id="up-msg" style="align-self:center">Files land in the library the moment they finish.</span>
+    </div>
+    <div class="eyebrow" style="margin:18px 0 9px">Or paste a link</div>
+    <div class="rowact">
       <input id="a-name" placeholder="Asset name" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;flex:1;min-width:160px;background:var(--card)">
       <input id="a-url" placeholder="Link (Drive, Dropbox, Canva…)" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;flex:2;min-width:200px;background:var(--card)">
       <select id="a-kind" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:14px;background:var(--card)">
@@ -989,7 +1139,7 @@ textarea.tall{min-height:132px}
         <option value="deck">Deck</option><option value="menu">Menu</option><option value="font">Font</option><option value="doc">Document</option></select>
       <button class="mbtn" id="aadd">Add</button>
     </div>
-    <p class="mini" style="margin-top:11px">Anyone signed in can add a link here. The point is that nobody has to ask "where are the logos" twice.</p>
+    <p class="mini" style="margin-top:11px">Anyone signed in can add to this — a file or a link, both end up in the same library. The point is that nobody has to ask "where are the logos" twice.</p>
   </div>
 </section>
 
@@ -1026,6 +1176,12 @@ textarea.tall{min-height:132px}
     <div class="eyebrow">Tap 05 · The Market</div>
     <h2>What we're actually up against.</h2>
     <p class="lede">Read against the three engines, because that is how the work is organised: what we already have going for us, what is genuinely broken, and what we do about it. Every number below carries its source and its date. Anything that could not be verified says so instead of guessing — including the places where checking the facts contradicted our own pitch.</p>
+  </div>
+
+  <div class="exportbar">
+    <a class="mbtn solid" href="benchmark.html" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block">★ Open the presentation</a>
+    <button class="mbtn" id="mkt-export">Download the long form</button>
+    <span class="mini" id="mkt-msg">Twenty-two slides, built to be read on a screen and saved straight to PDF from there — that is the version to send. Everything below is the working detail behind it, and it keeps changing as answers land.</span>
   </div>
 
   <div class="segs enginetabs" id="mkttabs"></div>
@@ -1091,6 +1247,42 @@ textarea.tall{min-height:132px}
     </div>
     <p class="mini" style="margin-top:14px">Signing here records your name, the exact time, and a fingerprint of the text you actually read. That record is append-only — it cannot be edited or removed afterwards, by anyone, including me. Both parties can download a signed copy from this page at any time, so neither of us depends on this dashboard existing forever.</p>
   </div>
+</section>
+
+<section class="page" id="p-log">
+  <div class="phead">
+    <div class="eyebrow">The Log</div>
+    <h2>Week by week, and what came out of it.</h2>
+    <p class="lede">One row per week: the hours, what actually got done, and the thing that came out of it. Nothing here is a status update written after the fact — it is the record, kept as it happens, so that at Day 30, 60 and 90 nobody has to reconstruct anything from memory.</p>
+  </div>
+
+  <div class="grid3" id="logstats" style="margin-bottom:22px"></div>
+
+  <div id="loglist"></div>
+
+  <div class="card" id="logedit" style="margin-top:18px;display:none">
+    <div class="eyebrow" style="margin-bottom:12px">Record this week</div>
+    <div class="fgrid">
+      <div><label for="lg-week">Week starting (Monday)</label><input id="lg-week" type="date"></div>
+      <div><label for="lg-hours">Hours logged</label><input id="lg-hours" type="number" step="0.5" min="0"></div>
+      <div><label for="lg-deliv">Deliverable</label><input id="lg-deliv" placeholder="What came out of the week"></div>
+      <div><label for="lg-url">Where it lives</label><input id="lg-url" placeholder="Link, or #p-market for a page in here"></div>
+      <div class="fwide"><label for="lg-sum">What got done</label><textarea id="lg-sum" placeholder="Plainly. This is the record Miguel reads at Day 90."></textarea></div>
+    </div>
+    <div class="rowact">
+      <button class="mbtn solid" id="lg-save">Save the week</button>
+      <span class="mini" id="lg-msg" style="align-self:center"></span>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="p-access">
+  <div class="phead">
+    <div class="eyebrow">Access</div>
+    <h2>Who sees what, and what is finished.</h2>
+    <p class="lede">Only I can see this page. Two controls per row: whether the work is finished enough to leave my desk, and who it is for once it is. Nothing reaches the co-op because I forgot a setting — it reaches them because I decided it.</p>
+  </div>
+  <div id="accessgrid"></div>
 </section>
 
 <!-- ═════ SCOPE ═════ -->
@@ -1190,59 +1382,117 @@ var TAPS_READY=false;
 var TAPS=[
  {id:"p-onboard", name:"Onboarding", state:"Pouring", live:true, fill:0},
  {id:"p-numbers", name:"The Numbers",state:"Live",    live:true, fill:40},
- {id:"p-pipeline",name:"Pipeline",   state:"Pouring", live:true, fill:100},
+ {id:"p-pipeline",name:"CRM",        state:"Pouring", live:true, fill:100},
  {id:"p-brand",   name:"Brand",      state:"Live",    live:true, fill:65},
  {id:"p-market",  name:"The Market", state:"Live",    live:true, fill:80},
  {id:"p-plan",    name:"The Plan",   state:"Building",live:true, fill:35},
- {id:"p-scope",   name:"Scope",      state:"Ready",   live:true, fill:100}
-];
-var PAGES=[
- {id:"p-home",label:"Home"},
- {id:"p-onboard",label:"Onboarding",tag:"Start"},
- {id:"p-miguel",label:"Track · Miguel",sub:true},
- {id:"p-karsen",label:"Track · Karsen",sub:true},
- {id:"p-agreement",label:"The Agreement",tag:"Sign",sub:true},
- {id:"p-scope",label:"Scope",sub:true},
- {id:"p-numbers",label:"The Numbers"},
- {id:"p-pipeline",label:"Pipeline",tag:"Live"},
- {id:"p-brand",label:"Brand & Content"},
- {id:"p-market",label:"The Market",tag:"New"},
- {id:"p-plan",label:"The Plan"}
+ {id:"p-log",     name:"The Log",    state:"Pouring", live:true, fill:100}
 ];
 var nav=document.getElementById("nav");
-// The two answer tracks are working documents, not destinations.
-// Only the admin gets them in the sidebar; everyone else reaches
-// their own from Onboarding or straight from their task list.
-function agreementOk(){
-  return !!(ME && (ME.is_admin || ["miguel","james"].indexOf(ME.slug)!==-1));
+/* ───────── NAV · groups that open and close ─────────
+   Five things at the top level instead of ten. Each group opens
+   when you're inside it and stays put when you're not. ------- */
+
+var NAVTREE=[
+ {id:"p-home",label:"Home"},
+ {g:"onboard", label:"Onboarding", tag:"Start", page:"p-onboard", kids:[
+   {id:"p-miguel",   label:"Track · Miguel"},
+   {id:"p-karsen",   label:"Track · Karsen"},
+   {id:"p-agreement",label:"The Agreement", tag:"Sign"},
+   {id:"p-scope",    label:"Scope"}
+ ]},
+ {g:"floor", label:"The Floor", note:"the day to day", kids:[
+   {id:"p-pipeline", label:"Pipeline · CRM", tag:"Live"},
+   {id:"p-brand",    label:"Brand & Content"}
+ ]},
+ {g:"work", label:"The Work", note:"what we deliver", kids:[
+   {id:"p-numbers",  label:"The Numbers"},
+   {id:"p-market",   label:"The Market"},
+   {id:"p-plan",     label:"The Plan"}
+ ]},
+ {id:"p-log", label:"The Log"},
+ {id:"p-access", label:"Access", tag:"Only me"}
+];
+
+var NAVOPEN={onboard:true, floor:false, work:false};
+
+
+
+function groupOf(pageId){
+  for(var i=0;i<NAVTREE.length;i++){
+    var n=NAVTREE[i];
+    if(!n.kids) continue;
+    if(n.page===pageId) return n.g;
+    for(var k=0;k<n.kids.length;k++) if(n.kids[k].id===pageId) return n.g;
+  }
+  return null;
 }
-function scopeOk(){
-  return !!(ME && (ME.is_admin || ["miguel","james","laura"].indexOf(ME.slug)!==-1));
-}
+
 function paintNav(){
-  var admin = ME && ME.is_admin;
-  var cur = (document.querySelector(".page.on")||{}).id || "p-home";
+  var cur=(document.querySelector(".page.on")||{}).id || "p-home";
+  if(!ME){ nav.innerHTML=""; return; }
+  var inGroup=groupOf(cur);
+  if(inGroup) NAVOPEN[inGroup]=true;      // never hide the page you're standing on
   nav.innerHTML="";
-  PAGES.forEach(function(p){
-    // Each person sees their own track; the admin sees both.
-    if(p.id==="p-miguel" && !(admin || (ME && ME.slug==="miguel"))) return;
-    if(p.id==="p-karsen" && !(admin || (ME && ME.slug==="karsen"))) return;
-    if(p.id==="p-scope" && !scopeOk()) return;
-    if(p.id==="p-agreement" && !agreementOk()) return;
-    var b=document.createElement("button");
-    b.className="navitem"+(p.sub?" sub":""); b.dataset.goto=p.id;
-    b.setAttribute("aria-current", p.id===cur);
-    b.innerHTML='<span class="dot"></span><span>'+p.label+'</span>'+
-      (p.tag?'<span class="tag'+(p.soon?' soon':'')+'">'+p.tag+'</span>':'');
-    nav.appendChild(b);
+
+  NAVTREE.forEach(function(n){
+    if(!n.kids){
+      if(!canSee(n.id)) return;
+      var b=document.createElement("button");
+      b.className="navitem"; b.dataset.goto=n.id;
+      b.setAttribute("aria-current", n.id===cur);
+      b.innerHTML='<span class="dot"></span><span>'+n.label+'</span>'+
+        (n.tag?'<span class="tag">'+n.tag+'</span>':'');
+      nav.appendChild(b);
+      return;
+    }
+
+    var kids=n.kids.filter(function(k){ return canSee(k.id) });
+    if(!kids.length && !n.page) return;
+
+    var open=!!NAVOPEN[n.g];
+    var isCur=(n.page===cur);
+    var h=document.createElement("button");
+    h.className="navitem navgroup"+(open?" open":"");
+    h.dataset.group=n.g;
+    if(n.page) h.dataset.groupgoto=n.page;
+    h.setAttribute("aria-expanded", open);
+    h.setAttribute("aria-current", isCur);
+    h.innerHTML='<span class="dot"></span><span>'+n.label+'</span>'+
+      (n.tag?'<span class="tag">'+n.tag+'</span>':'')+
+      '<span class="chevron" aria-hidden="true">›</span>';
+    nav.appendChild(h);
+
+    if(!open) return;
+    kids.forEach(function(k){
+      var b=document.createElement("button");
+      b.className="navitem sub"; b.dataset.goto=k.id;
+      b.setAttribute("aria-current", k.id===cur);
+      b.innerHTML='<span class="dot"></span><span>'+k.label+'</span>'+
+        (k.tag?'<span class="tag">'+k.tag+'</span>':'');
+      nav.appendChild(b);
+    });
   });
 }
+
+// A group header opens the group. If it also owns a page, it goes there too.
+document.addEventListener("click",function(e){
+  var h=e.target.closest("[data-group]"); if(!h) return;
+  var g=h.dataset.group;
+  var goingTo=h.dataset.groupgoto;
+  if(goingTo && groupOf((document.querySelector(".page.on")||{}).id)!==g){
+    NAVOPEN[g]=true; go(goingTo); return;
+  }
+  NAVOPEN[g]=!NAVOPEN[g];
+  paintNav();
+});
 paintNav();
 var taps=document.getElementById("taps");
 function paintTaps(){
   taps.innerHTML="";
   TAPS.forEach(function(t,i){
-    if(t.id==="p-scope" && !scopeOk()) return;
+    if(!canSee(t.id)) return;
+
     var b=document.createElement("button");
     b.className="tap"; b.dataset.goto=t.id;
     b.innerHTML=pintSVG(t,i)+
@@ -1253,8 +1503,8 @@ function paintTaps(){
 }
 function go(id){
   document.querySelectorAll(".page").forEach(function(s){s.classList.toggle("on",s.id===id)});
-  document.querySelectorAll(".navitem").forEach(function(n){
-    n.setAttribute("aria-current",n.dataset.goto===id)});
+  var g=groupOf(id); if(g) NAVOPEN[g]=true;
+  paintNav();
   window.scrollTo({top:0,behavior:"smooth"});
 }
 document.addEventListener("click",function(e){
@@ -1735,7 +1985,7 @@ async function enter(p){
   await loadIds();
   await Promise.all([loadTasks(),loadViews(),loadResponses()]);
   paintTaps();
-  paintTaskFilters(); renderTasks(); renderTaskSummary(); renderSaved();
+  paintTaskFilters(); renderTasks(); renderTaskSummary(); renderTaskCall(); renderNext(); renderSaved();
   render("miguel"); render("karsen");
   await loadGrowth();
   await loadDoc(); renderDoc();
@@ -1822,9 +2072,9 @@ function paintTaskFilters(){
 }
 document.addEventListener("click",function(e){
   var w=e.target.closest("[data-who]");
-  if(w){ TASK_WHO=w.dataset.who; paintTaskFilters(); renderTasks(); renderTaskSummary(); return; }
+  if(w){ TASK_WHO=w.dataset.who; paintTaskFilters(); renderTasks(); renderTaskSummary(); renderTaskCall(); renderNext(); return; }
   var wh=e.target.closest("[data-when]");
-  if(wh){ TASK_WHEN=wh.dataset.when; paintTaskFilters(); renderTasks(); renderTaskSummary(); return; }
+  if(wh){ TASK_WHEN=wh.dataset.when; paintTaskFilters(); renderTasks(); renderTaskSummary(); renderTaskCall(); renderNext(); return; }
 });
 function renderTasks(){
   var box=document.getElementById("tasklist");
@@ -1867,7 +2117,7 @@ document.addEventListener("click",async function(e){
   var b=e.target.closest("[data-tick]"); if(!b||!ONLINE) return;
   var t=TASKS.filter(function(x){return x.id===b.dataset.tick})[0]; if(!t) return;
   var next=t.status==="done"?"todo":"done";
-  t.status=next; renderTasks(); renderTaskSummary();
+  t.status=next; renderTasks(); renderTaskSummary(); renderTaskCall(); renderNext();
   await sb.from("tasks").update({status:next,done_at:next==="done"?new Date().toISOString():null})
     .eq("id",t.id);
 });
@@ -1895,7 +2145,7 @@ document.getElementById("nt-save").addEventListener("click",async function(){
     document.getElementById("nt-title").value="";
     document.getElementById("nt-due").value="";
     document.getElementById("addtask").classList.remove("on");
-    await loadTasks(); renderTasks(); renderTaskSummary();
+    await loadTasks(); renderTasks(); renderTaskSummary(); renderTaskCall(); renderNext();
   }
 });
 
@@ -2452,21 +2702,6 @@ async function loadAssets(){
   var r=await sb.from("assets").select("*").order("created_at",{ascending:false});
   if(!r.error) ASSETS=r.data||[];
 }
-function renderAssets(){
-  var box=q("assetlist"); if(!box) return;
-  if(!ASSETS.length){
-    box.innerHTML='<div class="emptybox">No assets linked yet. Miguel\'s track asks where the graphic materials live — whatever comes back goes here so it is never hunted for again.</div>';
-    return;
-  }
-  box.innerHTML=ASSETS.map(function(a){
-    return '<div class="calrow"><span class="cd">'+esc(a.kind||"file")+'</span>'+
-      '<div><b style="font-size:14.5px">'+esc(a.name)+'</b>'+
-        (a.url?'<div class="mini"><a href="'+esc(a.url)+'" target="_blank" rel="noopener">'+esc(a.url).slice(0,64)+'…</a></div>':"")+'</div>'+
-      '<span class="pill">'+(HOUSEL[a.house]||"all")+'</span>'+
-      '<span class="mini">'+dstr(a.created_at)+'</span></div>';
-  }).join("");
-}
-
 /* ───────── METRICS / BASELINE ───────── */
 async function loadMetrics(){
   METRICSD=[];
@@ -2763,6 +2998,7 @@ function renderTaskSummary(){
 function bindTaskCollapse(){
   var btn=q("task-toggle"), body=q("taskbody"), lab=q("task-toggle-label");
   if(!btn||!body) return;
+  if(btn.getAttribute("aria-expanded")==="true"){ body.hidden=false; if(lab) lab.textContent="Hide"; }
   btn.addEventListener("click",function(){
     var open=btn.getAttribute("aria-expanded")==="true";
     btn.setAttribute("aria-expanded", String(!open));
@@ -3171,6 +3407,779 @@ function bindMarket(){
   });
 }
 
+/* ───────── THE LOG · the record, kept as it happens ───────── */
+
+function renderLogStats(){
+  var box=q("logstats"); if(!box) return;
+  var past=WEEKS.filter(function(w){ return Number(w.logged)>0 });
+  var hours=WEEKS.reduce(function(a,w){ return a+Number(w.logged||0) },0);
+  var delivered=WEEKS.filter(function(w){ return w.deliverable && Number(w.logged)>0 }).length;
+  var cards=[
+    ["Weeks worked", String(past.length), "since 10 August"],
+    ["Hours logged", (hours%1?hours.toFixed(1):String(hours)), "against "+(past.length*15)+" planned"],
+    ["Deliverables out", String(delivered), "one per week, named in advance"]
+  ];
+  box.innerHTML=cards.map(function(c){
+    return '<div class="card"><div class="eyebrow">'+c[0]+'</div>'+
+      '<div class="statbig">'+c[1]+'</div><div class="mini">'+c[2]+'</div></div>';
+  }).join("");
+}
+
+function renderLog(){
+  var box=q("loglist"); if(!box) return;
+  var rows=WEEKS.slice().sort(function(a,b){ return a.week_start<b.week_start?1:-1 });
+  if(!rows.length){
+    box.innerHTML='<div class="emptybox">No weeks recorded yet.</div>';
+    return;
+  }
+  var cur=isoDate(mondayOf(new Date()));
+  box.innerHTML=rows.map(function(w){
+    var p=Number(w.planned)||15, l=Number(w.logged)||0;
+    var isNow=w.week_start===cur;
+    var future=w.week_start>cur;
+    return '<div class="logrow'+(isNow?" now":"")+(future?" ahead":"")+'">'+
+      '<div class="logwhen">'+
+        '<div class="logdate">'+weekLabel(w.week_start)+'</div>'+
+        '<div class="mini">'+(future?"ahead":(l%1?l.toFixed(1):l)+" of "+p+" h")+'</div>'+
+        (future?"":'<div class="bar" style="margin-top:6px"><i style="width:'+Math.min(100,(l/p)*100).toFixed(0)+'%"></i></div>')+
+      '</div>'+
+      '<div class="logbody">'+
+        (isNow?'<span class="pill hot" style="margin-bottom:7px;display:inline-block">this week</span>':"")+
+        (w.summary?'<p>'+esc(w.summary)+'</p>':'<p class="mini" style="font-style:italic">Not written up yet.</p>')+
+      '</div>'+
+      '<div class="logdeliv">'+
+        (w.deliverable
+          ? '<div class="eyebrow" style="margin-bottom:6px">'+(future?"Due":"Delivered")+'</div>'+
+            (w.deliverable_url
+              ? '<a class="delivlink'+(future?" pending":"")+'" href="'+esc(w.deliverable_url)+'"'+
+                (w.deliverable_url.charAt(0)==="#"?' data-goto="'+esc(w.deliverable_url.slice(1))+'"':' target="_blank" rel="noopener"')+
+                '>'+esc(w.deliverable)+' &rarr;</a>'
+              : '<span class="delivlink'+(future?" pending":"")+'">'+esc(w.deliverable)+'</span>')
+          : '<span class="mini" style="font-style:italic">&mdash;</span>')+
+      '</div>'+
+    '</div>';
+  }).join("");
+}
+
+function fillLogForm(){
+  var w=curWeek(); if(!w) return;
+  if(q("lg-week"))  q("lg-week").value=w.week_start;
+  if(q("lg-hours")) q("lg-hours").value=Number(w.logged||0);
+  if(q("lg-deliv")) q("lg-deliv").value=w.deliverable||"";
+  if(q("lg-url"))   q("lg-url").value=w.deliverable_url||"";
+  if(q("lg-sum"))   q("lg-sum").value=w.summary||"";
+}
+
+async function saveLog(){
+  var msg=q("lg-msg");
+  if(!ONLINE||!ME||!ME.is_admin) return;
+  var wk=q("lg-week").value; if(!wk){ msg.textContent="Pick the Monday."; return; }
+  msg.textContent="Saving…";
+  var r=await sb.from("work_weeks").upsert({
+    week_start:wk, planned:15,
+    logged:Number(q("lg-hours").value||0),
+    deliverable:q("lg-deliv").value.trim()||null,
+    deliverable_url:q("lg-url").value.trim()||null,
+    summary:q("lg-sum").value.trim()||null,
+    updated_at:new Date().toISOString()
+  },{onConflict:"week_start"});
+  if(r.error){ msg.textContent="Couldn't save: "+r.error.message; return; }
+  msg.textContent="Saved";
+  await loadWeeks(); renderLog(); renderLogStats(); renderCapacity();
+}
+
+function renderLogAll(){
+  renderLogStats(); renderLog(); fillLogForm();
+  var e=q("logedit"); if(e) e.style.display=(ME&&ME.is_admin)?"":"none";
+}
+
+function bindLog(){
+  var b=q("lg-save"); if(b) b.addEventListener("click",saveLog);
+}
+
+/* ───────── EXPORT · the benchmark, as a file they can keep ─────────
+   Renders every tab into one self-contained document. The page stays
+   the source of truth; this is a snapshot with a date on it. -------- */
+
+var EXPORT_CSS = [
+"@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');",
+":root{--blue:#4a6bb3;--blue-deep:#2e4478;--blue-ink:#1d2d52;--blue-wash:#e8eef8;--gold:#b8912f;",
+"--amber:#d9a441;--clay-deep:#b5705a;--paper:#f5f1e6;--card:#fffdf8;--ink:#1c2231;--ink-soft:#5a6172;--line:#dcd4c2;--ok:#4f7a4a}",
+"*{margin:0;padding:0;box-sizing:border-box}",
+"body{font-family:'Josefin Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;padding:52px 30px 90px}",
+".wrap{max-width:1080px;margin:0 auto}",
+".cover{border-bottom:2px solid var(--line);padding-bottom:30px;margin-bottom:40px}",
+".cover .eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:12px}",
+".cover h1{font-size:44px;line-height:1.1;font-weight:300;color:var(--blue-ink);margin-bottom:14px}",
+".cover p{font-size:16px;color:var(--ink-soft);max-width:74ch}",
+".cover .stamp{margin-top:18px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft)}",
+"h2.sec{font-size:27px;font-weight:300;color:var(--blue-ink);margin:52px 0 8px;padding-top:26px;border-top:1px solid var(--line)}",
+"h2.sec:first-of-type{border-top:none;padding-top:0;margin-top:0}",
+".eyebrow{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);font-weight:700}",
+".lede{font-size:16px;color:var(--ink-soft);max-width:76ch;margin-bottom:18px}",
+".grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:20px}",
+".grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}",
+".card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:17px 19px}",
+".statbig{font-family:'JetBrains Mono',monospace;font-size:27px;font-weight:700;color:var(--blue-ink);margin:7px 0 3px;line-height:1}",
+".mini{font-size:12.5px;color:var(--ink-soft);line-height:1.5}",
+".find{border-left:3px solid var(--line);padding:2px 0 2px 16px;margin-bottom:17px}",
+".find h4{font-size:15.5px;font-weight:700;color:var(--blue-ink);margin-bottom:6px;line-height:1.35}",
+".find p{font-size:14.5px;line-height:1.62;max-width:78ch}",
+".find.good{border-left-color:var(--ok)}.find.bad{border-left-color:var(--clay-deep)}",
+".find.warn{border-left-color:var(--amber)}.find.move{border-left-color:var(--blue)}",
+".srcs{margin-top:8px;display:flex;flex-wrap:wrap;gap:7px}",
+".srcs a{font-size:11px;padding:3px 9px;border-radius:100px;background:var(--blue-wash);color:var(--blue-deep);text-decoration:none}",
+".waitbox{border:1px dashed var(--line);border-radius:12px;padding:17px 19px;background:rgba(255,255,255,.5);margin-top:20px}",
+".waitchips{display:flex;flex-wrap:wrap;gap:7px}",
+".waitchips span{font-size:12px;padding:5px 12px;border-radius:100px;background:var(--paper);border:1px solid var(--line);color:var(--ink-soft)}",
+".tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}",
+"table.ledger{width:100%;border-collapse:collapse;font-size:13.5px}",
+"table.ledger.cmp{min-width:880px}",
+".ledger th{text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);padding:11px 12px;border-bottom:1px solid var(--line)}",
+".ledger td{padding:13px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.45}",
+".ledger td.no{color:var(--clay-deep)}.ledger td.yes{color:var(--ok);font-weight:600}.ledger td.mid{color:var(--gold)}",
+".ledger tr.us{background:var(--blue-wash)}.ledger tr.us td{font-weight:600}",
+".foot{margin-top:60px;padding-top:22px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-soft)}",
+"@media print{body{padding:0;background:#fff}h2.sec{page-break-before:always}h2.sec:first-of-type{page-break-before:auto}.find,.card{page-break-inside:avoid}}",
+"@media(max-width:860px){.grid4,.grid3{grid-template-columns:1fr 1fr}.cover h1{font-size:32px}}"
+].join("\n");
+
+function exportMarket(){
+  var saved = MKTTAB;
+  var tabs = [
+    ["market","The market"],
+    ["e1","Engine 01 · Brand &amp; Content"],
+    ["e2","Engine 02 · Digital &amp; Traffic"],
+    ["e3","Engine 03 · Sales &amp; Partnerships"],
+    ["table","How they sell events"],
+    ["plan","What it means for the plan"]
+  ];
+  var body = tabs.map(function(t){
+    MKTTAB = t[0];
+    renderMktPanel();
+    return '<h2 class="sec">'+t[1]+'</h2>'+q("mktpanel").innerHTML;
+  }).join("\n");
+  MKTTAB = saved; renderMktTabs(); renderMktPanel();
+
+  var stamp = new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+  var doc =
+'<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n'+
+'<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'+
+'<title>Democracy Brewing — The Boston Benchmark</title>\n'+
+'<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ctext y=\'.9em\' font-size=\'90\'%3E%F0%9F%8D%BA%3C/text%3E%3C/svg%3E">\n'+
+'<style>\n'+EXPORT_CSS+'\n</style>\n</head>\n<body>\n<div class="wrap">\n'+
+'<div class="cover">'+
+  '<div class="eyebrow">Democracy Brewing · Growth &amp; Partnerships</div>'+
+  '<h1>The Boston Benchmark</h1>'+
+  '<p>What we are actually up against, read against the three engines: what we already have going for us, what is genuinely broken, and what we do about it. Every number carries its source and its date. Anything that could not be verified says so instead of guessing — including the places where checking the facts contradicted our own pitch.</p>'+
+  '<div class="stamp">Snapshot taken '+stamp+' · prepared by Nicolás Guevara · the live version lives in the Growth Command Center</div>'+
+'</div>\n'+ body +
+'\n<div class="foot">This is a snapshot. The living version sits in the Growth Command Center and is rewritten as Miguel and Karsen answer their tracks and as the weekly research lands. Where a section says a question is still unanswered, that is a real gap, not a placeholder — it gets replaced with an answer, never with a guess.</div>\n'+
+'</div>\n</body>\n</html>';
+
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([doc],{type:"text/html"}));
+  a.download="democracy-boston-benchmark-"+new Date().toISOString().slice(0,10)+".html";
+  a.click(); URL.revokeObjectURL(a.href);
+  var m=q("mkt-msg"); if(m){ m.textContent="Downloaded. Open it in any browser, or print it to PDF from there."; }
+}
+
+function bindExport(){
+  var b=q("mkt-export"); if(b) b.addEventListener("click",exportMarket);
+  var p=q("mkt-print");  if(p) p.addEventListener("click",function(){ window.print() });
+}
+
+/* ───────── ACCESS · who sees what, and what is finished ─────────
+   ME is who you really are — every write is signed with it.
+   eff() is whose screen you are looking at. Only the admin can
+   make those two differ, and only for looking. -------------------- */
+
+var PAGES_DB=[], VIEWAS=null;
+
+function eff(){
+  if(!VIEWAS) return ME;
+  var p=ROSTER.filter(function(x){ return x.slug===VIEWAS })[0];
+  return p||ME;
+}
+function realAdmin(){ return !!(ME && ME.is_admin); }
+function previewing(){ return !!VIEWAS; }
+
+async function loadPages(){
+  PAGES_DB=[];
+  if(!ONLINE||!ME) return;
+  var r=await sb.from("app_pages").select("*").order("sort");
+  if(!r.error) PAGES_DB=r.data||[];
+}
+function pageRule(id){ return PAGES_DB.filter(function(p){ return p.id===id })[0]||null; }
+
+function canSee(id){
+  var m=eff(); if(!m) return false;
+  if(id==="p-access") return realAdmin() && !previewing();  // mine alone, never in a preview
+  if(m.is_admin && !previewing()) return true;      // the real admin sees everything
+  var r=pageRule(id);
+  if(!r) return true;                               // unknown page = not restricted
+  if(r.status!=="published") return false;
+  if(r.audience && r.audience.length && r.audience.indexOf(m.slug)===-1) return false;
+  return true;
+}
+function agreementOk(){ return canSee("p-agreement"); }
+function scopeOk(){ return canSee("p-scope"); }
+
+/* ── view-as ── */
+function paintViewAs(){
+  var box=q("viewas"); if(!box) return;
+  if(!realAdmin()){ box.style.display="none"; return; }
+  box.style.display="";
+  box.innerHTML='<label for="va-sel">View the dashboard as</label>'+
+    '<select id="va-sel">'+
+      '<option value="">Myself · admin</option>'+
+      ROSTER.filter(function(p){ return !p.is_admin }).map(function(p){
+        return '<option value="'+p.slug+'"'+(VIEWAS===p.slug?" selected":"")+'>'+esc(p.name)+' · '+esc(p.role_label)+'</option>';
+      }).join("")+
+    '</select>';
+}
+function paintPreviewBar(){
+  var bar=q("previewbar"); if(!bar) return;
+  if(!previewing()){ bar.classList.remove("on"); return; }
+  var m=eff();
+  bar.classList.add("on");
+  bar.innerHTML='<span>You are looking at <b>'+esc(m.name)+'&rsquo;s</b> view. '+
+    'Anything you save is still recorded as you.</span>'+
+    '<button class="mbtn" id="va-exit">Back to my own</button>';
+}
+async function setViewAs(slug){
+  VIEWAS=slug||null;
+  paintViewAs(); paintPreviewBar();
+  var m=eff();
+  document.getElementById("av").textContent=m.initial;
+  document.getElementById("whotxt").innerHTML=esc(m.name)+"<small>"+esc(m.role_label)+" · sign out</small>";
+  var h=document.getElementById("hellotxt");
+  if(h) h.innerHTML=greetPrefix()+esc(m.name)+".<br>Here's where everything stands.";
+  document.getElementById("task-title").textContent=m.is_admin?"All tasks":"Your tasks";
+  var ta=document.getElementById("task-add"); if(ta) ta.style.display=m.is_admin?"":"none";
+  ["miguel","karsen"].forEach(function(t){
+    var card=document.querySelector('.track[data-goto="p-'+t+'"]');
+    if(card) card.style.display=(m.is_admin||m.slug===t)?"":"none";
+  });
+  var tw=document.getElementById("trackswrap");
+  if(tw){
+    var mine=(m.slug==="miguel"||m.slug==="karsen");
+    tw.style.display=(m.is_admin||mine)?"":"none";
+    var no=document.getElementById("notrack");
+    if(no) no.style.display=(m.is_admin||mine)?"none":"";
+  }
+  paintNav(); paintTaps(); renderTasks(); renderTaskSummary(); renderTaskCall(); renderNext(); renderNext();
+  renderLogAll(); renderAssets();
+  if(!canSee((document.querySelector(".page.on")||{}).id||"p-home")) go("p-home");
+}
+
+/* ── the access matrix ── */
+var GRPL={onboard:"Onboarding",floor:"The Floor",work:"The Work"};
+function renderAccess(){
+  var box=q("accessgrid"); if(!box) return;
+  var people=ROSTER.filter(function(p){ return !p.is_admin });
+  var rows=PAGES_DB.filter(function(p){ return p.id!=="p-home" });
+  box.innerHTML='<div class="tblwrap"><table class="ledger acc">'+
+    '<tr><th>Page</th><th>State</th>'+people.map(function(p){
+      return '<th style="text-align:center">'+esc(p.name)+'</th>' }).join("")+'</tr>'+
+    rows.map(function(r){
+      var everyone = !r.audience || !r.audience.length;
+      return '<tr><td><b>'+esc(r.label)+'</b>'+
+          (r.grp?'<div class="mini">'+(GRPL[r.grp]||r.grp)+'</div>':'')+'</td>'+
+        '<td><button class="statebtn '+(r.status==="published"?"pub":"dr")+'" data-pagestate="'+r.id+'">'+
+          (r.status==="published"?"Published":"Draft")+'</button></td>'+
+        people.map(function(p){
+          var on = everyone || r.audience.indexOf(p.slug)!==-1;
+          return '<td style="text-align:center"><button class="tick'+(on?" on":"")+'" '+
+            'data-acc="'+r.id+'" data-slug="'+p.slug+'" aria-pressed="'+on+'" '+
+            'title="'+(on?"Visible":"Hidden")+'">'+(on?"✓":"·")+'</button></td>';
+        }).join("")+'</tr>';
+    }).join("")+'</table></div>'+
+    '<p class="mini" style="margin-top:13px">A page in <b>Draft</b> is invisible to everyone but me, whatever the ticks say — that is the switch for &ldquo;this version goes to the group.&rdquo; A row with every tick on is open to the whole co-op. Changes take effect the next time each person loads the page, or immediately if they have it open.</p>';
+}
+
+async function toggleAccess(pageId, slug){
+  if(!realAdmin()||!ONLINE) return;
+  var r=pageRule(pageId); if(!r) return;
+  var people=ROSTER.filter(function(p){ return !p.is_admin }).map(function(p){ return p.slug });
+  var aud=(r.audience&&r.audience.length)?r.audience.slice():people.slice();
+  var i=aud.indexOf(slug);
+  if(i===-1) aud.push(slug); else aud.splice(i,1);
+  // everybody ticked is stored as "everyone", so adding a person later still works
+  var next = people.every(function(s){ return aud.indexOf(s)!==-1 }) ? [] : aud;
+  var up=await sb.from("app_pages").update({audience:next,updated_at:new Date().toISOString()}).eq("id",pageId);
+  if(up.error) return;
+  await loadPages(); renderAccess(); paintNav();
+}
+
+async function togglePageState(pageId){
+  if(!realAdmin()||!ONLINE) return;
+  var r=pageRule(pageId); if(!r) return;
+  var next = r.status==="published" ? "draft" : "published";
+  if(next==="published" && !window.confirm("Publish “"+r.label+"” to the co-op?\n\nEverybody ticked on that row will see it from now on.")) return;
+  var up=await sb.from("app_pages").update({
+    status:next,
+    published_at: next==="published" ? new Date().toISOString() : null,
+    updated_at:new Date().toISOString()
+  }).eq("id",pageId);
+  if(up.error) return;
+  await loadPages(); renderAccess(); paintNav(); paintTaps();
+}
+
+function bindAccess(){
+  document.addEventListener("click",function(e){
+    var t=e.target.closest("[data-acc]");
+    if(t){ toggleAccess(t.dataset.acc, t.dataset.slug); return; }
+    var s=e.target.closest("[data-pagestate]");
+    if(s){ togglePageState(s.dataset.pagestate); return; }
+    if(e.target.closest("#va-exit")) setViewAs(null);
+  });
+  document.addEventListener("change",function(e){
+    if(e.target && e.target.id==="va-sel") setViewAs(e.target.value);
+  });
+}
+
+/* ───────── ASSETS · a link or an actual file ───────── */
+
+var UP_BUSY=false;
+
+function prettyBytes(n){
+  if(!n) return "";
+  var u=["B","KB","MB","GB"], i=0; n=Number(n);
+  while(n>=1024 && i<u.length-1){ n/=1024; i++; }
+  return (n<10&&i>0?n.toFixed(1):Math.round(n))+" "+u[i];
+}
+function kindFromMime(m){
+  if(!m) return "doc";
+  if(m.indexOf("image/")===0) return "photo";
+  if(m.indexOf("video/")===0) return "video";
+  if(m==="application/pdf") return "deck";
+  return "doc";
+}
+function safeName(n){
+  return n.toLowerCase().replace(/[^a-z0-9.\-_]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80);
+}
+
+async function uploadAssets(files){
+  var msg=q("up-msg");
+  if(!ONLINE||!ME){ if(msg) msg.textContent="Not connected."; return; }
+  if(UP_BUSY) return;
+  UP_BUSY=true;
+  var mine=idOf(ME.slug), ok=0, failed=[];
+  for(var i=0;i<files.length;i++){
+    var f=files[i];
+    if(msg) msg.textContent="Uploading "+(i+1)+" of "+files.length+" — "+f.name+"…";
+    var path=new Date().toISOString().slice(0,10)+"/"+Date.now()+"-"+safeName(f.name);
+    var up=await sb.storage.from("assets").upload(path,f,{cacheControl:"3600",upsert:false});
+    if(up.error){ failed.push(f.name+" ("+up.error.message+")"); continue; }
+    var pub=sb.storage.from("assets").getPublicUrl(path);
+    var ins=await sb.from("assets").insert({
+      name:f.name, kind:kindFromMime(f.type), url:pub.data.publicUrl,
+      storage_path:path, mime:f.type||null, bytes:f.size||null,
+      house:(q("a-house")?q("a-house").value:"all"), uploaded_by:mine
+    });
+    if(ins.error){ failed.push(f.name+" ("+ins.error.message+")"); continue; }
+    ok++;
+  }
+  UP_BUSY=false;
+  if(msg) msg.textContent = failed.length
+    ? ok+" uploaded, "+failed.length+" failed: "+failed.join("; ")
+    : ok+" file"+(ok===1?"":"s")+" uploaded.";
+  var inp=q("a-file"); if(inp) inp.value="";
+  await loadAssets(); renderAssets();
+}
+
+function bindUpload(){
+  var drop=q("dropzone"), inp=q("a-file");
+  if(inp) inp.addEventListener("change",function(){ if(inp.files&&inp.files.length) uploadAssets(inp.files); });
+  if(!drop) return;
+  drop.addEventListener("click",function(){ if(inp) inp.click(); });
+  ["dragenter","dragover"].forEach(function(ev){
+    drop.addEventListener(ev,function(e){ e.preventDefault(); drop.classList.add("over"); });
+  });
+  ["dragleave","drop"].forEach(function(ev){
+    drop.addEventListener(ev,function(e){ e.preventDefault(); drop.classList.remove("over"); });
+  });
+  drop.addEventListener("drop",function(e){
+    if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length)
+      uploadAssets(e.dataTransfer.files);
+  });
+  drop.addEventListener("keydown",function(e){
+    if(e.key==="Enter"||e.key===" "){ e.preventDefault(); if(inp) inp.click(); }
+  });
+}
+
+/* thumbnails, so a photo library actually looks like one */
+function renderAssets(){
+  var box=q("assetlist"); if(!box) return;
+  if(!ASSETS.length){
+    box.innerHTML='<div class="emptybox">Nothing here yet. Drop a file below, or paste a link — both end up in the same place.</div>';
+    return;
+  }
+  box.innerHTML='<div class="assetgrid">'+ASSETS.map(function(a){
+    var isImg=(a.mime&&a.mime.indexOf("image/")===0)||/\.(png|jpe?g|webp|gif|svg)$/i.test(a.url||"");
+    return '<a class="asset" href="'+esc(a.url||"#")+'" target="_blank" rel="noopener">'+
+      (isImg
+        ? '<span class="athumb" style="background-image:url(\''+esc(a.url)+'\')"></span>'
+        : '<span class="athumb ph">'+({photo:"🖼",video:"🎬",deck:"📑",doc:"📄",logo:"★",menu:"🍺",font:"A"}[a.kind]||"📄")+'</span>')+
+      '<span class="ameta"><b>'+esc(a.name)+'</b>'+
+        '<span class="mini">'+esc(a.kind||"file")+
+        (a.bytes?' · '+prettyBytes(a.bytes):'')+
+        (a.storage_path?'':' · link')+'</span></span></a>';
+  }).join("")+'</div>';
+}
+
+/* ───────── TASKS ON THE HOME · make it obvious somebody owes something ───────── */
+
+function myOpenTasks(){
+  var m=eff(); if(!m) return [];
+  return TASKS.filter(function(t){
+    return t.status!=="done" && (m.is_admin || t.assignee===idOf(m.slug));
+  });
+}
+
+function renderTaskCall(){
+  var box=q("taskcall"); if(!box) return;
+  var m=eff(); if(!m){ box.innerHTML=""; return; }
+  var open=myOpenTasks();
+  var t0=today12(), nx=weekStart(1);
+  var late=open.filter(function(t){ return t.due_on && new Date(t.due_on+"T12:00:00")<t0 });
+  var soon=open.filter(function(t){
+    if(!t.due_on) return false;
+    var d=new Date(t.due_on+"T12:00:00"); return d>=t0 && d<nx;
+  });
+
+  if(!open.length){
+    box.className="taskcall clear";
+    box.innerHTML='<div class="tcicon">✓</div><div class="tctext">'+
+      '<h3>Nothing is waiting on you, '+esc(m.name.split(" ")[0])+'.</h3>'+
+      '<p>Everything assigned to you is done. Anything new lands here and you get it in the weekly note.</p></div>';
+    return;
+  }
+
+  var n=open.length;
+  var head = m.is_admin
+    ? n+" thing"+(n===1?"":"s")+" open across the team"
+    : n===1 ? "One thing is waiting on you, "+esc(m.name.split(" ")[0])+"."
+            : n+" things are waiting on you, "+esc(m.name.split(" ")[0])+".";
+
+  var lead = late.length
+    ? '<b class="late">'+late.length+' '+(late.length===1?"is":"are")+' past the date.</b> '
+    : soon.length ? '<b>'+soon.length+' due this week.</b> ' : '';
+
+  var show=open.slice().sort(function(a,b){
+    if(!a.due_on) return 1; if(!b.due_on) return -1;
+    return a.due_on<b.due_on?-1:1;
+  }).slice(0,4);
+
+  box.className="taskcall"+(late.length?" late":"");
+  box.innerHTML=
+    '<div class="tcicon">'+(late.length?"!":"→")+'</div>'+
+    '<div class="tctext">'+
+      '<h3>'+head+'</h3>'+
+      '<p>'+lead+'They are yours to tick off — nobody else can do it for you.</p>'+
+      '<div class="tclist">'+show.map(function(t){
+        var od=t.due_on && new Date(t.due_on+"T12:00:00")<t0;
+        return '<button class="tcitem" data-tcgo="'+t.id+'">'+
+          '<span class="tcdot'+(od?" od":"")+'"></span>'+
+          '<span class="tcname">'+esc(t.title)+'</span>'+
+          '<span class="tcwhen'+(od?" od":"")+'">'+(t.due_on?dueTxt(t.due_on):"no date")+'</span>'+
+          (m.is_admin&&t.assignee?'<span class="tcwho">'+esc(nameOf(t.assignee)||"")+'</span>':'')+
+        '</button>';
+      }).join("")+'</div>'+
+      (open.length>show.length?'<p class="mini" style="margin-top:9px">'+(open.length-show.length)+' more below.</p>':'')+
+    '</div>';
+}
+
+function bindTaskCall(){
+  document.addEventListener("click",function(e){
+    var b=e.target.closest("[data-tcgo]"); if(!b) return;
+    var body=q("taskbody"), btn=q("task-toggle");
+    if(body&&body.hidden&&btn) btn.click();
+    var sec=q("tasksec"); if(sec) sec.scrollIntoView({behavior:"smooth",block:"start"});
+  });
+}
+
+/* ───────── LIVE · everybody works at once, nobody blocks anybody ─────────
+   Postgres changes push straight to whoever has the page open. No locks,
+   no check-out, no "someone else is editing this". ------------------------ */
+
+var RT=null, RT_ON=false;
+
+function rtFlash(what){
+  var b=q("livebar"); if(!b) return;
+  b.textContent=what;
+  b.classList.add("on");
+  clearTimeout(rtFlash._t);
+  rtFlash._t=setTimeout(function(){ b.classList.remove("on") },3200);
+}
+
+async function startRealtime(){
+  if(!ONLINE||!ME||RT_ON) return;
+  try{
+    RT=sb.channel("command-center")
+      .on("postgres_changes",{event:"*",schema:"public",table:"leads"},async function(){
+        await loadLeads(); renderFunnel(); renderLeads(); renderTouch(); renderLedger();
+        renderNumbers(); rtFlash("Pipeline updated");
+      })
+      .on("postgres_changes",{event:"*",schema:"public",table:"tasks"},async function(){
+        await loadTasks(); renderTasks(); renderTaskSummary(); renderTaskCall(); renderNext(); renderTaskCall();
+        rtFlash("Tasks updated");
+      })
+      .on("postgres_changes",{event:"*",schema:"public",table:"responses"},async function(){
+        await loadResponses(); render("miguel"); render("karsen"); paintTaps();
+        rtFlash("An onboarding answer just came in");
+      })
+      .on("postgres_changes",{event:"*",schema:"public",table:"content"},async function(){
+        await loadContent(); renderCstats(); renderContent(); renderNumbers();
+        rtFlash("Content calendar updated");
+      })
+      .on("postgres_changes",{event:"*",schema:"public",table:"assets"},async function(){
+        await loadAssets(); renderAssets(); rtFlash("A file was added");
+      })
+      .on("postgres_changes",{event:"*",schema:"public",table:"work_weeks"},async function(){
+        await loadWeeks(); renderCapacity(); renderLogAll(); rtFlash("The log was updated");
+      })
+      .on("postgres_changes",{event:"*",schema:"public",table:"app_pages"},async function(){
+        await loadPages(); paintNav(); paintTaps(); renderAccess();
+        rtFlash("Access changed");
+      })
+      .on("postgres_changes",{event:"*",schema:"public",table:"metrics"},async function(){
+        await loadMetrics(); renderNumbers(); rtFlash("A measurement landed");
+      })
+      .subscribe(function(status){ RT_ON = (status==="SUBSCRIBED"); });
+  }catch(e){ RT_ON=false; }   // no realtime is a degraded page, not a broken one
+}
+
+/* ───────── FIRST RUN · a short walk through, built from what you can see ─────────
+   Nobody is shown a feature they do not have. The tour is assembled from the
+   same access rules as the nav, so it never promises a page that is not there. */
+
+var TOUR=[], TSTEP=0;
+
+function buildTour(){
+  var m=eff(); if(!m) return [];
+  var first=m.name.split(" ")[0];
+  var steps=[];
+
+  steps.push({
+    target:null,
+    title:"Welcome, "+esc(first)+".",
+    body:"This is the Growth Command Center &mdash; one link, no app to install, nothing to remember. "+
+         "Everything about the growth work lives here: what is owed, what got done, and the numbers behind it. "+
+         "Two minutes and you will know your way around."
+  });
+
+  steps.push({
+    target:"#taskcall",
+    title:"Start with what is waiting on you",
+    body:"Anything assigned to you shows up at the top of this page, with its date. "+
+         "Overdue turns red. Nobody can tick these off for you &mdash; that is the point of them being here rather than in a message you have to scroll back for."
+  });
+
+  if(canSee("p-miguel")&&m.slug==="miguel"){
+    steps.push({target:'[data-goto="p-miguel"]', title:"Your track",
+      body:"Twenty-seven questions, most of which only you can answer &mdash; eight years of context that is not written down anywhere. "+
+           "It saves as you type, so you can leave halfway through and come back. &ldquo;I don't know&rdquo; is a real answer."});
+  }
+  if(canSee("p-karsen")&&m.slug==="karsen"){
+    steps.push({target:'[data-goto="p-karsen"]', title:"Your track",
+      body:"Twenty-three questions about how private events really work today &mdash; not the ideal version, the real one. "+
+           "It saves as you type. Most of it is me making sure I never step on your toes."});
+  }
+  if(canSee("p-agreement")){
+    steps.push({target:'[data-goto="p-agreement"]', title:"The agreement",
+      body:"The engagement on one page, signed here rather than by email. Your signature is stamped with the time and with a fingerprint of the exact text you read, "+
+           "so nobody can change a word afterwards without it showing."});
+  }
+  if(canSee("p-pipeline")){
+    steps.push({target:'[data-goto="p-pipeline"]', title:"The Floor &mdash; the day to day",
+      body:"The CRM lives here: every company we talk to, from the first hello. You can see the whole pipeline at any time &mdash; who was contacted, what is moving, what got handed over. "+
+           "Nothing about it is hidden from the co-op."});
+  }
+  if(canSee("p-numbers")){
+    steps.push({target:'[data-goto="p-numbers"]', title:"The Work &mdash; what we deliver",
+      body:"The numbers, the market research and the plan. The numbers are grouped by the three engines: brand, digital and sales. "+
+           "Anything that has not been measured yet says so instead of showing an invented figure."});
+  }
+  if(canSee("p-log")){
+    steps.push({target:'[data-goto="p-log"]', title:"The Log &mdash; the record",
+      body:"One row per week: the hours, what got done, and the thing that came out of it. "+
+           "It is kept as it happens, so at Day 30, 60 and 90 nobody has to reconstruct anything from memory."});
+  }
+
+  steps.push({
+    target:"#whoami",
+    title:"That is the whole thing",
+    body:"You can reopen this walkthrough any time from your name down here. "+
+         "Anything confusing, anything missing, anything that looks wrong &mdash; tell me and I will fix it. This is built for you to use, not to admire."
+  });
+
+  return steps;
+}
+
+function paintTour(){
+  var wrap=q("tour"); if(!wrap) return;
+  var s=TOUR[TSTEP]; if(!s){ endTour(false); return; }
+
+  document.querySelectorAll(".tourlit").forEach(function(e){ e.classList.remove("tourlit") });
+  var el = s.target ? document.querySelector(s.target) : null;
+  if(el){
+    el.classList.add("tourlit");
+    if(el.closest("#nav")) el.scrollIntoView({block:"nearest"});
+    else el.scrollIntoView({behavior:"smooth",block:"center"});
+  } else {
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  q("tourbody").innerHTML=
+    '<div class="tourstep">Step '+(TSTEP+1)+' of '+TOUR.length+'</div>'+
+    '<h3>'+s.title+'</h3>'+
+    '<p>'+s.body+'</p>'+
+    '<div class="tourdots">'+TOUR.map(function(_,i){
+      return '<span class="'+(i===TSTEP?"on":(i<TSTEP?"done":""))+'"></span>' }).join("")+'</div>'+
+    '<div class="tournav">'+
+      (TSTEP>0?'<button class="mbtn" data-tour="back">Back</button>':'<span></span>')+
+      '<div class="rowact">'+
+        '<button class="mbtn" data-tour="skip">Skip</button>'+
+        '<button class="mbtn solid" data-tour="next">'+(TSTEP===TOUR.length-1?"Got it":"Next")+'</button>'+
+      '</div>'+
+    '</div>';
+}
+
+function startTour(force){
+  TOUR=buildTour(); TSTEP=0;
+  if(!TOUR.length) return;
+  var wrap=q("tour"); if(!wrap) return;
+  wrap.classList.add("on");
+  paintTour();
+}
+
+async function endTour(complete){
+  var wrap=q("tour"); if(wrap) wrap.classList.remove("on");
+  document.querySelectorAll(".tourlit").forEach(function(e){ e.classList.remove("tourlit") });
+  // remember it for the real person only — a preview must not tick somebody else's box
+  if(ONLINE && ME && !previewing()){
+    try{ await sb.rpc("mark_tour_done"); ME.tour_done_at=new Date().toISOString(); }catch(e){}
+  }
+}
+
+async function maybeStartTour(){
+  if(!ONLINE||!ME||previewing()) return;
+  var r=await sb.from("members").select("tour_done_at").eq("slug",ME.slug).maybeSingle();
+  if(r.error) return;
+  if(r.data && r.data.tour_done_at) return;
+  setTimeout(function(){ startTour(true) },700);
+}
+
+function bindTour(){
+  document.addEventListener("click",function(e){
+    var b=e.target.closest("[data-tour]"); if(!b) return;
+    var a=b.dataset.tour;
+    if(a==="skip"){ endTour(false); return; }
+    if(a==="back"){ if(TSTEP>0){ TSTEP--; paintTour(); } return; }
+    if(a==="next"){
+      if(TSTEP<TOUR.length-1){ TSTEP++; paintTour(); }
+      else endTour(true);
+      return;
+    }
+    if(a==="open"){ startTour(true); return; }
+  });
+  document.addEventListener("keydown",function(e){
+    var wrap=q("tour"); if(!wrap||!wrap.classList.contains("on")) return;
+    if(e.key==="Escape") endTour(false);
+    if(e.key==="ArrowRight"){ if(TSTEP<TOUR.length-1){ TSTEP++; paintTour(); } }
+    if(e.key==="ArrowLeft"){ if(TSTEP>0){ TSTEP--; paintTour(); } }
+  });
+}
+
+/* ───────── HOME · where to go next ─────────
+   The Home page's real job is to send people somewhere. Built per person,
+   ordered by what is actually owed. Nothing generic. ------------------- */
+
+function trackProgress(slug){
+  var w=slug==="miguel"?"miguel":"karsen";
+  if(typeof Q==="undefined"||!Q[w]) return null;
+  return {done:answered(w), total:total(w)};
+}
+
+function renderNext(){
+  var box=q("nextup"); if(!box) return;
+  var m=eff(); if(!m){ box.innerHTML=""; return; }
+  var owed=[], around=[];
+
+  // ── things owed by this person ──
+  ["miguel","karsen"].forEach(function(t){
+    if(m.slug!==t || !canSee("p-"+t)) return;
+    var p=trackProgress(t);
+    var done=p&&p.done, tot=p&&p.total;
+    if(done===tot && tot) return;                     // finished, stop nagging
+    owed.push({
+      go:"p-"+t, icon:"✍️", label:"Your onboarding track",
+      title:done?"Pick up where you left off":"Answer your track",
+      body:tot?(done+" of "+tot+" answered &mdash; it saves as you type, so you can stop halfway."):
+               "Most of these only you can answer. It saves as you type.",
+      pct:tot?Math.round((done/tot)*100):0
+    });
+  });
+
+  if(canSee("p-agreement") && typeof DOC!=="undefined" && DOC){
+    var mine=(DOC.parties||[]).indexOf(m.slug)!==-1 ? sigOf(m.slug) : null;
+    if((DOC.parties||[]).indexOf(m.slug)!==-1 && !mine){
+      owed.push({go:"p-agreement", icon:"🖋", label:"The agreement",
+        title:"Read it, then sign it",
+        body:"One page. Nothing in it is new &mdash; it is what the plan said, written where we can both point at it."});
+    }
+  }
+
+  var myTasks=myOpenTasks().filter(function(t){ return !t.link_page });
+  if(myTasks.length && !owed.length){
+    owed.push({go:"p-home", icon:"✓", label:"Your tasks",
+      title:myTasks.length+" thing"+(myTasks.length===1?"":"s")+" to tick off",
+      body:"They are listed above, with their dates."});
+  }
+
+  // ── worth a look ──
+  var latest=WEEKS.slice().filter(function(w){
+      return w.deliverable && w.status!=="draft" && w.week_start<=isoDate(mondayOf(new Date()));
+    }).sort(function(a,b){ return a.week_start<b.week_start?1:-1 })[0];
+  if(latest && canSee("p-log")){
+    around.push({go:"p-log", icon:"📌", label:"Latest delivery",
+      title:latest.deliverable,
+      body:"From the week of "+weekLabel(latest.week_start)+". Every week's work and its deliverable are logged here."});
+  }
+  if(canSee("p-market")) around.push({go:"p-market", icon:"🔍", label:"The Market",
+    title:"How we compare", body:"Six competitors, what they charge, and where the gap is. Every figure sourced and dated."});
+  if(canSee("p-pipeline")) around.push({go:"p-pipeline", icon:"🤝", label:"The Floor",
+    title:"Who we are talking to", body:"The whole pipeline, open to everyone. No lead lives in one person's inbox."});
+  if(canSee("p-numbers")) around.push({go:"p-numbers", icon:"📊", label:"The Work",
+    title:"The numbers", body:"Grouped by the three engines. Anything not measured yet says so."});
+
+  var html="";
+  if(owed.length){
+    html+='<div class="eyebrow" style="margin:26px 0 11px">Start here</div>'+
+      '<div class="grid2">'+owed.map(function(c){
+        return '<button class="nextcard owed" data-goto="'+c.go+'">'+
+          '<span class="nxicon">'+c.icon+'</span>'+
+          '<span class="nxbody"><span class="nxlab">'+c.label+'</span>'+
+          '<b>'+c.title+'</b><span class="nxsub">'+c.body+'</span>'+
+          (c.pct!==undefined&&c.pct>0?'<span class="bar" style="margin-top:9px"><i style="width:'+c.pct+'%"></i></span>':'')+
+          '</span><span class="nxgo">→</span></button>';
+      }).join("")+'</div>';
+  }
+  if(around.length){
+    html+='<div class="eyebrow" style="margin:26px 0 11px">'+(owed.length?"And while you are here":"Have a look around")+'</div>'+
+      '<div class="grid3">'+around.slice(0,3).map(function(c){
+        return '<button class="nextcard" data-goto="'+c.go+'">'+
+          '<span class="nxicon">'+c.icon+'</span>'+
+          '<span class="nxbody"><span class="nxlab">'+c.label+'</span>'+
+          '<b>'+c.title+'</b><span class="nxsub">'+c.body+'</span></span>'+
+          '<span class="nxgo">→</span></button>';
+      }).join("")+'</div>';
+  }
+  box.innerHTML=html;
+}
+
 /* ───────── WIRING ───────── */
 function bindGrowth(){
   var f=q("funnel");
@@ -3256,10 +4265,13 @@ function bindGrowth(){
 }
 
 async function loadGrowth(){
-  await Promise.all([loadLeads(),loadContent(),loadAssets(),loadMetrics(),loadCamps(),loadWeeks()]);
+  await Promise.all([loadLeads(),loadContent(),loadAssets(),loadMetrics(),loadCamps(),loadWeeks(),loadPages()]);
   renderFunnel(); renderLeads(); renderTouch(); renderLedger();
   renderCstats(); renderContent(); renderAssets();
   renderNumbers(); renderCamps(); renderCapacity(); renderTaskSummary();
+  renderLogAll(); renderAccess(); paintViewAs(); renderTaskCall(); renderNext();
+  startRealtime();
+  maybeStartTour();
   var ma=q("metricadd"); if(ma) ma.style.display=(ME&&ME.is_admin)?"flex":"none";
   var cn=q("cnew"); if(cn) cn.style.display=(ME&&ME.is_admin)?"":"none";
 }
@@ -3397,6 +4409,12 @@ function bindAgreement(){
   bindCapacity();
   bindEngines();
   bindMarket();
+  bindLog();
+  bindExport();
+  bindAccess();
+  bindUpload();
+  bindTaskCall();
+  bindTour();
   renderMktTabs(); renderMktPanel();
   boot();
 })();

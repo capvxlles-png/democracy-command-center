@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Democracy Brewing — The Boston Benchmark</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%BA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&family=Oswald:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+--cobalt:#2E5FA8; --navy:#1B2237; --deep:#12182B;
+--gold:#C9A24B; --goldb:#E2BC62;
+--cream:#F4ECD8; --dim:#C9C0A8; --ink:#10141F;
+--bad:#E08A6E; --good:#8FC08A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;color:var(--cream);
+background:
+radial-gradient(ellipse 75% 60% at 18% -8%, rgba(46,95,168,.38), transparent 62%),
+radial-gradient(ellipse 60% 50% at 88% 108%, rgba(201,162,75,.13), transparent 60%),
+var(--deep);}
+
+#deck{position:relative;width:100vw;height:100vh;overflow:hidden;}
+.slide{position:absolute;inset:0;padding:56px 78px;display:flex;flex-direction:column;justify-content:center;opacity:0;transform:translateY(22px);pointer-events:none;transition:opacity .5s ease,transform .5s ease;overflow:hidden;}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto;}
+.slide .reveal{opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease;}
+.slide.active .reveal{opacity:1;transform:translateY(0);}
+.slide.active .reveal:nth-of-type(1){transition-delay:.06s}
+.slide.active .reveal:nth-of-type(2){transition-delay:.16s}
+.slide.active .reveal:nth-of-type(3){transition-delay:.26s}
+.slide.active .reveal:nth-of-type(4){transition-delay:.36s}
+
+.eyebrow{font-family:'Oswald',sans-serif;font-weight:600;font-size:11.5px;letter-spacing:.38em;text-transform:uppercase;color:var(--gold);margin-bottom:13px;}
+h1{font-family:'Bevan',serif;font-weight:400;line-height:1.05;}
+h2{font-family:'Bevan',serif;font-weight:400;font-size:40px;line-height:1.12;margin-bottom:10px;}
+.sub{font-size:15.5px;color:var(--dim);max-width:680px;line-height:1.58;}
+.gold{color:var(--goldb);}
+.bgstar{position:absolute;color:rgba(201,162,75,.055);font-size:340px;line-height:1;z-index:0;user-select:none;animation:drift 15s ease-in-out infinite;}
+@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(10px,-12px)}}
+.inner{position:relative;z-index:2;width:100%;}
+
+/* chrome */
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--goldb));width:0%;z-index:60;transition:width .4s ease;}
+#counter{position:fixed;top:20px;right:28px;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;color:var(--dim);z-index:60;}
+#brandmark{position:fixed;top:15px;left:24px;z-index:60;height:33px;opacity:.9;}
+.navbtns{position:fixed;bottom:22px;right:26px;display:flex;gap:8px;z-index:60;}
+.navbtns button{width:42px;height:42px;border-radius:12px;border:none;background:rgba(244,236,216,.08);color:var(--goldb);font-size:17px;cursor:pointer;transition:all .2s;}
+.navbtns button:hover{background:var(--gold);color:var(--navy);transform:translateY(-2px);}
+#dots{position:fixed;bottom:30px;left:26px;display:flex;gap:6px;z-index:60;flex-wrap:wrap;max-width:60vw;}
+#dots span{width:6px;height:6px;border-radius:50%;background:rgba(244,236,216,.18);cursor:pointer;transition:all .25s;}
+#dots span.on{background:var(--gold);transform:scale(1.4);}
+#printbtn{position:fixed;bottom:22px;right:118px;z-index:60;background:rgba(244,236,216,.08);color:var(--goldb);
+  border:none;border-radius:12px;height:42px;padding:0 18px;cursor:pointer;font-family:'Oswald',sans-serif;
+  font-size:11px;letter-spacing:.18em;text-transform:uppercase;transition:all .2s;}
+#printbtn:hover{background:var(--gold);color:var(--navy);transform:translateY(-2px);}
+
+/* cover + closer */
+#s1{align-items:center;text-align:center;}
+#s1 h1{font-size:clamp(46px,6.4vw,86px);text-shadow:0 8px 34px rgba(0,0,0,.5);}
+.logo-card{background:var(--cream);border-radius:20px;padding:20px 27px;box-shadow:0 18px 50px rgba(0,0,0,.45);display:inline-block;}
+.logo-card img{height:100px;display:block;}
+.stars3{margin:24px 0 6px;color:var(--gold);letter-spacing:12px;font-size:14px;padding-left:12px;}
+.csub{margin-top:20px;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.4em;text-transform:uppercase;color:var(--dim);}
+.cmeta{margin-top:30px;display:flex;gap:18px;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);flex-wrap:wrap;}
+.cmeta b{color:var(--gold);font-weight:400;}
+.ferment{position:absolute;bottom:40px;left:0;right:0;font-family:'Bevan',serif;font-style:italic;font-size:13px;color:rgba(226,188,98,.85);letter-spacing:.12em;text-align:center;}
+
+/* full bleed */
+.adbg{position:absolute;inset:0;background-size:cover;background-position:center;}
+.slide.active .adbg{animation:kenburns 18s ease-out forwards;}
+@keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.09)}}
+.adshade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,24,43,.5),rgba(18,24,43,.4) 45%,rgba(18,24,43,.88));}
+
+/* section divider */
+.divider{align-items:flex-start;justify-content:center;}
+.divnum{font-family:'Bevan',serif;font-size:clamp(90px,13vw,170px);line-height:.9;color:rgba(201,162,75,.22);}
+.divider h1{font-size:clamp(38px,5.2vw,66px);margin-top:-14px;}
+.divider .sub{margin-top:18px;font-size:17px;}
+
+/* the hero number */
+.bigwrap{display:grid;grid-template-columns:auto 1fr;gap:56px;align-items:center;}
+.bignum{font-family:'Bevan',serif;font-size:clamp(72px,11vw,150px);line-height:.92;color:var(--goldb);white-space:nowrap;}
+.bignum small{display:block;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);margin-top:14px;}
+.bigsay h2{font-size:34px;margin-bottom:14px;}
+.bigsay p{font-size:16px;line-height:1.62;color:var(--dim);max-width:56ch;}
+.srcline{margin-top:20px;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,236,216,.42);}
+.srcline a{color:rgba(226,188,98,.75);text-decoration:none;}
+.srcline a:hover{text-decoration:underline;}
+
+/* card rows */
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:32px;}
+.row2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:30px;}
+.tile{background:rgba(244,236,216,.045);border-radius:18px;padding:26px 24px;border:1px solid rgba(244,236,216,.06);transition:all .28s;}
+.tile:hover{transform:translateY(-5px);background:rgba(46,95,168,.14);border-color:rgba(201,162,75,.4);}
+.tile .temoji{font-size:26px;margin-bottom:11px;}
+.tile h3{font-family:'Bevan',serif;font-size:17px;line-height:1.28;margin-bottom:9px;color:var(--goldb);}
+.tile p{font-size:13px;line-height:1.55;color:var(--dim);}
+.tile .tnum{font-family:'Bevan',serif;font-size:38px;color:var(--goldb);line-height:1;margin-bottom:8px;}
+
+/* good / bad / move */
+.gbm{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px;}
+.gbm .col{background:rgba(244,236,216,.04);border-radius:16px;padding:22px 20px;border-top:3px solid;}
+.gbm .col.g{border-top-color:var(--good);}
+.gbm .col.b{border-top-color:var(--bad);}
+.gbm .col.m{border-top-color:var(--cobalt);}
+.gbm .clab{font-family:'Oswald',sans-serif;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:13px;}
+.gbm .col.g .clab{color:var(--good);}
+.gbm .col.b .clab{color:var(--bad);}
+.gbm .col.m .clab{color:#9DBCE8;}
+.gbm li{list-style:none;font-size:13px;line-height:1.52;color:var(--dim);padding-left:16px;position:relative;margin-bottom:12px;}
+.gbm li:last-child{margin-bottom:0;}
+.gbm li::before{content:"";position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.55;}
+.gbm li b{color:var(--cream);font-weight:600;}
+
+/* charts */
+.chartbox{margin-top:26px;}
+.bars{display:flex;flex-direction:column;gap:14px;}
+.barrow{display:grid;grid-template-columns:190px 1fr auto;gap:16px;align-items:center;}
+.barlab{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);text-align:right;}
+.bartrack{display:block;height:26px;background:rgba(244,236,216,.06);border-radius:0 6px 6px 0;overflow:hidden;}
+.barfill{display:block;height:100%;border-radius:0 6px 6px 0;background:rgba(244,236,216,.22);transition:width .8s cubic-bezier(.22,1,.36,1);width:0;}
+.slide.active .barfill{width:var(--w);}
+.barfill.hi{background:linear-gradient(90deg,var(--gold),var(--goldb));}
+.barval{font-family:'Bevan',serif;font-size:19px;color:var(--cream);min-width:76px;}
+.barval.hi{color:var(--goldb);}
+.baseline{margin-top:14px;font-family:'Oswald',sans-serif;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(244,236,216,.4);}
+
+/* table */
+.tbl{margin-top:24px;width:100%;border-collapse:collapse;font-size:12.5px;}
+.tbl th{font-family:'Oswald',sans-serif;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);text-align:left;padding:0 12px 11px;border-bottom:1px solid rgba(244,236,216,.14);}
+.tbl td{padding:12px;border-bottom:1px solid rgba(244,236,216,.07);color:var(--dim);vertical-align:middle;}
+.tbl td b{color:var(--cream);font-size:13.5px;}
+.tbl tr.us{background:rgba(201,162,75,.11);}
+.tbl tr.us td{color:var(--cream);}
+.tbl .no{color:#E08A6E;}
+.tbl .yes{color:#8FC08A;font-weight:600;}
+.tbl .mid{color:var(--goldb);}
+
+/* callout */
+.callout{margin-top:28px;background:linear-gradient(135deg,rgba(46,95,168,.42),rgba(46,95,168,.16));border-radius:18px;padding:24px 30px;}
+.callout .line{font-family:'Bevan',serif;font-size:22px;line-height:1.4;}
+.callout .line em{color:var(--goldb);font-style:italic;}
+.callout small{display:block;margin-top:10px;font-size:12px;color:var(--dim);line-height:1.5;}
+.warnbox{margin-top:26px;display:flex;gap:16px;align-items:flex-start;background:rgba(224,138,110,.1);border:1px solid rgba(224,138,110,.35);border-radius:16px;padding:20px 24px;}
+.warnbox .wemoji{font-size:26px;flex-shrink:0;}
+.warnbox p{font-size:14px;line-height:1.58;color:var(--cream);}
+.warnbox p b{color:#E08A6E;}
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px;}
+.chips span{font-size:12.5px;padding:7px 15px;border-radius:100px;background:rgba(244,236,216,.06);border:1px solid rgba(244,236,216,.12);color:var(--dim);}
+
+/* print → one slide per page */
+@media print{
+  html,body{height:auto;overflow:visible;background:#12182B !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  #deck{height:auto;overflow:visible;}
+  #progress,#counter,#dots,.navbtns,#printbtn,#brandmark{display:none !important;}
+  .slide{position:relative;inset:auto;opacity:1 !important;transform:none !important;page-break-after:always;
+    min-height:96vh;padding:48px 56px;pointer-events:auto;}
+  .slide .reveal{opacity:1 !important;transform:none !important;}
+  .barfill{width:var(--w) !important;}
+  .slide.active .adbg{animation:none;}
+  @page{size:landscape;margin:0;}
+}
+
+@media (max-width:900px){
+  .slide{padding:70px 20px 92px;justify-content:flex-start;overflow-y:auto;}
+  h2{font-size:27px;}
+  .row3,.row2,.gbm{grid-template-columns:1fr;gap:13px;}
+  .bigwrap{grid-template-columns:1fr;gap:22px;}
+  .bignum{font-size:64px;}
+  .bigsay h2{font-size:25px;}
+  .barrow{grid-template-columns:110px 1fr auto;gap:10px;}
+  .barlab{font-size:10px;}
+  .tbl{font-size:11px;}
+  .tbl th,.tbl td{padding:8px 6px;}
+  #dots{display:none;}
+  .divider h1{font-size:33px;}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="counter">01 / 22</div>
+<img id="brandmark" src="https://images.squarespace-cdn.com/content/v1/68ed5afac628a460d7cae774/74115dae-8a95-4b74-87c2-5d83576574c2/logoclearback%281%29+%281%29.png?format=300w" alt="Democracy Brewing">
+
+<div id="deck">
+
+<!-- 01 COVER -->
+<section class="slide active" id="s1">
+  <div class="bgstar" style="top:-70px;right:-50px;">★</div>
+  <div class="inner reveal"><div class="logo-card"><img src="https://images.squarespace-cdn.com/content/v1/68ed5afac628a460d7cae774/74115dae-8a95-4b74-87c2-5d83576574c2/logoclearback%281%29+%281%29.png?format=750w" alt="Democracy Brewing"></div></div>
+  <div class="stars3 reveal">★ ★ ★</div>
+  <h1 class="reveal">THE BOSTON<br><span class="gold">Benchmark</span></h1>
+  <div class="csub reveal">Where we stand &middot; August 2026</div>
+  <div class="cmeta">Prepared for the Worker-Owners <b>★</b> Nicolás Guevara <b>★</b> Growth &amp; Partnerships</div>
+  <div class="ferment">— Fermenting Rebellion since 2018 —</div>
+</section>
+
+<!-- 02 FULL BLEED -->
+<section class="slide" id="s2" style="justify-content:flex-end;padding-bottom:84px;">
+  <div class="adbg" style="background-image:url('https://images.squarespace-cdn.com/content/v1/68ed5afac628a460d7cae774/f61a222e-0542-424d-9224-675371ec3408/DEMOCRACY+BREWING_BRIAN+SAMUELS+PHOTOGRAPHY_NOVEMBER+2025-IMG_0415+copy.jpg?format=1500w')"></div>
+  <div class="adshade"></div>
+  <div class="inner">
+    <div class="stars3 reveal" style="margin:0 0 20px;padding:0;">★ ★ ★ ★ ★ ★</div>
+    <h1 class="reveal" style="font-size:clamp(36px,5vw,66px);">Six competitors.<br><span class="gold">Not one of them publishes a price.</span></h1>
+  </div>
+</section>
+
+<!-- 03 HOW TO READ -->
+<section class="slide" id="s3">
+  <div class="bgstar" style="bottom:-90px;left:-60px;">★</div>
+  <div class="inner">
+    <div class="eyebrow reveal">★ How to read this</div>
+    <h2 class="reveal">Three questions,<br><span class="gold">asked of each engine.</span></h2>
+    <p class="sub reveal">Not a market report. A working document, organised the way the work is organised — so every finding lands on somebody's desk instead of in a drawer.</p>
+    <div class="row3 reveal">
+      <div class="tile"><div class="temoji">✅</div><h3>What we have going for us</h3><p>Real advantages, named. Not encouragement — things a competitor cannot copy this quarter.</p></div>
+      <div class="tile"><div class="temoji">⚠️</div><h3>What is actually broken</h3><p>Including three claims of our own that did not survive checking. Better we find them than a board member with a map.</p></div>
+      <div class="tile"><div class="temoji">→</div><h3>What we do about it</h3><p>Each one becomes a line in the annual plan on 28 August. Nothing here is an observation for its own sake.</p></div>
+    </div>
+    <div class="callout reveal" style="margin-top:26px;">
+      <div class="line">Every number carries its source and its date. <em>Where something could not be verified, it says so.</em></div>
+      <small>Instagram blocks automated collection, so no competitor's posting cadence is in here — a stated gap rather than an invented figure.</small>
+    </div>
+  </div>
+</section>
+
+<!-- 04 DIVIDER -->
+<section class="slide divider" id="s4">
+  <div class="bgstar" style="top:-60px;right:-70px;">★</div>
+  <div class="inner">
+    <div class="divnum reveal">01</div>
+    <h1 class="reveal">The market.</h1>
+    <p class="sub reveal">Who is downtown, when, and what changed while nobody was writing it down.</p>
+  </div>
+</section>
+
+<!-- 05 TEMPLE PLACE -->
+<section class="slide" id="s5">
+  <div class="bgstar" style="bottom:-100px;right:-60px;">★</div>
+  <div class="inner bigwrap">
+    <div class="bignum reveal">12,900<small>Temple Place · 19 June 2026</small></div>
+    <div class="bigsay reveal">
+      <h2>Our own street just had<br><span class="gold">its best day in seven years.</span></h2>
+      <p>The Downtown Boston Alliance measures foot traffic from Essex to Court and from the Common to Congress. Thirty-five Temple Place sits inside that zone — which means we get a professional daily count of our own doorstep, free, forever.</p>
+      <p style="margin-top:12px;">July 2026 came in <b style="color:var(--goldb)">10.5% above last year</b>.</p>
+      <div class="srcline">Source · <a href="https://www.boston.com/news/local-news/2026/08/13/downtown-boston-was-buzzing-in-july-heres-a-look-at-the-numbers/" target="_blank" rel="noopener">Boston.com, 13 August 2026</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 MONDAY -->
+<section class="slide" id="s6">
+  <div class="bgstar" style="top:-80px;left:-70px;">★</div>
+  <div class="inner">
+    <div class="eyebrow reveal">★ The dead day</div>
+    <h2 class="reveal">Monday is not slow.<br><span class="gold">Monday is missing.</span></h2>
+    <p class="sub reveal">The deck we presented in August claimed a 30% drop. It turns out to be exactly right — and now it has a source instead of a hunch.</p>
+    <div class="chartbox reveal">
+      <div class="bars">
+        <div class="barrow"><span class="barlab">Mondays, 2019</span><span class="bartrack"><i class="barfill" style="--w:100%"></i></span><span class="barval">5.9M</span></div>
+        <div class="barrow"><span class="barlab">Mondays, 2025</span><span class="bartrack"><i class="barfill hi" style="--w:71%"></i></span><span class="barval hi">4.2M</span></div>
+      </div>
+      <div class="baseline">People downtown across the year · Downtown Boston Alliance count</div>
+    </div>
+    <div class="callout reveal">
+      <div class="line">Every large employer concentrates its mandate on <em>Tuesday, Wednesday or Thursday.</em></div>
+      <small>Monday has slipped from 88% of the midweek average in 2019 to 84% in 2025. No launch, no paid push and no ticketed event should ever be scheduled on a Monday. · <a href="https://www.bostonglobe.com/2026/05/18/business/downtown-boston-mondays-return-office/" target="_blank" rel="noopener" style="color:rgba(226,188,98,.8)">Boston Globe, 18 May 2026</a></small>
+    </div>
+  </div>
+</section>
+
+<!-- 07 WEEKEND VS WEEKDAY -->
+<section class="slide" id="s7">
+  <div class="bgstar" style="bottom:-110px;right:-80px;">★</div>
+  <div class="inner">
+    <div class="eyebrow reveal">★ The uncomfortable one</div>
+    <h2 class="reveal">The office worker is the<br><span class="gold">weaker half of our story.</span></h2>
+    <p class="sub reveal">We have been selling the Financial District crowd as the core audience. Measured against 2019, here is who actually came back.</p>
+    <div class="chartbox reveal">
+      <div class="bars">
+        <div class="barrow"><span class="barlab">Weekends</span><span class="bartrack"><i class="barfill hi" style="--w:100%"></i></span><span class="barval hi">104%</span></div>
+        <div class="barrow"><span class="barlab">Weekday daytime</span><span class="bartrack"><i class="barfill" style="--w:72%"></i></span><span class="barval">75%</span></div>
+      </div>
+      <div class="baseline">Downtown Crossing foot traffic, 2026 · 2019 = 100%</div>
+    </div>
+    <div class="warnbox reveal">
+      <div class="wemoji">⚠️</div>
+      <p><b>Both audiences are real. Only one is growing.</b> The plan needs both, weighted honestly — B2B prospecting Tuesday to Thursday into offices that are genuinely staffed, and the paid consumer calendar built around Thursday to Saturday.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 WHAT CHANGED -->
+<section class="slide" id="s8">
+  <div class="bgstar" style="top:-90px;right:-60px;">★</div>
+  <div class="inner">
+    <div class="eyebrow reveal">★ Twelve months</div>
+    <h2 class="reveal">Three things changed<br><span class="gold">while nobody wrote them down.</span></h2>
+    <div class="row3 reveal">
+      <div class="tile">
+        <div class="tnum">3</div>
+        <h3>Trillium lost the Greenway — and opened three downtown sites instead</h3>
+        <p>Their beer garden ran 2017 to 2025 and did not return; the Conservancy picked Boston Harbor Distillery. Trillium answered with an indoor winter garden at Winthrop Center, an outdoor one on Devonshire, and a waterfront garden at the Boston Harbor Hotel. <b style="color:var(--cream)">The after-office corridor is being contested right now.</b></p>
+      </div>
+      <div class="tile">
+        <div class="tnum">0</div>
+        <h3>Night Shift is no longer independent</h3>
+        <p>Jack's Abby's parent bought them in October 2024. The founders left. Events now funnel through a five-venue portfolio with a shared sales team. Their own website still calls the company &ldquo;proudly independent&rdquo; — two years on.</p>
+      </div>
+      <div class="tile">
+        <div class="tnum">3am</div>
+        <h3>Downtown nights opened up, on a pilot</h3>
+        <p>Social districts ran on Temple Place through July with an extended last call and the street closed to cars. Downtown spending rose 15% in a fortnight. Whether they return in 2027 has not been announced.</p>
+      </div>
+    </div>
+    <div class="srcline reveal" style="margin-top:24px;">Sources · <a href="https://www.boston.com/food/food-news/2026/01/21/trilliums-greenway-beer-garden-not-returning/" target="_blank" rel="noopener">Boston.com</a> · <a href="https://www.bostonglobe.com/2024/10/08/business/beer-industry-craft-consolidation/" target="_blank" rel="noopener">Boston Globe</a> · <a href="https://www.boston.gov/news/two-downtown-social-districts-announced-through-july-31" target="_blank" rel="noopener">City of Boston</a></div>
+  </div>
+</section>
+
+<!-- 09 CLAIMS THAT FAILED -->
+<section class="slide" id="s9">
+  <div class="bgstar" style="bottom:-90px;left:-80px;">★</div>
+  <div class="inner">
+    <div class="eyebrow reveal">★ Checking our own work</div>
+    <h2 class="reveal">Three claims of ours<br><span class="gold">that did not survive.</span></h2>
+    <div class="row3 reveal">
+      <div class="tile" style="border-color:rgba(224,138,110,.35);">
+        <div class="temoji">🗺️</div>
+        <h3 style="color:#E08A6E;">We are near the Freedom Trail. We are not on it.</h3>
+        <p>The Trail runs down Tremont, then turns onto School Street. It never enters Downtown Crossing. Say <b style="color:var(--cream)">&ldquo;a block off the Freedom Trail&rdquo;</b> and it holds. Say &ldquo;on&rdquo; it and the first person with a map takes the rest of the deck less seriously.</p>
+      </div>
+      <div class="tile" style="border-color:rgba(224,138,110,.35);">
+        <div class="temoji">📊</div>
+        <h3 style="color:#E08A6E;">There is no single Boston vacancy rate</h3>
+        <p>Same quarter: Cushman &amp; Wakefield say 19.0% with falling absorption, JLL say 23.6% with the first back-to-back positive quarters since 2019. Different inventory. <b style="color:var(--cream)">Never quote one unattributed.</b></p>
+      </div>
+      <div class="tile" style="border-color:rgba(224,138,110,.35);">
+        <div class="temoji">⚽</div>
+        <h3 style="color:#E08A6E;">Summer 2026 is not a normal comparison year</h3>
+        <p>The World Cup lifted Massachusetts beer sales 12% and on-premise 27% — the biggest jump of eleven host cities. But hotel occupancy was flat: it displaced normal visitors rather than adding new ones. <b style="color:var(--cream)">Any 2027 forecast built on this summer will overshoot.</b></p>
+      </div>
+    </div>
+    <div class="callout reveal" style="margin-top:24px;">
+      <div class="line">Finding these ourselves is the point. <em>A benchmark that only flatters us is a brochure.</em></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 SEASONALITY -->
+<section class="slide" id="s10">
+  <div class="bgstar" style="top:-70px;left:-60px;">★</div>
+  <div class="inner">
+    <div class="eyebrow reveal">★ The shape of the year</div>
+    <h2 class="reveal">The hard problem is<br><span class="gold">November to March.</span></h2>
+    <div class="chartbox reveal">
+      <div class="bars" style="gap:9px;">
+        <div class="barrow"><span class="barlab">April – October</span><span class="bartrack"><i class="barfill hi" style="--w:100%"></i></span><span class="barval hi">85%</span></div>
+        <div class="barrow"><span class="barlab">March &amp; November</span><span class="bartrack"><i class="barfill" style="--w:88%"></i></span><span class="barval">75%</span></div>
+        <div class="barrow"><span class="barlab">Jan · Feb · December</span><span class="bartrack"><i class="barfill" style="--w:72%"></i></span><span class="barval">61%</span></div>
+      </div>
+      <div class="baseline">Boston &amp; Cambridge hotel occupancy by season · Pinnacle Advisory</div>
+    </div>
+    <div class="row2 reveal">
+      <div class="tile">
+        <h3>The lever that works on a winter is pulled in summer</h3>
+        <p>Corporate business pre-sold in June to September is the only thing that fills January. That makes the summer prospecting block the highest-leverage stretch of the whole year — and it is the one we are standing in.</p>
+      </div>
+      <div class="tile" style="border-color:rgba(201,162,75,.35);">
+        <h3>Do not let a hotel number talk us out of December</h3>
+        <p>That 61% counts people sleeping in hotels. Holiday parties are booked by local companies whose staff sleep at home. Two different businesses, two different numbers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 DIVIDER -->
+<section class="slide divider" id="s11" style="justify-content:flex-end;padding-bottom:78px;">
+  <div class="adbg" style="background-image:url('https://images.unsplash.com/photo-1778034951254-63452b7b77cd?w=1900&q=80&auto=format&fit=crop')"></div>
+  <div class="adshade"></div>
+  <div class="inner">
+    <div class="divnum reveal">02</div>
+    <h1 class="reveal">🎨 Brand &amp; Content</h1>
+    <p class="sub reveal">One brand across three houses, and whether anyone can tell the story apart from the beer.</p>
+  </div>
+</section>
+
+<!-- 12 ENGINE 01 -->
+<section class="slide" id="s12">
+  <div class="bgstar" style="top:-90px;right:-70px;">★</div>
+  <div class="inner">
+    <div class="eyebrow reveal">🎨 Engine 01 · Brand &amp; Content</div>
+    <h2 class="reveal">The only authentic ownership<br><span class="gold">story left in Boston beer.</span></h2>
+    <div class="gbm reveal">
+      <div class="col g">
+        <div class="clab">✅ Going for us</div>
+        <ul>
+          <li>Night Shift belongs to the state's largest brewer and its founders are gone. Trillium is founders and a farm. Lamplighter holds community and values — <b>from Cambridge</b>. In Boston proper, worker-owned is ours alone.</li>
+          <li>That is not sentiment. It is <b>the thing that sells to an HR or DEI budget holder</b> choosing between four rooms that all serve good beer.</li>
+          <li>The content bar is on the floor. Lamplighter's entire blog holds three posts — two of them job listings.</li>
+        </ul>
+      </div>
+      <div class="col b">
+        <div class="clab">⚠️ Broken</div>
+        <ul>
+          <li>Three houses, <b>one voice</b>. Trillium and Night Shift each run a handle per venue. Our Eastie regular and our City Hall tourist get each other's content.</li>
+          <li>The December 2024 guidelines name two houses. <b>There are three.</b></li>
+          <li>We cannot benchmark anyone's cadence — including our own. There is no baseline until 28 August.</li>
+        </ul>
+      </div>
+      <div class="col m">
+        <div class="clab">→ What we do</div>
+        <ul>
+          <li>Split the houses, keep one voice. One shoot feeds three feeds, cut differently — that makes three cheaper to run than one, not dearer.</li>
+          <li>Extend the guidelines to the whole estate before anything else gets designed.</li>
+          <li>One <b>engineered announcement per season</b> instead of posting into the void — Night Shift's May launch landed on five outlets the same day.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 DIVIDER -->
+<section class="slide divider" id="s13" style="justify-content:flex-end;padding-bottom:78px;">
+  <div class="adbg" style="background-image:url('https://images.unsplash.com/photo-1777558578181-a3f56ba8f0e2?w=1900&q=80&auto=format&fit=crop')"></div>
+  <div class="adshade"></div>
+  <div class="inner">
+    <div class="divnum reveal">03</div>
+    <h1 class="reveal">📍 Digital &amp; Traffic</h1>
+    <p class="sub reveal">Whether the city can find us without being told.</p>
+  </div>
+</section>
+
+<!-- 14 ENGINE 02 -->
+<section class="slide" id="s14">
+  <div class="bgstar" style="bottom:-100px;left:-70px;">★</div>
+  <div class="inner">
+    <div class="eyebrow reveal">📍 Engine 02 · Digital &amp; Traffic</div>
+    <h2 class="reveal">Six thousand people arrive<br><span class="gold">at walking distance in September.</span></h2>
+    <div class="gbm reveal">
+      <div class="col g">
+        <div class="clab">✅ Going for us</div>
+        <ul>
+          <li><b>Fidelity moves to full-time in person at Summer Street from September 2026</b> — up from two weeks in four. TD Bank is doubling its Boston space on the same logic.</li>
+          <li>The dead-hours argument now has a citation, not a hunch.</li>
+          <li>Our doorstep sits inside a professionally measured foot-traffic zone. That is free data we never have to buy.</li>
+        </ul>
+      </div>
+      <div class="col b">
+        <div class="clab">⚠️ Broken</div>
+        <ul>
+          <li>We are <b>not on the Freedom Trail</b> and our language implies we are.</li>
+          <li>No keyword landing pages. Dorchester runs four — <b>/corporate-event-space-boston/</b> is literally what an office manager types.</li>
+          <li>Missing from Meet Boston, the city's own convention bureau, where Harpoon and Sam Adams are both tagged “Group Friendly.” <b>That listing is free.</b></li>
+        </ul>
+      </div>
+      <div class="col m">
+        <div class="clab">→ What we do</div>
+        <ul>
+          <li>Three landing pages — corporate, private parties, non-profit — on keyword URLs, one set per house. <b>Cheapest, highest-return item in this benchmark.</b></li>
+          <li>Claim the free B2B directories this month.</li>
+          <li>Rebuild all three Google profiles <b>before</b> Oktoberfest, not after.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="srcline reveal">Sources · <a href="https://www.bostonglobe.com/2026/05/12/business/return-to-office-fidelity-boston/" target="_blank" rel="noopener">Boston Globe, 12 May 2026</a> · <a href="https://www.dorchesterbrewing.com/corporate-event-space-boston/" target="_blank" rel="noopener">Dorchester Brewing</a> · <a href="https://www.meetboston.com/listing/harpoon-brewery/14131/" target="_blank" rel="noopener">Meet Boston</a></div>
+  </div>
+</section>
+
+<!-- 15 DIVIDER -->
+<section class="slide divider" id="s15" style="justify-content:flex-end;padding-bottom:78px;">
+  <div class="adbg" style="background-image:url('https://images.unsplash.com/photo-1695606453521-a160be0c7706?w=1900&q=80&auto=format&fit=crop')"></div>
+  <div class="adshade"></div>
+  <div class="inner">
+    <div class="divnum reveal">04</div>
+    <h1 class="reveal">🤝 Sales &amp; Partnerships</h1>
+    <p class="sub reveal">The engine that pays for the other two.</p>
+  </div>
+</section>
+
+<!-- 16 ENGINE 03 -->
+<section class="slide" id="s16">
+  <div class="bgstar" style="top:-80px;right:-60px;">★</div>
+  <div class="inner">
+    <div class="eyebrow reveal">🤝 Engine 03 · Sales &amp; Partnerships</div>
+    <h2 class="reveal">The most in-demand slot in the market<br><span class="gold">is the shift we already work.</span></h2>
+    <div class="gbm reveal">
+      <div class="col g">
+        <div class="clab">✅ Going for us</div>
+        <ul>
+          <li><b>53% of employees want the party between noon and 5pm.</b> 56% prefer a Friday. We are staffed Tue–Thu 10–2 and Fri 11–2 — no evening cover, no scope renegotiation.</li>
+          <li>51% of decision-makers are raising budgets; food and drink budgets are up 31% year on year.</li>
+          <li>The mid-size downtown room is genuinely unclaimed.</li>
+        </ul>
+      </div>
+      <div class="col b">
+        <div class="clab">⚠️ Broken</div>
+        <ul>
+          <li><b>Harpoon already holds Boston Common</b> — with the City Parks Department and Emerson College's stage. Our City Hall Plaza plank and our Emerson plank both walk into the incumbent.</li>
+          <li><b>We are late for part of December.</b> Parties book four to six months out; this season is being bought now and largely closes in early October.</li>
+          <li>The 150–250 buyout is the slowest door to knock on first.</li>
+        </ul>
+      </div>
+      <div class="col m">
+        <div class="clab">→ What we do</div>
+        <ul>
+          <li><b>Publish the rate card this week.</b> Capacity, a number, a guest floor, a named human, 24 hours.</li>
+          <li>Lead with a <b>15-guest</b> product, not a 250-guest one.</li>
+          <li>Work Fidelity and TD Bank in September, by name.</li>
+          <li>Sell the seasons nobody fights over: Q1 offsites and the 2027 holiday calendar.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 THE TABLE -->
+<section class="slide" id="s17">
+  <div class="bgstar" style="bottom:-110px;right:-70px;">★</div>
+  <div class="inner">
+    <div class="eyebrow reveal">★ How they sell events</div>
+    <h2 class="reveal">Nobody gives the buyer<br><span class="gold">a number.</span></h2>
+    <table class="tbl reveal">
+      <tr><th>Brewery</th><th>Biggest room</th><th>Mid-size room</th><th>Price published?</th><th>Named contact</th><th>Response promise</th></tr>
+      <tr><td><b>Harpoon</b></td><td>400 standing</td><td>70 standing</td><td class="no">No · 30-guest floor</td><td class="no">No</td><td class="no">None</td></tr>
+      <tr><td><b>Trillium</b></td><td>500</td><td>100 reception</td><td class="no">No · $500/hr overtime</td><td class="yes">Emily Grant</td><td class="no">None</td></tr>
+      <tr><td><b>Night Shift</b></td><td>480 standing</td><td>90 standing</td><td class="no">No · “quote request”</td><td class="no">Generic inbox</td><td class="mid">24 h</td></tr>
+      <tr><td><b>Sam Adams</b></td><td>150 standing</td><td>100 standing</td><td class="mid">Partly · $85pp Bier Keller</td><td class="no">No</td><td class="no">None</td></tr>
+      <tr><td><b>Lamplighter</b></td><td>160</td><td>40–100</td><td class="mid">Partly · fee structure only</td><td class="no">events@ inbox</td><td class="no">None</td></tr>
+      <tr><td><b>Dorchester</b></td><td>200 standing</td><td>100</td><td class="no">No</td><td class="mid">Named in reviews</td><td class="no">None</td></tr>
+      <tr class="us"><td><b>Democracy</b><br><span style="font-size:11px;color:var(--goldb)">what we could publish</span></td><td>150–250</td><td><b>60–70</b></td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">24 h</td></tr>
+    </table>
+    <div class="callout reveal" style="margin-top:22px;">
+      <div class="line">This is not an oversight by six well-run businesses. <em>It is an industry habit — and habits are cheap to break.</em></div>
+      <small>Every cell in the last row is a decision we can take this week at no cost. Figures read off live pages and Tripleseat, EventUp and Cvent listings on 18 August 2026.</small>
+    </div>
+  </div>
+</section>
+
+<!-- 18 THE GAP -->
+<section class="slide" id="s18">
+  <div class="bgstar" style="top:-70px;left:-80px;">★</div>
+  <div class="inner">
+    <div class="eyebrow reveal">★ Where the room is</div>
+    <h2 class="reveal">Everyone is fighting over<br><span class="gold">a size we are not.</span></h2>
+    <div class="chartbox reveal">
+      <div class="bars" style="gap:11px;">
+        <div class="barrow"><span class="barlab">Trillium · Canton</span><span class="bartrack"><i class="barfill" style="--w:100%"></i></span><span class="barval">500</span></div>
+        <div class="barrow"><span class="barlab">Night Shift · Lovejoy</span><span class="bartrack"><i class="barfill" style="--w:96%"></i></span><span class="barval">480</span></div>
+        <div class="barrow"><span class="barlab">Harpoon · Seaport</span><span class="bartrack"><i class="barfill" style="--w:80%"></i></span><span class="barval">400</span></div>
+        <div class="barrow"><span class="barlab">Dorchester</span><span class="bartrack"><i class="barfill" style="--w:40%"></i></span><span class="barval">200</span></div>
+        <div class="barrow"><span class="barlab">Lamplighter · CX</span><span class="bartrack"><i class="barfill" style="--w:32%"></i></span><span class="barval">160</span></div>
+        <div class="barrow"><span class="barlab">Democracy · the PDR</span><span class="bartrack"><i class="barfill hi" style="--w:14%"></i></span><span class="barval hi">60–70</span></div>
+      </div>
+      <div class="baseline">Largest private capacity, standing · and where Lamplighter sits — across the river in Cambridge</div>
+    </div>
+    <div class="callout reveal">
+      <div class="line">Nobody in Boston proper is built for the <em>sixty-to-a-hundred-person corporate room.</em></div>
+      <small>Lamplighter owns that band and is in Cambridge. Everyone else plays at three to five hundred. That gap is not a weakness — it is the product.</small>
+    </div>
+  </div>
+</section>
+
+<!-- 19 THE TWO WARNINGS -->
+<section class="slide" id="s19">
+  <div class="bgstar" style="bottom:-90px;right:-70px;">★</div>
+  <div class="inner">
+    <div class="eyebrow reveal">★ Two things to say out loud</div>
+    <h2 class="reveal">Better we raise these<br><span class="gold">than the room does.</span></h2>
+    <div class="row2 reveal">
+      <div class="tile" style="border-color:rgba(224,138,110,.4);">
+        <div class="temoji">🏛️</div>
+        <h3 style="color:#E08A6E;">Harpoon has the Common, the City and Emerson</h3>
+        <p>Their beer garden runs May to late October on the UnCommon Corner, free admission, with the Parks Department and a 5,000 sq ft Emerson stage that WERS broadcasts from.</p>
+        <p style="margin-top:11px;color:var(--cream);"><b>Our answer is not a bigger lawn.</b> It is the private room, three neighbourhoods, and being the only place in Boston where the money stays with the people pouring the beer.</p>
+      </div>
+      <div class="tile" style="border-color:rgba(224,138,110,.4);">
+        <div class="temoji">🗓️</div>
+        <h3 style="color:#E08A6E;">A share of December 2026 is already sold</h3>
+        <p>Events of a hundred or more book four to six months ahead. 86% of companies want December. Working backwards, this season is being bought right now and closes in early October. We started on 10 August.</p>
+        <p style="margin-top:11px;color:var(--cream);"><b>Setting an ambitious December number would be programming the Day-90 review to fail.</b> Target what is still winnable and put the weight on Q1 and 2027.</p>
+      </div>
+    </div>
+    <div class="warnbox reveal">
+      <div class="wemoji">🍺</div>
+      <p><b>And the Oktoberfest calendar is crowded.</b> Sam Adams goes mid-to-late September, deliberately ahead of Harpoon, whose 35th year lands the first weekend of October. Our 19 September launch sits on top of Sam Adams — but as of today <b>nobody has announced 2026 dates.</b> The window to move first is open right now.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 20 THE PLAN -->
+<section class="slide" id="s20">
+  <div class="bgstar" style="top:-100px;right:-60px;">★</div>
+  <div class="inner">
+    <div class="eyebrow reveal">★ What it means</div>
+    <h2 class="reveal">Six decisions for<br><span class="gold">28 August.</span></h2>
+    <div class="row3 reveal">
+      <div class="tile"><div class="tnum">1</div><h3>The audience splits in two</h3><p>B2B prospecting Tue–Thu into staffed offices. Paid consumer calendar Thu–Sat. No Monday launches, ever.</p></div>
+      <div class="tile"><div class="tnum">2</div><h3>Oktoberfest moves first or takes second</h3><p>Announce before Sam Adams and own the front of the season, or deliberately pick a different weekend. Not the same week, hoping.</p></div>
+      <div class="tile"><div class="tnum">3</div><h3>December gets an honest target</h3><p>State plainly what is already gone. Weight the plan toward Q1 offsites and the 2027 calendar.</p></div>
+    </div>
+    <div class="row3 reveal" style="margin-top:16px;">
+      <div class="tile"><div class="tnum">4</div><h3>The entry product is 15–30 people</h3><p>A fixed-price afternoon package, closable in one email. The buyout is the second-year outcome of that relationship.</p></div>
+      <div class="tile"><div class="tnum">5</div><h3>Publishing the number is the strategy</h3><p>Rate card, capacities, a named human, 24 hours — on a page built from the search query.</p></div>
+      <div class="tile"><div class="tnum">6</div><h3>Rewrite the City Hall story</h3><p>The City's own Plaza criteria were social impact, diversity and local ingredients. A worker-owned co-op scores well on that rubric. Press it.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 21 WHAT WE DON'T KNOW -->
+<section class="slide" id="s21">
+  <div class="bgstar" style="bottom:-80px;left:-70px;">★</div>
+  <div class="inner">
+    <div class="eyebrow reveal">★ Honest gaps</div>
+    <h2 class="reveal">What we still<br><span class="gold">do not know.</span></h2>
+    <p class="sub reveal">Every one of these is a question sitting in Miguel's or Karsen's onboarding track. When the answers land, these sections get rewritten — never padded.</p>
+    <div class="chips reveal">
+      <span>Which accounts exist, and how to get into them</span>
+      <span>What has actually filled the houses in eight years</span>
+      <span>Who keeps coming back</span>
+      <span>The real average value of a private event</span>
+      <span>Who Karsen is already talking to</span>
+      <span>What a prospect should never be promised</span>
+      <span>Slowest days and hours, house by house</span>
+      <span>Where the graphic materials live</span>
+      <span>The exact City Hall closing date</span>
+      <span>What Boston gets wrong about Democracy</span>
+    </div>
+    <div class="callout reveal">
+      <div class="line">A plan built before these come back would be <em>a guess dressed up as a number.</em></div>
+      <small>Which is why the annual plan is dated 28 August and not today.</small>
+    </div>
+  </div>
+</section>
+
+<!-- 22 CLOSE -->
+<section class="slide" id="s22" style="align-items:center;text-align:center;">
+  <div class="bgstar" style="top:-60px;right:-50px;">★</div>
+  <div class="inner reveal"><div class="logo-card" style="padding:14px 20px;"><img src="https://images.squarespace-cdn.com/content/v1/68ed5afac628a460d7cae774/74115dae-8a95-4b74-87c2-5d83576574c2/logoclearback%281%29+%281%29.png?format=300w" alt="Democracy Brewing" style="height:60px;"></div></div>
+  <h1 class="reveal" style="font-size:clamp(30px,4.4vw,52px);margin-top:26px;">The best story in Boston beer.<br><span class="gold"><em>Now with the map to go with it.</em></span></h1>
+  <p class="sub reveal" style="margin:20px auto 0;text-align:center;">The living version of this benchmark sits in the Growth Command Center and is rewritten as answers land and as the weekly research comes in. This file is a snapshot with a date on it.</p>
+  <div class="cmeta">Nicolás Guevara <b>★</b> nicodsanabria@gmail.com <b>★</b> Boston, MA</div>
+  <p style="margin-top:26px;font-size:11px;color:rgba(244,236,216,.35);max-width:60ch;line-height:1.6;">Atmosphere photography is licensed stock, used as design texture — it does not depict Democracy Brewing's venues. Every figure in this document carries its source and its date; anything unverified is marked as such.</p>
+  <div class="ferment">— Fermenting Rebellion since 2018 —</div>
+</section>
+
+</div>
+
+<div class="navbtns">
+  <button id="prevBtn" aria-label="Previous slide">←</button>
+  <button id="nextBtn" aria-label="Next slide">→</button>
+</div>
+<button id="printbtn">Save as PDF</button>
+<div id="dots"></div>
+
+<script>
+(function(){
+  var slides=Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total=slides.length, cur=0;
+  var counter=document.getElementById('counter');
+  var progress=document.getElementById('progress');
+  var dotsWrap=document.getElementById('dots');
+
+  slides.forEach(function(_,i){
+    var d=document.createElement('span');
+    d.addEventListener('click',function(){ go(i); });
+    dotsWrap.appendChild(d);
+  });
+  var dots=Array.prototype.slice.call(dotsWrap.children);
+  function pad(n){ return (n<10?'0':'')+n; }
+
+  function go(n){
+    if(n<0||n>=total) return;
+    slides[cur].classList.remove('active');
+    cur=n;
+    slides[cur].classList.add('active');
+    counter.textContent=pad(cur+1)+' / '+pad(total);
+    progress.style.width=((cur+1)/total*100)+'%';
+    dots.forEach(function(d,i){ d.classList.toggle('on',i===cur); });
+  }
+
+  document.getElementById('nextBtn').addEventListener('click',function(){ go(cur+1); });
+  document.getElementById('prevBtn').addEventListener('click',function(){ go(cur-1); });
+  document.getElementById('printbtn').addEventListener('click',function(){
+    slides.forEach(function(s){ s.classList.add('active'); });
+    window.print();
+    setTimeout(function(){ slides.forEach(function(s,i){ s.classList.toggle('active',i===cur); }); },400);
+  });
+
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown') go(cur+1);
+    if(e.key==='ArrowLeft'||e.key==='PageUp') go(cur-1);
+    if(e.key==='Home') go(0);
+    if(e.key==='End') go(total-1);
+  });
+
+  var tx=null;
+  document.addEventListener('touchstart',function(e){ tx=e.changedTouches[0].clientX; },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(tx===null) return;
+    var dx=e.changedTouches[0].clientX-tx;
+    if(Math.abs(dx)>60) (dx<0?go(cur+1):go(cur-1));
+    tx=null;
+  },{passive:true});
+
+  go(0);
+})();
+</script>
+</body>
+</html>

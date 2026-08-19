@@ -26,3 +26,10 @@
   for = "/proposal.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+# Deliverables get the same treatment — a cached copy of a superseded
+# benchmark is worse than no benchmark.
+[[headers]]
+  for = "/benchmark.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
