@@ -646,6 +646,75 @@ textarea.tall{min-height:132px}
 .tourlink{background:none;border:none;color:var(--amber-lt);font:inherit;font-size:11px;letter-spacing:.08em;
   cursor:pointer;padding:0;text-decoration:underline;opacity:.75}
 .tourlink:hover{opacity:1}
+
+/* the tap strip, shrunk to a banner */
+.hero{padding-bottom:0}
+.heroin{padding-bottom:4px}
+.hero .dots{opacity:.5}
+.taps{padding-top:4px}
+.taps{grid-template-columns:repeat(8,1fr);gap:6px}
+.tap svg{max-width:52px}
+.tap .tname{font-size:9px;letter-spacing:.07em}
+.tap .tstate{font-size:8px;margin-top:2px}
+.heroin h2{font-size:clamp(24px,3.2vw,34px)}
+.heroin .sub{max-width:60ch;font-size:14px}
+.barfoot{padding:9px 0 13px;font-size:9.5px}
+@media(max-width:900px){.taps{grid-template-columns:repeat(4,1fr)}}
+
+/* bell + notifications */
+.topbar{display:flex;align-items:center;justify-content:flex-end;gap:10px;position:relative;margin-bottom:12px}
+#bell{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;width:42px;height:42px;
+  cursor:pointer;font-size:18px;transition:.16s}
+#bell:hover{border-color:var(--amber);transform:translateY(-2px)}
+.belldot{position:absolute;top:-5px;right:-5px;background:var(--clay-deep);color:#fff;font-size:10px;font-weight:700;
+  min-width:18px;height:18px;border-radius:100px;display:flex;align-items:center;justify-content:center;padding:0 5px}
+#notifpanel{display:none;position:absolute;top:50px;right:0;width:380px;max-width:92vw;z-index:50;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 44px rgba(0,0,0,.18);overflow:hidden}
+#notifpanel.on{display:block}
+.nhead{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+.nlist{max-height:60vh;overflow-y:auto}
+.nrow{display:flex;gap:12px;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--line);
+  padding:13px 16px;cursor:pointer;font:inherit;transition:.14s}
+.nrow:hover{background:var(--blue-wash)}
+.nrow.unread{background:#fffaf0}
+.nrow.unread:hover{background:var(--blue-wash)}
+.nico{font-size:17px;flex-shrink:0}
+.nbody{flex:1;min-width:0}
+.nbody b{display:block;font-size:14px;color:var(--ink);margin-bottom:2px;line-height:1.35}
+.nbody span{display:block;font-size:12.5px;color:var(--ink-soft);line-height:1.45}
+.nwhen{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-soft);margin-top:4px}
+
+/* what's new */
+.feedlist{display:flex;flex-direction:column;gap:8px}
+.feeditem{display:flex;gap:14px;align-items:center;width:100%;text-align:left;cursor:pointer;font:inherit;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 17px;transition:.16s}
+.feeditem:hover{border-color:var(--amber);transform:translateX(3px)}
+.feeditem.pinned{border-left:3px solid var(--amber)}
+.fico{font-size:19px;flex-shrink:0}
+.fbody{flex:1;min-width:0}
+.fbody b{display:block;font-size:15px;color:var(--ink);line-height:1.35}
+.fsub{display:block;font-size:13px;color:var(--ink-soft);margin-top:3px;line-height:1.45}
+.fwhen{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft);white-space:nowrap;flex-shrink:0}
+
+/* pulse */
+.pulsecard{display:block;width:100%;text-align:left;cursor:pointer;font:inherit;background:var(--card);
+  border:1px solid var(--line);border-radius:13px;padding:16px 18px;transition:.16s}
+.pulsecard:hover{border-color:var(--amber);transform:translateY(-3px)}
+.pv{display:block;font-family:'JetBrains Mono',monospace;font-size:25px;font-weight:700;color:var(--blue-ink);margin:7px 0 3px;line-height:1}
+
+/* log calendar */
+.calbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:20px;padding:14px 16px;
+  background:var(--card);border:1px solid var(--line);border-radius:13px}
+.calyear{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft);letter-spacing:.1em;
+  margin:0 6px 0 12px;padding-left:12px;border-left:1px solid var(--line)}
+.calbar .calyear:first-of-type{border-left:none;margin-left:4px;padding-left:0}
+.calchip{position:relative;background:none;border:1px solid transparent;border-radius:9px;padding:7px 13px;
+  font:inherit;font-size:13px;color:var(--ink-soft);cursor:pointer;transition:.14s}
+.calchip:hover{background:var(--blue-wash);color:var(--ink)}
+.calchip.on{background:var(--blue-deep);color:var(--foam);font-weight:600}
+.calchip.now{border-color:var(--amber)}
+.caldot{position:absolute;top:5px;right:5px;width:5px;height:5px;border-radius:50%;background:var(--amber)}
+.calchip.on .caldot{background:var(--amber-lt)}
 </style>
 </head>
 <body>
@@ -701,12 +770,17 @@ textarea.tall{min-height:132px}
 
 <!-- ═════ HOME ═════ -->
 <section class="page on" id="p-home">
+  <div class="topbar">
+    <button id="bell" aria-label="Notifications"></button>
+    <div id="notifpanel"></div>
+  </div>
+
   <div class="hero">
     <div class="dots"></div><div class="glow"></div>
     <div class="heroin">
       <div class="eyebrow">Week of August 10 · 2026</div>
-      <h2 id="hellotxt">Everything I do for Democracy,<br>on one tap list.</h2>
-      <p class="sub">Six lines. Two are pouring already. The rest fill as the work lands — nothing is hidden, so you always know what's coming next.</p>
+      <h2 id="hellotxt">Welcome back.<br>Here's where everything stands.</h2>
+      <p class="sub">What changed, what is owed, and where it all lives. Pull a handle for the shortcut — everything below is the summary.</p>
     </div>
     <div class="taps" id="taps"></div>
     <div class="counter"></div>
@@ -736,6 +810,10 @@ textarea.tall{min-height:132px}
     <div id="tasklist"></div>
     </div>
   </div>
+
+  <div id="feed"></div>
+
+  <div id="pulse" style="margin-top:22px"></div>
 
   <div id="nextup"></div>
 
@@ -1258,6 +1336,8 @@ textarea.tall{min-height:132px}
 
   <div class="grid3" id="logstats" style="margin-bottom:22px"></div>
 
+  <div id="logcal"></div>
+
   <div id="loglist"></div>
 
   <div class="card" id="logedit" style="margin-top:18px;display:none">
@@ -1384,8 +1464,7 @@ var TAPS=[
  {id:"p-numbers", name:"The Numbers",state:"Live",    live:true, fill:40},
  {id:"p-pipeline",name:"CRM",        state:"Pouring", live:true, fill:100},
  {id:"p-brand",   name:"Brand",      state:"Live",    live:true, fill:65},
- {id:"p-market",  name:"The Market", state:"Live",    live:true, fill:80},
- {id:"p-plan",    name:"The Plan",   state:"Building",live:true, fill:35},
+
  {id:"p-log",     name:"The Log",    state:"Pouring", live:true, fill:100}
 ];
 var nav=document.getElementById("nav");
@@ -1407,10 +1486,8 @@ var NAVTREE=[
  ]},
  {g:"work", label:"The Work", note:"what we deliver", kids:[
    {id:"p-numbers",  label:"The Numbers"},
-   {id:"p-market",   label:"The Market"},
-   {id:"p-plan",     label:"The Plan"}
+   {id:"p-log",      label:"The Log"}
  ]},
- {id:"p-log", label:"The Log"},
  {id:"p-access", label:"Access", tag:"Only me"}
 ];
 
@@ -1432,7 +1509,12 @@ function paintNav(){
   var cur=(document.querySelector(".page.on")||{}).id || "p-home";
   if(!ME){ nav.innerHTML=""; return; }
   var inGroup=groupOf(cur);
-  if(inGroup) NAVOPEN[inGroup]=true;      // never hide the page you're standing on
+  // Force the group open only when the live page is one of its children —
+  // if you are on the group's own page, you may still fold it away.
+  if(inGroup){
+    var own=NAVTREE.filter(function(n){ return n.g===inGroup })[0];
+    if(!own || own.page!==cur) NAVOPEN[inGroup]=true;
+  }
   nav.innerHTML="";
 
   NAVTREE.forEach(function(n){
@@ -3427,9 +3509,11 @@ function renderLogStats(){
 
 function renderLog(){
   var box=q("loglist"); if(!box) return;
-  var rows=WEEKS.slice().sort(function(a,b){ return a.week_start<b.week_start?1:-1 });
+  var rows=weeksShown();
   if(!rows.length){
-    box.innerHTML='<div class="emptybox">No weeks recorded yet.</div>';
+    box.innerHTML='<div class="emptybox">'+(WEEKS.length
+      ? "Nothing logged in that month."
+      : "No weeks recorded yet.")+'</div>';
     return;
   }
   var cur=isoDate(mondayOf(new Date()));
@@ -3489,7 +3573,7 @@ async function saveLog(){
 }
 
 function renderLogAll(){
-  renderLogStats(); renderLog(); fillLogForm();
+  renderLogStats(); renderLogCal(); renderLog(); fillLogForm();
   var e=q("logedit"); if(e) e.style.display=(ME&&ME.is_admin)?"":"none";
 }
 
@@ -3669,7 +3753,7 @@ async function setViewAs(slug){
     if(no) no.style.display=(m.is_admin||mine)?"none":"";
   }
   paintNav(); paintTaps(); renderTasks(); renderTaskSummary(); renderTaskCall(); renderNext(); renderNext();
-  renderLogAll(); renderAssets();
+  renderLogAll(); renderAssets(); renderHome();
   if(!canSee((document.querySelector(".page.on")||{}).id||"p-home")) go("p-home");
 }
 
@@ -4180,6 +4264,244 @@ function renderNext(){
   box.innerHTML=html;
 }
 
+/* ───────── HOME · the noticeboard ─────────
+   What changed, what is owed, what to look at. Assembled per person
+   from the same access rules as everything else. -------------------- */
+
+var NOTIFS=[], ANN=[];
+
+async function loadNotifs(){
+  NOTIFS=[]; ANN=[];
+  if(!ONLINE||!ME) return;
+  var a=await sb.from("notifications").select("*").order("created_at",{ascending:false}).limit(60);
+  if(!a.error) NOTIFS=a.data||[];
+  var b=await sb.from("announcements").select("*").order("created_at",{ascending:false}).limit(20);
+  if(!b.error) ANN=b.data||[];
+}
+
+function myNotifs(){
+  var m=eff(); if(!m) return [];
+  var id=idOf(m.slug);
+  return NOTIFS.filter(function(n){ return n.member_id===id });
+}
+function unreadCount(){ return myNotifs().filter(function(n){ return !n.read_at }).length; }
+
+function myAnnouncements(){
+  var m=eff(); if(!m) return [];
+  return ANN.filter(function(a){
+    return !a.audience || !a.audience.length || a.audience.indexOf(m.slug)!==-1;
+  });
+}
+
+function ago(ts){
+  if(!ts) return "";
+  var s=(Date.now()-new Date(ts).getTime())/1000;
+  if(s<90) return "just now";
+  if(s<3600) return Math.round(s/60)+" min ago";
+  if(s<86400) return Math.round(s/3600)+" h ago";
+  var d=Math.round(s/86400);
+  if(d===1) return "yesterday";
+  if(d<14) return d+" days ago";
+  return dstr(ts);
+}
+
+var NKIND={task:"✓", delivery:"📦", access:"🔓", answer:"✍️", announcement:"📣"};
+
+function renderBell(){
+  var b=q("bell"); if(!b) return;
+  var n=unreadCount();
+  b.innerHTML='<span class="bellicon">🔔</span>'+(n?'<span class="belldot">'+(n>9?"9+":n)+'</span>':'');
+  b.setAttribute("aria-label", n? n+" unread" : "Notifications");
+}
+
+function renderNotifPanel(){
+  var p=q("notifpanel"); if(!p) return;
+  var list=myNotifs();
+  p.innerHTML='<div class="nhead"><b>Notifications</b>'+
+      (unreadCount()?'<button class="mbtn" id="notif-read">Mark all read</button>':'')+'</div>'+
+    (list.length
+      ? '<div class="nlist">'+list.slice(0,18).map(function(n){
+          return '<button class="nrow'+(n.read_at?"":" unread")+'"'+
+            (n.link_page?' data-goto="'+esc(n.link_page)+'"':'')+'>'+
+            '<span class="nico">'+(NKIND[n.kind]||"•")+'</span>'+
+            '<span class="nbody"><b>'+esc(n.title)+'</b>'+
+              (n.body?'<span>'+esc(n.body)+'</span>':'')+
+              '<span class="nwhen">'+ago(n.created_at)+'</span></span></button>';
+        }).join("")+'</div>'
+      : '<div class="emptybox" style="margin:12px">Nothing yet. Anything assigned to you, or anything new that opens up, lands here.</div>');
+}
+
+/* ── what changed, assembled from the data itself ── */
+function feedItems(){
+  var m=eff(); if(!m) return [];
+  var out=[];
+
+  myAnnouncements().forEach(function(a){
+    out.push({at:a.created_at, pin:a.pinned, kind:a.kind||"note", icon:"📣",
+      title:a.title, body:a.body, go:a.link_page, url:a.link_url});
+  });
+
+  WEEKS.filter(function(w){ return w.deliverable && w.status!=="draft" && w.published_at })
+    .forEach(function(w){
+      out.push({at:w.published_at, kind:"delivery", icon:"📦",
+        title:w.deliverable+" is ready",
+        body:(w.summary||"").slice(0,180)+((w.summary||"").length>180?"…":""),
+        go:(w.deliverable_url&&w.deliverable_url.charAt(0)==="#")?w.deliverable_url.slice(1):"p-log",
+        url:(w.deliverable_url&&w.deliverable_url.charAt(0)!=="#")?w.deliverable_url:null});
+    });
+
+  PAGES_DB.filter(function(p){
+      return p.published_at && p.id!=="p-home" && p.id!=="p-onboard" && canSee(p.id);
+    }).forEach(function(p){
+      out.push({at:p.published_at, kind:"access", icon:"🔓",
+        title:p.label+" is open", body:"Added to your sidebar.", go:p.id});
+    });
+
+  if(m.is_admin){
+    LEADS.filter(function(l){ return l.first_contact_at }).slice(0,4).forEach(function(l){
+      out.push({at:l.first_contact_at, kind:"pipeline", icon:"🤝",
+        title:"First contact with "+l.company, body:l.next_action||"", go:"p-pipeline"});
+    });
+  }
+
+  return out.sort(function(a,b){
+    if(a.pin&&!b.pin) return -1; if(b.pin&&!a.pin) return 1;
+    return (a.at||"")<(b.at||"")?1:-1;
+  }).slice(0,6);
+}
+
+function renderFeed(){
+  var box=q("feed"); if(!box) return;
+  var items=feedItems();
+  if(!items.length){ box.innerHTML=""; return; }
+  box.innerHTML='<div class="eyebrow" style="margin:30px 0 12px">What&rsquo;s new</div>'+
+    '<div class="feedlist">'+items.map(function(f){
+      var attr = f.url ? 'data-href="'+esc(f.url)+'"' : (f.go?'data-goto="'+esc(f.go)+'"':'');
+      return '<button class="feeditem'+(f.pin?" pinned":"")+'" '+attr+'>'+
+        '<span class="fico">'+f.icon+'</span>'+
+        '<span class="fbody"><b>'+esc(f.title)+'</b>'+
+          (f.body?'<span class="fsub">'+esc(f.body)+'</span>':'')+'</span>'+
+        '<span class="fwhen">'+ago(f.at)+'</span></button>';
+    }).join("")+'</div>';
+}
+
+/* ── the little numbers, so the Home summarises the site ── */
+function renderPulse(){
+  var box=q("pulse"); if(!box) return;
+  var m=eff(); if(!m){ box.innerHTML=""; return; }
+  var cards=[];
+
+  var mt=(typeof Q!=="undefined")?["miguel","karsen"].map(function(t){
+    return {t:t,d:answered(t),n:total(t)};
+  }):[];
+  var td=mt.reduce(function(a,x){return a+x.d},0), tn=mt.reduce(function(a,x){return a+x.n},0);
+  if(tn) cards.push({l:"Onboarding",v:td+" / "+tn,s:"questions answered",pct:Math.round((td/tn)*100),go:"p-onboard"});
+
+  if(canSee("p-pipeline")){
+    var open=LEADS.filter(function(l){ return ["won","lost","dormant"].indexOf(l.stage)===-1 });
+    cards.push({l:"Pipeline",v:money(open.reduce(function(a,l){return a+Number(l.est_value||0)},0)),
+      s:open.length+" open "+(open.length===1?"conversation":"conversations"),go:"p-pipeline"});
+  }
+  var wk=curWeek();
+  if(wk) cards.push({l:"This week",v:(Number(wk.logged)%1?Number(wk.logged).toFixed(1):Number(wk.logged))+" / "+Number(wk.planned)+" h",
+    s:weekLabel(wk.week_start),pct:Math.round((Number(wk.logged)/Number(wk.planned))*100),go:"p-log"});
+  var deliv=WEEKS.filter(function(w){ return w.deliverable && w.status!=="draft" }).length;
+  if(canSee("p-log")) cards.push({l:"Delivered",v:String(deliv),s:"one per week, named ahead",go:"p-log"});
+
+  box.innerHTML='<div class="grid4">'+cards.map(function(c){
+    return '<button class="pulsecard" data-goto="'+c.go+'">'+
+      '<span class="eyebrow">'+c.l+'</span>'+
+      '<span class="pv">'+c.v+'</span>'+
+      '<span class="mini">'+c.s+'</span>'+
+      (c.pct!==undefined?'<span class="bar" style="margin-top:9px"><i style="width:'+Math.min(100,c.pct)+'%"></i></span>':'')+
+    '</button>';
+  }).join("")+'</div>';
+}
+
+async function markNotifsRead(){
+  if(!ONLINE||!ME||previewing()) return;
+  try{ await sb.rpc("mark_notifications_read"); }catch(e){}
+  await loadNotifs(); renderBell(); renderNotifPanel();
+}
+
+function renderHome(){ renderBell(); renderNotifPanel(); renderFeed(); renderPulse(); }
+
+function bindHome(){
+  var b=q("bell");
+  if(b) b.addEventListener("click",function(e){
+    e.stopPropagation();
+    var p=q("notifpanel"); if(p) p.classList.toggle("on");
+  });
+  document.addEventListener("click",function(e){
+    if(e.target.closest("#notif-read")){ markNotifsRead(); return; }
+    var h=e.target.closest("[data-href]");
+    if(h){ window.open(h.dataset.href,"_blank","noopener"); return; }
+    var p=q("notifpanel");
+    if(p && p.classList.contains("on") && !e.target.closest("#notifpanel") && !e.target.closest("#bell"))
+      p.classList.remove("on");
+  });
+}
+
+/* ───────── THE LOG · calendared, so August is one click away in January ───────── */
+
+var LOGMONTH="all";
+
+function monthKey(iso){ return iso.slice(0,7); }
+function monthLabel(k){
+  var d=new Date(k+"-01T12:00:00");
+  return d.toLocaleDateString("en-US",{month:"short"});
+}
+function yearOf(k){ return k.slice(0,4); }
+
+function logMonths(){
+  var seen={}, out=[];
+  WEEKS.forEach(function(w){
+    var k=monthKey(w.week_start);
+    if(!seen[k]){ seen[k]=0; out.push(k); }
+    seen[k]++;
+  });
+  out.sort();
+  return out.map(function(k){ return {k:k, n:seen[k]} });
+}
+
+function renderLogCal(){
+  var box=q("logcal"); if(!box) return;
+  var months=logMonths();
+  if(!months.length){ box.innerHTML=""; return; }
+  var years={};
+  months.forEach(function(m){ (years[yearOf(m.k)]=years[yearOf(m.k)]||[]).push(m) });
+  var cur=monthKey(isoDate(mondayOf(new Date())));
+
+  box.innerHTML='<div class="calbar">'+
+    '<button class="calchip'+(LOGMONTH==="all"?" on":"")+'" data-logmonth="all">Everything</button>'+
+    Object.keys(years).sort().map(function(y){
+      return '<span class="calyear">'+y+'</span>'+
+        years[y].map(function(m){
+          var delivered=WEEKS.filter(function(w){
+            return monthKey(w.week_start)===m.k && w.deliverable && w.status!=="draft"; }).length;
+          return '<button class="calchip'+(LOGMONTH===m.k?" on":"")+(m.k===cur?" now":"")+'" data-logmonth="'+m.k+'">'+
+            monthLabel(m.k)+
+            (delivered?'<i class="caldot" title="'+delivered+' delivered"></i>':'')+
+          '</button>';
+        }).join("");
+    }).join("")+
+  '</div>';
+}
+
+function weeksShown(){
+  var rows=WEEKS.slice().sort(function(a,b){ return a.week_start<b.week_start?1:-1 });
+  if(LOGMONTH==="all") return rows;
+  return rows.filter(function(w){ return monthKey(w.week_start)===LOGMONTH });
+}
+
+function bindLogCal(){
+  document.addEventListener("click",function(e){
+    var b=e.target.closest("[data-logmonth]"); if(!b) return;
+    LOGMONTH=b.dataset.logmonth;
+    renderLogCal(); renderLog();
+  });
+}
+
 /* ───────── WIRING ───────── */
 function bindGrowth(){
   var f=q("funnel");
@@ -4265,11 +4587,11 @@ function bindGrowth(){
 }
 
 async function loadGrowth(){
-  await Promise.all([loadLeads(),loadContent(),loadAssets(),loadMetrics(),loadCamps(),loadWeeks(),loadPages()]);
+  await Promise.all([loadLeads(),loadContent(),loadAssets(),loadMetrics(),loadCamps(),loadWeeks(),loadPages(),loadNotifs()]);
   renderFunnel(); renderLeads(); renderTouch(); renderLedger();
   renderCstats(); renderContent(); renderAssets();
   renderNumbers(); renderCamps(); renderCapacity(); renderTaskSummary();
-  renderLogAll(); renderAccess(); paintViewAs(); renderTaskCall(); renderNext();
+  renderLogAll(); renderAccess(); paintViewAs(); renderTaskCall(); renderNext(); renderHome();
   startRealtime();
   maybeStartTour();
   var ma=q("metricadd"); if(ma) ma.style.display=(ME&&ME.is_admin)?"flex":"none";
@@ -4415,6 +4737,8 @@ function bindAgreement(){
   bindUpload();
   bindTaskCall();
   bindTour();
+  bindHome();
+  bindLogCal();
   renderMktTabs(); renderMktPanel();
   boot();
 })();
